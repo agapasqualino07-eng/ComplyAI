@@ -12,6 +12,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'DM Sans',sans-serif;overflow-x:hidden;background:#060910;color:#CBD5E1}a{color:#60A5FA;text-decoration:none}a:hover{text-decoration:underline}.mono{font-family:'Space Mono',monospace}.card{transition:all .25s ease;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.015);border-radius:14px}.card:hover{border-color:rgba(59,130,246,.2)}.bp{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .15s ease}.bp:hover{transform:translateY(-1px)}.bg{background:transparent;border:1px solid rgba(255,255,255,.12);color:#fff;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif}.opt{transition:all .2s;border:1px solid rgba(255,255,255,.07);cursor:pointer;font-family:'DM Sans',sans-serif;border-radius:10px;background:rgba(255,255,255,.015);color:#D1D9E6}.opt:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.04)}.oa{border-color:rgba(59,130,246,.5)!important;background:rgba(59,130,246,.08)!important}.fade{opacity:0;transform:translateY(14px);animation:fu .5s ease forwards}.d1{animation-delay:.12s}.d2{animation-delay:.24s}.d3{animation-delay:.36s}.d4{animation-delay:.48s}@keyframes fu{to{opacity:1;transform:translateY(0)}}.sec{max-width:1060px;margin:0 auto;padding:0 28px}.st{color:#fff;font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}.ss{color:#64748B;font-size:15px;line-height:1.6;margin-bottom:28px;max-width:540px}.tag{display:inline-block;border-radius:100px;padding:4px 14px;font-size:12px;font-weight:500}.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.dv{height:1px;background:rgba(255,255,255,.04);margin:56px 0}@media(max-width:600px){.sec{padding:0 18px}}
 </style>
@@ -20,6 +21,12 @@
 <div id="root"></div>
 <script type="text/babel">
 const{useState,useEffect}=React;
+
+/* ═══════ ANALYTICS ANONIME ═══════ */
+const SUPABASE_URL="https://uuktxbqjemizafizxhzz.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1a3R4YnFqZW1pemFmaXp4aHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTAyMzYsImV4cCI6MjA5MDI2NjIzNn0.3aNOEbNNCWpJgWMmQHPkOG4KeSdkndVsHy9tch5p78Q";
+const sb=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const trackQuiz=async(data)=>{try{if(sb)await sb.from("quiz_completions").insert(data)}catch(e){}};
 
 /* ═══════════════════════════════════════════════════════════
    DATI NORMATIVI VERIFICATI
@@ -60,6 +67,15 @@ const QS=[
     ds:"ChatGPT, Gemini, Copilot, Claude, Midjourney — per testi, traduzioni, immagini, analisi dati",
     t:"yn",ry:2,rn:0,ct:"gpai",sy:"IA Generativa (ChatGPT, Gemini, Copilot…)",
     ob:"Obbligo di alfabetizzazione IA per il personale che li utilizza (Art. 4 AI Act, già in vigore dal 2 feb 2025). Se i contenuti generati vengono pubblicati, obbligo di etichettatura (Art. 50, da agosto 2026)."},
+  {id:"tools",q:"Quali strumenti di IA utilizzate?",
+    ds:"Seleziona tutti quelli che usate in azienda — anche se usati solo da un dipendente. Se non ne usi nessuno, clicca Avanti.",
+    t:"multi",os:[
+      {l:"ChatGPT",v:"chatgpt"},{l:"Google Gemini",v:"gemini"},{l:"Microsoft Copilot",v:"copilot"},
+      {l:"Claude (Anthropic)",v:"claude"},{l:"Midjourney / DALL-E",v:"midjourney"},
+      {l:"Chatbot sul sito web",v:"chatbot_web"},{l:"CRM con IA (HubSpot, Salesforce…)",v:"crm_ia"},
+      {l:"Software HR con IA",v:"hr_ia"},{l:"Tool contabilità/fatturazione con IA",v:"accounting_ia"},
+      {l:"Altro strumento IA",v:"altro_ia"}
+    ]},
   {id:"cb",q:"Avete un chatbot o assistente virtuale per i clienti?",
     ds:"Su sito web, WhatsApp, social, app — qualsiasi sistema che risponde in automatico alle persone",
     t:"yn",ry:3,rn:0,ct:"tr",sy:"Chatbot / Assistente Virtuale",
@@ -129,7 +145,7 @@ function Landing({go,goTerms,goPrivacy}){return(<Sh ch={<div><Nv r={<button clas
 <div className="tag" style={{background:"rgba(59,130,246,.08)",border:"1px solid rgba(59,130,246,.2)",color:"#93C5FD",marginBottom:20}}>Reg. (UE) 2024/1689 + Legge 132/2025 — obblighi già in vigore</div>
 <h1 style={{color:"#fff",fontSize:"clamp(30px,4.5vw,52px)",lineHeight:1.1,fontWeight:700,letterSpacing:"-0.03em",maxWidth:700,marginBottom:18}}>Usi l'IA in azienda?<br/>Verifica in 5 minuti se sei a norma.</h1>
 <p style={{color:"#8896AB",fontSize:17,lineHeight:1.7,maxWidth:560,marginBottom:32}}>La Legge Europea sull'IA e la Legge italiana 132/2025 introducono obblighi per tutte le aziende che usano intelligenza artificiale — anche solo ChatGPT. Il nostro check gratuito ti dice esattamente cosa devi fare.</p>
-<div style={{display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}><button className="bp" onClick={go}>Fai il Check Gratuito →</button><span style={{color:"#4B5B73",fontSize:13}}>Nessuna registrazione · 16 domande · Report immediato</span></div>
+<div style={{display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}><button className="bp" onClick={go}>Fai il Check Gratuito →</button><span style={{color:"#4B5B73",fontSize:13}}>Nessuna registrazione · 17 domande · Report immediato</span></div>
 </div>
 <div className="sec dv"/>
 
@@ -145,7 +161,7 @@ function Landing({go,goTerms,goPrivacy}){return(<Sh ch={<div><Nv r={<button clas
 {/* SOLUTION */}
 <div className="sec" style={{paddingBottom:48}}><div className="st">La soluzione</div><div className="ss">AIComply traduce la normativa in azioni concrete. Senza legalese, senza consulenti.</div>
 <div className="g2">{[
-  {i:"🗂️",t:"Mappatura automatica",d:"Rispondi a 16 domande e identifichiamo tutti i sistemi IA in uso, anche quelli che non sapevi di avere."},
+  {i:"🗂️",t:"Mappatura automatica",d:"Rispondi a 17 domande e identifichiamo tutti i sistemi IA in uso, anche quelli che non sapevi di avere."},
   {i:"🎯",t:"Classificazione del rischio",d:"Ogni sistema classificato nei livelli dell'AI Act: vietato, alto, trasparenza, minimo."},
   {i:"📋",t:"Obblighi chiari",d:"Per ogni sistema, cosa devi fare e entro quando. Con riferimento all'articolo di legge (AI Act + L.132/2025)."},
   {i:"📊",t:"Punteggio di compliance",d:"Un numero da 0 a 100 che ti dice subito quanto sei a norma."},
@@ -155,7 +171,7 @@ function Landing({go,goTerms,goPrivacy}){return(<Sh ch={<div><Nv r={<button clas
 {/* HOW */}
 <div className="sec" style={{paddingBottom:48}}><div className="st">Come funziona</div>
 <div style={{display:"flex",flexDirection:"column",gap:20,maxWidth:520,marginTop:20}}>{[
-  {n:"1",t:"Rispondi al questionario",d:"16 domande semplici sulla tua azienda e gli strumenti che usi. 5 minuti."},
+  {n:"1",t:"Rispondi al questionario",d:"17 domande semplici sulla tua azienda e gli strumenti che usi. 5 minuti."},
   {n:"2",t:"Ricevi il report gratuito",d:"Sistemi IA rilevati, classificazione rischio, punteggio, obblighi con articoli di legge."},
   {n:"3",t:"Mettiti a norma con Pro",d:"Registro vivo, documenti pronti, alert normativi, formazione tracciata. €29/mese."},
 ].map((s,i)=><div key={i} style={{display:"flex",gap:16,alignItems:"flex-start"}}><div style={{width:36,height:36,borderRadius:10,background:"rgba(59,130,246,.1)",border:"1px solid rgba(59,130,246,.2)",display:"flex",alignItems:"center",justifyContent:"center",color:"#60A5FA",fontWeight:700,fontSize:14,flexShrink:0,fontFamily:"Space Mono"}}>{s.n}</div><div><h4 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:3}}>{s.t}</h4><p style={{color:"#64748B",fontSize:13,lineHeight:1.5}}>{s.d}</p></div></div>)}</div></div>
@@ -178,9 +194,10 @@ function Landing({go,goTerms,goPrivacy}){return(<Sh ch={<div><Nv r={<button clas
 
 {/* PRICING */}
 <div className="sec" style={{paddingBottom:48}}><div className="st">Prezzi semplici</div>
-<div className="g2" style={{maxWidth:580,marginTop:20}}>
-<div className="card" style={{padding:24}}><div style={{color:"#64748B",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Check Gratuito</div><div className="mono" style={{color:"#fff",fontSize:28,fontWeight:700,marginBottom:14}}>€0</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Questionario 16 domande</li><li>✓ Sistemi IA + classificazione rischio</li><li>✓ Punteggio compliance</li><li>✓ Obblighi AI Act + L.132/2025</li></ul><button className="bp" onClick={go} style={{width:"100%",marginTop:16,fontSize:14,padding:"12px 0"}}>Inizia →</button></div>
-<div style={{background:"linear-gradient(135deg,rgba(59,130,246,.05),rgba(124,58,237,.05))",border:"1px solid rgba(59,130,246,.18)",borderRadius:14,padding:24}}><div style={{color:"#60A5FA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Pro</div><div className="mono" style={{color:"#fff",fontSize:28,fontWeight:700}}>€29<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:14}}>Cancelli quando vuoi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Free</li><li style={{color:"#93C5FD"}}>✓ Registro IA Vivo con storico</li><li style={{color:"#93C5FD"}}>✓ Policy + documenti generati</li><li style={{color:"#93C5FD"}}>✓ Alert normativi</li><li style={{color:"#93C5FD"}}>✓ Formazione tracciata + attestati</li></ul></div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(230px,1fr))",gap:14,marginTop:20,maxWidth:800}}>
+<div className="card" style={{padding:22}}><div style={{color:"#64748B",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Check Gratuito</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700,marginBottom:12}}>€0</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Questionario 17 domande</li><li>✓ Sistemi IA + classificazione</li><li>✓ Punteggio compliance</li><li>✓ Obblighi AI Act + L.132/2025</li></ul><button className="bp" onClick={go} style={{width:"100%",marginTop:14,fontSize:13,padding:"10px 0"}}>Inizia →</button></div>
+<div style={{background:"linear-gradient(135deg,rgba(59,130,246,.05),rgba(124,58,237,.05))",border:"1px solid rgba(59,130,246,.18)",borderRadius:14,padding:22}}><div style={{color:"#60A5FA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Pro — Singola azienda</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700}}>€29<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:12}}>Cancelli quando vuoi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Free</li><li style={{color:"#93C5FD"}}>✓ Registro IA Vivo</li><li style={{color:"#93C5FD"}}>✓ Documenti compliance</li><li style={{color:"#93C5FD"}}>✓ Alert normativi</li><li style={{color:"#93C5FD"}}>✓ Formazione + attestati</li></ul></div>
+<div style={{background:"linear-gradient(135deg,rgba(139,92,246,.06),rgba(109,40,217,.06))",border:"1px solid rgba(139,92,246,.2)",borderRadius:14,padding:22}}><div style={{color:"#A78BFA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Enterprise — Studi e Partner</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700}}>€199<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:12}}>10 clienti PMI inclusi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Pro</li><li style={{color:"#C4B5FD"}}>✓ Dashboard multi-cliente</li><li style={{color:"#C4B5FD"}}>✓ White-label (logo e colori)</li><li style={{color:"#C4B5FD"}}>✓ Audit trail completo</li><li style={{color:"#C4B5FD"}}>✓ Report attività mensile</li></ul><button onClick={function(){window.location.href="/enterprise.html"}} style={{width:"100%",marginTop:14,fontSize:13,padding:"10px 0",background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",color:"#fff",border:"none",borderRadius:8,fontWeight:600,cursor:"pointer"}}>Scopri Enterprise →</button></div>
 </div></div>
 
 {/* FINAL CTA + DISCLAIMER */}
@@ -205,8 +222,11 @@ Fonti normative: Regolamento (UE) 2024/1689 (AI Act), Legge 23 settembre 2025 n.
 
 /* ═══════ QUIZ ═══════ */
 function Quiz({done}){
-const[c,sC]=useState(0);const[a,sA]=useState({});const q=QS[c];
-const pk=(v)=>{const n={...a,[q.id]:v};sA(n);if(c<QS.length-1)setTimeout(()=>sC(c+1),260);else setTimeout(()=>done(n),320)};
+const[c,sC]=useState(0);const[a,sA]=useState({});const[sel,setSel]=useState([]);const q=QS[c];
+const advance=(answers)=>{if(c<QS.length-1)setTimeout(()=>{sC(c+1);setSel([])},260);else setTimeout(()=>done(answers),320)};
+const pk=(v)=>{const n={...a,[q.id]:v};sA(n);advance(n)};
+const toggle=(v)=>{setSel(p=>p.includes(v)?p.filter(x=>x!==v):[...p,v])};
+const confirmMulti=()=>{const n={...a,[q.id]:sel};sA(n);advance(n)};
 return(<Sh ch={<div><Nv r={<span className="mono" style={{color:"#475569",fontSize:12}}>{c+1}/{QS.length}</span>}/>
 <div className="sec" style={{maxWidth:700}}><div style={{height:3,background:"rgba(255,255,255,.04)",borderRadius:10,marginBottom:48}}><div style={{height:"100%",width:(c/QS.length*100)+"%",background:"linear-gradient(90deg,#3B82F6,#7C3AED)",borderRadius:10,transition:"width .35s ease"}}/></div></div>
 <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"55vh",padding:"0 28px"}}><div style={{maxWidth:580,width:"100%"}}>
@@ -215,11 +235,22 @@ return(<Sh ch={<div><Nv r={<span className="mono" style={{color:"#475569",fontSi
 {!q.ds&&<div style={{height:18}}/>}
 {q.t==="sel"&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:9}}>{q.os.map(o=><button key={o.v} className={"opt"+(a[q.id]===o.v?" oa":"")} onClick={()=>pk(o.v)} style={{padding:"13px 16px",fontSize:14,textAlign:"left"}}>{o.l}</button>)}</div>}
 {q.t==="yn"&&<div style={{display:"flex",gap:12}}>{[{l:"Sì",v:"yes"},{l:"No",v:"no"},...(!q.cp?[{l:"Non so",v:"un"}]:[])].map(o=><button key={o.v} className={"opt"+(a[q.id]===o.v?" oa":"")} onClick={()=>pk(o.v)} style={{flex:1,padding:"15px 18px",fontSize:15,fontWeight:500,textAlign:"center"}}>{o.l}</button>)}</div>}
+{q.t==="multi"&&<div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:9,marginBottom:20}}>
+{q.os.map(o=><button key={o.v} className={"opt"+(sel.includes(o.v)?" oa":"")} onClick={()=>toggle(o.v)}
+  style={{padding:"13px 16px",fontSize:14,textAlign:"left",display:"flex",alignItems:"center",gap:10}}>
+  <span style={{width:18,height:18,borderRadius:4,border:sel.includes(o.v)?"2px solid #3B82F6":"2px solid rgba(255,255,255,.15)",background:sel.includes(o.v)?"rgba(59,130,246,.2)":"transparent",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,color:"#3B82F6",flexShrink:0}}>{sel.includes(o.v)?"✓":""}</span>
+  {o.l}
+</button>)}
+</div>
+<button className="bp" onClick={confirmMulti} style={{width:"100%",padding:"14px 0"}}>{sel.length===0?"Nessuno di questi — Avanti →":"Conferma "+sel.length+" strumento/i →"}</button>
+</div>}
 </div></div></div>}/>)}
 
 /* ═══════ REPORT ═══════ */
 function Report({ans,rst}){
 const[sh,setSh]=useState(false);useEffect(()=>{setTimeout(()=>setSh(true),450)},[]);
+/* Bridge Free→Pro: salva dati in localStorage per importazione nella dashboard */
 let rk=0;const sys=[];const act=[];
 QS.forEach(q=>{const a=ans[q.id];if(q.t==="sel"){const o=q.os.find(x=>x.v===a);if(o)rk+=o.r}else if(q.t==="yn"){if(a==="yes")rk+=(q.ry||0);else if(a==="no")rk+=(q.rn||0);else if(a==="un")rk+=Math.max((q.ry||0)-1,0);if(q.sy&&(a==="yes"||a==="un")){const m=RM[q.ct]||{};sys.push({n:q.sy,ct:q.ct,st:a==="yes"?"confermato":"da verificare",m,ob:q.ob})}}});
 
@@ -232,6 +263,13 @@ if(sys.some(s=>s.ct==="vt"))act.push({t:"Possibile uso di pratica vietata dall'A
 
 const sc=100-Math.min(Math.max(Math.round((rk/55)*100),5),98);
 let lv,lc;if(sc>=70){lv="BASSO";lc="#10B981"}else if(sc>=40){lv="MEDIO";lc="#F59E0B"}else{lv="CRITICO";lc="#EF4444"}
+/* Salva in localStorage per bridge Free→Pro */
+const selectedTools=ans.tools||[];
+useEffect(()=>{
+  try{localStorage.setItem("aicomply_data",JSON.stringify({answers:ans,score:sc,systems:sys.map(s=>({name:s.n,category:s.ct,status:s.st,obligation:s.ob})),selectedTools:selectedTools,actions:act,timestamp:new Date().toISOString()}))}catch(e){}
+  /* Tracking anonimo — nessun dato personale */
+  trackQuiz({sector:ans.sector||null,employees:ans.emp||null,score:sc,systems_count:sys.length,tools_selected:selectedTools.length>0?selectedTools:null,clicked_pro:false});
+},[]);
 
 return(<Sh ch={<div><Nv r={null}/>
 <div className="sec" style={{maxWidth:660,paddingTop:16,paddingBottom:60}}>
@@ -244,11 +282,20 @@ return(<Sh ch={<div><Nv r={null}/>
 {/* Systems */}
 {sys.length>0&&<div className="fade d2 card" style={{padding:24,marginBottom:16}}><h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:14}}>🗂️ Sistemi IA rilevati ({sys.length})</h3>{sys.map((s,i)=><div key={i} style={{padding:"12px 0",borderBottom:i<sys.length-1?"1px solid rgba(255,255,255,.04)":"none"}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}><span style={{fontSize:14}}>{s.m.i||"⚪"}</span><span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{s.n}</span>{s.st==="da verificare"&&<span style={{color:"#F59E0B",fontSize:10,background:"rgba(245,158,11,.08)",padding:"2px 7px",borderRadius:4}}>da verificare</span>}</div><div style={{marginLeft:22}}><span style={{color:s.m.c,fontSize:11,fontWeight:600,background:s.m.bg,border:"1px solid "+s.m.br,padding:"2px 7px",borderRadius:4}}>{s.m.l}</span>{s.ob&&<p style={{color:"#5A6B7F",fontSize:12,marginTop:5,lineHeight:1.5}}>{s.ob}</p>}</div></div>)}</div>}
 
+{/* Tools selezionati */}
+{selectedTools.length>0&&<div className="fade d2 card" style={{padding:24,marginBottom:16}}><h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:14}}>🔧 Strumenti IA in uso ({selectedTools.length})</h3>
+<div style={{display:"flex",flexWrap:"wrap",gap:8}}>{selectedTools.map((t,i)=>{
+const names={chatgpt:"ChatGPT",gemini:"Google Gemini",copilot:"Microsoft Copilot",claude:"Claude",midjourney:"Midjourney/DALL-E",chatbot_web:"Chatbot sito web",crm_ia:"CRM con IA",hr_ia:"Software HR con IA",accounting_ia:"Contabilità con IA",altro_ia:"Altro strumento IA"};
+return<span key={i} style={{background:"rgba(59,130,246,.06)",border:"1px solid rgba(59,130,246,.15)",color:"#93C5FD",padding:"6px 12px",borderRadius:8,fontSize:13}}>{names[t]||t}</span>
+})}</div>
+<p style={{color:"#5A6B7F",fontSize:12,marginTop:12}}>Con AIComply Pro, questi strumenti verranno importati nel Registro IA con analisi dei rischi specifica per ogni vendor.</p>
+</div>}
+
 {/* Actions */}
 {act.length>0&&<div className="fade d3" style={{background:"rgba(239,68,68,.025)",border:"1px solid rgba(239,68,68,.1)",borderRadius:14,padding:24,marginBottom:16}}><h3 style={{color:"#FCA5A5",fontSize:15,fontWeight:600,marginBottom:14}}>🚨 Azioni da intraprendere</h3>{act.map((a,i)=><div key={i} style={{display:"flex",gap:8,alignItems:"flex-start",padding:"8px 0",borderBottom:i<act.length-1?"1px solid rgba(239,68,68,.06)":"none"}}><span style={{background:a.u==="critica"?"rgba(239,68,68,.12)":"rgba(245,158,11,.12)",color:a.u==="critica"?"#FCA5A5":"#FCD34D",fontSize:9,fontWeight:700,padding:"2px 6px",borderRadius:3,textTransform:"uppercase",flexShrink:0,marginTop:2}}>{a.u}</span><div><span style={{color:"#D1D9E6",fontSize:13}}>{a.t}</span><div style={{display:"flex",gap:10,marginTop:3}}><span className="mono" style={{color:"#4B5B73",fontSize:10}}>Scadenza: {a.d}</span><span style={{color:"#3B5B73",fontSize:10}}>Fonte: {a.src}</span></div></div></div>)}</div>}
 
 {/* CTA */}
-<div className="fade d4" style={{background:"linear-gradient(135deg,rgba(59,130,246,.04),rgba(124,58,237,.04))",border:"1px solid rgba(59,130,246,.15)",borderRadius:14,padding:28,textAlign:"center",marginBottom:16}}><h3 style={{color:"#fff",fontSize:18,fontWeight:700,marginBottom:8}}>Vuoi metterti a norma?</h3><p style={{color:"#7A8BA0",fontSize:13,lineHeight:1.6,maxWidth:440,margin:"0 auto 18px"}}>Registro IA vivo, documenti pronti, alert normativi, formazione tracciata con attestati. €29/mese, cancelli quando vuoi.</p><button className="bp" onClick={function(){window.open(STRIPE_LINK,"_blank")}}>Attiva AIComply Pro — €29/mese</button></div>
+<div className="fade d4" style={{background:"linear-gradient(135deg,rgba(59,130,246,.04),rgba(124,58,237,.04))",border:"1px solid rgba(59,130,246,.15)",borderRadius:14,padding:28,textAlign:"center",marginBottom:16}}><h3 style={{color:"#fff",fontSize:18,fontWeight:700,marginBottom:8}}>Vuoi metterti a norma?</h3><p style={{color:"#7A8BA0",fontSize:13,lineHeight:1.6,maxWidth:440,margin:"0 auto 18px"}}>Registro IA vivo, documenti pronti, alert normativi, formazione tracciata con attestati. €29/mese, cancelli quando vuoi.</p><button className="bp" onClick={function(){trackQuiz({sector:ans.sector||null,employees:ans.emp||null,score:sc,systems_count:sys.length,tools_selected:selectedTools.length>0?selectedTools:null,clicked_pro:true});window.open(STRIPE_LINK,"_blank")}}>Attiva AIComply Pro — €29/mese</button><p style={{color:"#64748B",fontSize:12,marginTop:10}}>Dopo il pagamento, <a href="/app.html" style={{color:"#60A5FA"}}>accedi alla dashboard Pro</a> per importare i tuoi dati.</p></div>
 
 <div style={{background:"rgba(255,255,255,.02)",border:"1px solid rgba(255,255,255,.04)",borderRadius:10,padding:18,marginBottom:16}}>
 <p style={{color:"#475569",fontSize:10,lineHeight:1.6}}>
@@ -278,7 +325,7 @@ function Privacy({back}){return(<Sh ch={<div><Nv r={<button className="bg" onCli
 <h1 style={{color:"#fff",fontSize:28,fontWeight:700,marginBottom:24}}>Privacy Policy</h1>
 <div style={{color:"#8896AB",fontSize:14,lineHeight:1.8}}>
 <p style={{marginBottom:16}}><strong style={{color:"#CBD5E1"}}>1. Titolare del trattamento</strong><br/>Il titolare del trattamento dei dati personali è il proprietario del sito aicomplyonline.it. Per comunicazioni relative alla privacy, scrivere a: [inserire email di contatto].</p>
-<p style={{marginBottom:16}}><strong style={{color:"#CBD5E1"}}>2. Dati raccolti</strong><br/><em>Questionario gratuito:</em> Il questionario non raccoglie dati personali. Le risposte vengono elaborate localmente nel browser dell'utente e non vengono trasmesse a nessun server.<br/><br/><em>Piano Pro (Stripe):</em> Per l'acquisto del piano Pro, Stripe raccoglie: nome, cognome, ragione sociale, indirizzo, email e dati di pagamento. Stripe agisce come responsabile del trattamento ai sensi del GDPR. I dati di pagamento sono gestiti esclusivamente da Stripe Inc. e non sono accessibili al titolare.</p>
+<p style={{marginBottom:16}}><strong style={{color:"#CBD5E1"}}>2. Dati raccolti</strong><br/><em>Questionario gratuito:</em> Il questionario raccoglie esclusivamente dati statistici anonimi e aggregati (settore aziendale, dimensione impresa, punteggio di compliance, strumenti IA selezionati) a fini di miglioramento del servizio. Non vengono raccolti dati personali identificativi quali nome, email o indirizzo IP. Ai sensi del Considerando 26 del GDPR, i principi di protezione dei dati non si applicano a informazioni anonime.<br/><br/><em>Piano Pro (Stripe):</em> Per l'acquisto del piano Pro, Stripe raccoglie: nome, cognome, ragione sociale, indirizzo, email e dati di pagamento. Stripe agisce come responsabile del trattamento ai sensi del GDPR. I dati della carta di pagamento (numero, CVV) sono gestiti esclusivamente da Stripe Inc. e non sono accessibili al titolare. I dati anagrafici e di contatto (nome, email, ragione sociale, indirizzo) sono accessibili al titolare tramite la dashboard Stripe per l'erogazione del servizio e la fatturazione.</p>
 <p style={{marginBottom:16}}><strong style={{color:"#CBD5E1"}}>3. Finalità del trattamento</strong><br/>I dati raccolti tramite Stripe sono utilizzati esclusivamente per: gestione dell'abbonamento e dei pagamenti ricorrenti, emissione di fatture, comunicazioni relative al servizio acquistato.</p>
 <p style={{marginBottom:16}}><strong style={{color:"#CBD5E1"}}>4. Base giuridica</strong><br/>Il trattamento dei dati è basato sull'esecuzione del contratto di abbonamento (Art. 6(1)(b) GDPR).</p>
 <p style={{marginBottom:16}}><strong style={{color:"#CBD5E1"}}>5. Conservazione</strong><br/>I dati sono conservati per la durata dell'abbonamento e per il periodo successivo necessario agli adempimenti fiscali (10 anni).</p>
