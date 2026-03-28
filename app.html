@@ -3,41 +3,61 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIComply Pro — Dashboard</title>
+<title>AIComply Pro — Dashboard Compliance AI Act</title>
+<meta name="description" content="Dashboard AIComply Pro — Gestisci la compliance AI Act e L.132/2025 della tua azienda.">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
+:root{--bg:#080C16;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#CBD5E1;--muted:#64748B;--white:#fff;--blue:#3B82F6;--green:#10B981;--yellow:#F59E0B;--red:#EF4444;--sidebar:220px}
 *{margin:0;padding:0;box-sizing:border-box}
-html{height:100%}
-body{font-family:'DM Sans',sans-serif;background:#080C16;color:#CBD5E1;height:100%;overflow:hidden}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
 .mono{font-family:'Space Mono',monospace}
-input,textarea,select{font-family:'DM Sans',sans-serif;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#E2E8F0;border-radius:8px;padding:10px 14px;font-size:14px;width:100%;outline:none;transition:border .2s}
+input,textarea,select{font-family:inherit;background:rgba(255,255,255,.04);border:1px solid var(--border);color:#E2E8F0;border-radius:8px;padding:10px 14px;font-size:14px;width:100%;outline:0;transition:border .2s}
 input:focus,textarea:focus,select:focus{border-color:rgba(59,130,246,.5)}
 select option{background:#1E293B;color:#E2E8F0}
-button{font-family:'DM Sans',sans-serif;cursor:pointer}
-::-webkit-scrollbar{width:6px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
 .bp{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;transition:transform .15s}
 .bp:hover{transform:translateY(-1px)}
-.bs{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:#CBD5E1;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;transition:all .2s}
-.bs:hover{border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.04)}
-.card{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:20px;transition:border .2s}
-.card:hover{border-color:rgba(255,255,255,.1)}
+.bs{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;transition:all .2s}
+.bs:hover{border-color:rgba(59,130,246,.3)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
 .badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
 .fade-in{animation:fadeIn .4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:10px 16px;border-radius:8px;cursor:pointer;transition:all .15s;color:#64748B;font-size:14px;font-weight:500;border:none;background:none;width:100%;text-align:left}
-.sidebar-item:hover{background:rgba(255,255,255,.04);color:#94A3B8}
-.sidebar-item.active{background:rgba(59,130,246,.08);color:#60A5FA}
-.table-row{display:grid;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);align-items:center;font-size:13px;transition:background .15s}
-.table-row:hover{background:rgba(255,255,255,.02)}
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px)}
-.modal{background:#0F172A;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(3px)}
+.modal{background:#0F172A;border:1px solid var(--border);border-radius:14px;padding:28px;max-width:520px;width:92%;max-height:85vh;overflow-y:auto}
+.progress-track{height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+.progress-bar{height:100%;border-radius:4px;transition:width .8s ease}
+.disclaimer{color:#475569;font-size:10px;line-height:1.6;padding:12px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.03);border-radius:8px;margin-top:16px}
+/* Sidebar */
+.sidebar{width:var(--sidebar);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 12px;flex-shrink:0;background:rgba(0,0,0,.15)}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;transition:all .15s;color:var(--muted);font-size:13px;font-weight:500;border:none;background:none;width:100%;text-align:left}
+.sb-item:hover{background:rgba(255,255,255,.04);color:#94A3B8}
+.sb-item.active{background:rgba(59,130,246,.08);color:#60A5FA}
+/* Mobile nav */
+.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#0A0F1E;border-top:1px solid var(--border);z-index:50;padding:6px 0}
+.mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border:none;background:none;color:var(--muted);font-size:10px;font-weight:500}
+.mob-btn.active{color:#60A5FA}
+/* Grid helpers */
+.grid{display:grid;gap:12px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .mob-nav{display:flex}
+  .main-content{padding-bottom:70px!important}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  .hide-mobile{display:none!important}
+  .modal{width:96%;padding:20px;max-height:90vh}
+}
+@media(min-width:769px){.mob-nav{display:none!important}}
 </style>
 </head>
 <body>
@@ -46,42 +66,106 @@ button{font-family:'DM Sans',sans-serif;cursor:pointer}
 const{useState,useEffect,useCallback}=React;
 
 /* ═══════════════════════════════════════
-   SUPABASE CONFIG — INSERISCI I TUOI VALORI
+   CONFIG — INSERISCI LE TUE CHIAVI
    ═══════════════════════════════════════ */
-const SUPABASE_URL="https://esspmwkdxxhlyqhgxrmb.supabase.co";
-const SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVzc3Btd2tkeHhobHlxaGd4cm1iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2NTIyMTgsImV4cCI6MjA5MDIyODIxOH0.fhRnrv9tAYIIIpAWQHqT-OCSeKEGPg11zZqyPjFDad4";
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const SUPABASE_URL="https://uuktxbqjemizafizxhzz.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1a3R4YnFqZW1pemFmaXp4aHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTAyMzYsImV4cCI6MjA5MDI2NjIzNn0.3aNOEbNNCWpJgWMmQHPkOG4KeSdkndVsHy9tch5p78Q";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* ═══════ VENDOR INTELLIGENCE ═══════ */
+const VENDORS={
+  chatgpt:{name:"ChatGPT",provider:"OpenAI",cat:"gpai",
+    risks:["Art. 50 — contenuti generati devono essere identificabili se pubblicati","Art. 4 — formazione obbligatoria per il personale che lo utilizza","Dati inseriti possono essere usati per addestramento (verificare opt-out in Settings → Data Controls)","Nessun data processing agreement automatico — necessario per uso aziendale GDPR-compliant"],
+    dataLocation:"USA + EU (Azure)",policyDate:"2025-11",policyUrl:"https://openai.com/policies/terms-of-use"},
+  gemini:{name:"Gemini",provider:"Google DeepMind",cat:"gpai",
+    risks:["Art. 50 — stessi obblighi di trasparenza","Art. 4 — formazione personale","Dati possono essere usati per miglioramento servizio (verificare impostazioni)","Integrato in Workspace — verificare se attivo per tutti i dipendenti"],
+    dataLocation:"USA + EU",policyDate:"2025-09",policyUrl:"https://ai.google/terms"},
+  copilot:{name:"Microsoft Copilot",provider:"Microsoft",cat:"gpai",
+    risks:["Art. 50 — contenuti generati identificabili","Art. 4 — formazione personale","Integrato in Microsoft 365 — potrebbe essere attivo senza che i dipendenti lo sappiano","Verificare Commercial Data Protection per uso aziendale"],
+    dataLocation:"EU (con Microsoft EU Data Boundary)",policyDate:"2025-10",policyUrl:"https://www.microsoft.com/en-us/ai/responsible-ai"},
+  claude:{name:"Claude",provider:"Anthropic",cat:"gpai",
+    risks:["Art. 50 — contenuti generati identificabili","Art. 4 — formazione personale","I dati NON vengono usati per addestramento per impostazione predefinita (piano Team/Enterprise)","Verificare il piano utilizzato: Free vs Pro vs Team"],
+    dataLocation:"USA (GCP)",policyDate:"2025-12",policyUrl:"https://www.anthropic.com/policies"},
+  midjourney:{name:"Midjourney",provider:"Midjourney Inc.",cat:"gpai",
+    risks:["Art. 50(2) — immagini generate devono essere marcate come AI-generated","Art. 50(4) — deepfake devono essere etichettati esplicitamente","Le immagini generate sono pubbliche nel piano base (privacy solo con piano Pro/Mega)","Verificare diritti commerciali sull'output generato"],
+    dataLocation:"USA",policyDate:"2025-06",policyUrl:"https://docs.midjourney.com/terms-of-service"},
+  custom:{name:"",provider:"",cat:"gpai",risks:[],dataLocation:"",policyDate:"",policyUrl:""}
+};
 
 /* ═══════ RISK CATEGORIES ═══════ */
 const CATS={
-  vietato:{l:"Vietato",c:"#DC2626",bg:"rgba(220,38,38,.08)"},
-  alto:{l:"Alto Rischio",c:"#EF4444",bg:"rgba(239,68,68,.06)"},
-  trasparenza:{l:"Trasparenza",c:"#F59E0B",bg:"rgba(245,158,11,.06)"},
-  gpai:{l:"IA Generativa",c:"#3B82F6",bg:"rgba(59,130,246,.06)"},
-  minimo:{l:"Minimo",c:"#10B981",bg:"rgba(16,185,129,.06)"},
+  vietato:{l:"Pratica Vietata",c:"#DC2626",bg:"rgba(220,38,38,.08)",ic:"⛔"},
+  alto:{l:"Alto Rischio",c:"#EF4444",bg:"rgba(239,68,68,.06)",ic:"🔴"},
+  trasparenza:{l:"Rischio Trasparenza",c:"#F59E0B",bg:"rgba(245,158,11,.06)",ic:"🟡"},
+  gpai:{l:"IA Generativa",c:"#3B82F6",bg:"rgba(59,130,246,.06)",ic:"🔵"},
+  minimo:{l:"Rischio Minimo",c:"#10B981",bg:"rgba(16,185,129,.06)",ic:"🟢"},
 };
 
-/* ═══════ AUTH SCREEN ═══════ */
+/* ═══════ REQUIRED DOCUMENTS ═══════ */
+const REQ_DOCS=[
+  {type:"policy",title:"Policy Interna sull'uso dell'IA",desc:"Documento che regola l'utilizzo dei sistemi IA in azienda",icon:"📋",ref:"AI Act + L.132/2025"},
+  {type:"info_dip",title:"Informativa IA per i dipendenti",desc:"Informativa scritta sull'uso di IA nei processi aziendali",icon:"👥",ref:"Art. 11 L.132/2025"},
+  {type:"info_cli",title:"Informativa trasparenza clienti",desc:"Avviso sull'uso di sistemi IA rivolto a clienti/utenti",icon:"🤝",ref:"Art. 50 AI Act"},
+  {type:"registro",title:"Registro IA formale",desc:"Registro stampabile con data e firma per ispezioni",icon:"🗂️",ref:"Best practice AI Act"},
+];
+
+/* ═══════ TRAINING MODULES ═══════ */
+const MODULES=[
+  {id:"m1",title:"Cos'è l'AI Act e perché ti riguarda",duration:0.5,content:"Il Regolamento (UE) 2024/1689 — noto come AI Act — è la prima legge al mondo sull'intelligenza artificiale. Entrato in vigore il 1° agosto 2024, introduce obblighi per tutte le aziende che usano sistemi di IA, classificandoli per livello di rischio.\n\nI 4 livelli: Rischio inaccettabile (vietato), Alto rischio, Rischio di trasparenza, Rischio minimo.\n\nObblighi già in vigore dal 2 febbraio 2025:\n• 8 pratiche di IA vietate (Art. 5)\n• Obbligo di alfabetizzazione IA per il personale (Art. 4)\n\nObblighi in arrivo (agosto 2026):\n• Conformità per sistemi ad alto rischio\n• Obblighi di trasparenza (Art. 50)"},
+  {id:"m2",title:"Uso responsabile di ChatGPT e IA Generativa",duration:0.5,content:"Quando usi ChatGPT, Gemini, Copilot o altri strumenti di IA generativa per lavoro:\n\n✅ Cosa PUOI fare:\n• Usarli come supporto per bozze, traduzioni, analisi\n• Usarli per brainstorming e ricerche iniziali\n• Revisionare sempre l'output prima di usarlo\n\n❌ Cosa NON devi fare:\n• Inserire dati personali di clienti o dipendenti\n• Inserire informazioni riservate o segreti aziendali\n• Pubblicare output senza revisione umana\n• Usarli per decisioni automatiche su persone\n\n⚠️ Obblighi:\n• Se pubblichi contenuti generati dall'IA, devi etichettarli\n• Devi sapere come funzionano (limiti, rischi, allucinazioni)\n• Devi segnalare anomalie o risultati discriminatori"},
+  {id:"m3",title:"Le 8 pratiche vietate dall'AI Act",duration:0.5,content:"L'Art. 5 dell'AI Act vieta 8 pratiche. Divieto in vigore dal 2 febbraio 2025.\n\n1. Manipolazione subliminale o ingannevole\n2. Sfruttamento delle vulnerabilità (età, disabilità)\n3. Punteggio sociale (social scoring)\n4. Previsione del rischio di reato individuale\n5. Scraping non mirato per riconoscimento facciale\n6. Riconoscimento emozioni sul lavoro e a scuola\n7. Categorizzazione biometrica per caratteristiche protette\n8. Identificazione biometrica remota in tempo reale\n\nSanzione: fino a €35 milioni o 7% del fatturato globale.\n\nSe sospetti che un sistema utilizzato in azienda rientri in una di queste categorie, segnalalo immediatamente al responsabile."},
+  {id:"m4",title:"Obblighi della Legge italiana 132/2025",duration:0.5,content:"La Legge 132/2025 (in vigore dal 10 ottobre 2025) aggiunge obblighi specifici per le aziende italiane.\n\nArt. 11 — IA nel rapporto di lavoro:\n• Il datore di lavoro deve informare per iscritto i dipendenti sull'uso dell'IA\n• L'informativa deve specificare finalità, logiche e limiti del sistema\n• L'informazione va data almeno 24h prima di modifiche significative\n• L'essere umano deve sempre poter intervenire (human-in-command)\n\nArt. 13 — Professioni intellettuali:\n• L'IA è ammessa solo come strumento di supporto\n• Il lavoro intellettuale umano deve prevalere\n• Il cliente deve essere informato in modo chiaro\n\nArt. 7/10 — Sanità:\n• L'IA non può sostituire il giudizio clinico\n• Il paziente deve essere informato"},
+];
+
+const DISC="Questo strumento è fornito a scopo informativo e non costituisce consulenza legale. La responsabilità della firma, dei contenuti e della conformità resta del Titolare del trattamento. Fonte: Reg. (UE) 2024/1689, L. 132/2025.";
+
+/* ═══════ AUTH ═══════ */
 function Auth({onAuth}){
   const[mode,setMode]=useState("login");
-  const[email,setEmail]=useState("");
-  const[pass,setPass]=useState("");
-  const[name,setName]=useState("");
-  const[err,setErr]=useState("");
-  const[loading,setLoading]=useState(false);
+  const[email,setEmail]=useState("");const[pass,setPass]=useState("");const[name,setName]=useState("");
+  const[err,setErr]=useState("");const[loading,setLoading]=useState(false);
 
   const handle=async(e)=>{
     e.preventDefault();setErr("");setLoading(true);
     try{
       if(mode==="login"){
         const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-        if(error)throw error;
-        onAuth(data.user);
+        if(error)throw error;onAuth(data.user);
       }else{
         const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{company_name:name}}});
         if(error)throw error;
         if(data.user){
-          await sb.from("companies").insert({user_id:data.user.id,name:name,sector:"altro",employees:"1",compliance_score:50});
+          /* Import dati dal test gratuito (localStorage bridge) */
+          let testData=null;let score=50;let importedSystems=[];let selectedTools=[];
+          try{const raw=localStorage.getItem("aicomply_data");if(raw){testData=JSON.parse(raw);score=testData.score||50;importedSystems=testData.systems||[];selectedTools=testData.selectedTools||[]}}catch(x){}
+          const{data:co}=await sb.from("companies").insert({user_id:data.user.id,name:name,sector:testData?.answers?.sector||"altro",employees:testData?.answers?.emp||"1",compliance_score:score,questionnaire_data:testData?.answers||null}).select().single();
+          if(co){
+            /* Importa sistemi rilevati dal questionario */
+            const rows=[];
+            if(importedSystems.length>0){importedSystems.forEach(s=>rows.push({company_id:co.id,name:s.name,category:s.category,status:s.status==="confermato"?"attivo":"in valutazione",obligation:s.obligation||""}))}
+            /* Importa tool specifici selezionati con Vendor Intelligence */
+            const toolMap={chatgpt:"chatgpt",gemini:"gemini",copilot:"copilot",claude:"claude",midjourney:"midjourney",chatbot_web:"custom",crm_ia:"custom",hr_ia:"custom",accounting_ia:"custom",altro_ia:"custom"};
+            const toolNames={chatbot_web:"Chatbot sito web",crm_ia:"CRM con IA",hr_ia:"Software HR con IA",accounting_ia:"Contabilità/Fatturazione con IA",altro_ia:"Altro strumento IA"};
+            const toolCats={chatbot_web:"trasparenza",crm_ia:"minimo",hr_ia:"alto",accounting_ia:"minimo",altro_ia:"minimo"};
+            selectedTools.forEach(t=>{
+              const vKey=toolMap[t]||"custom";const v=VENDORS[vKey];
+              if(v&&vKey!=="custom"){
+                /* Tool con vendor noto — importa con dati completi */
+                if(!rows.some(r=>r.name===v.name))rows.push({company_id:co.id,name:v.name,provider:v.provider,category:v.cat,status:"attivo",obligation:v.risks?v.risks[0]:"",vendor_key:vKey})
+              }else{
+                /* Tool generico */
+                const nm=toolNames[t]||t;
+                if(!rows.some(r=>r.name===nm))rows.push({company_id:co.id,name:nm,provider:"",category:toolCats[t]||"minimo",status:"attivo",obligation:"",vendor_key:""})
+              }
+            });
+            if(rows.length>0)await sb.from("ai_systems").insert(rows);
+          }
+          /* Crea documenti richiesti */
+          if(co){
+            const docRows=REQ_DOCS.map(d=>({company_id:co.id,doc_type:d.type,doc_title:d.title,status:"missing"}));
+            await sb.from("documents").insert(docRows);
+          }
+          try{localStorage.removeItem("aicomply_data")}catch(x){}
           onAuth(data.user);
         }
       }
@@ -90,347 +174,421 @@ function Auth({onAuth}){
   };
 
   return(
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060910,#0C1221 50%,#0A0F1E)",padding:20}}>
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060910,#0C1221)",padding:20}}>
       <div style={{maxWidth:380,width:"100%"}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:40,justifyContent:"center"}}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:32,justifyContent:"center"}}>
           <div style={{width:32,height:32,borderRadius:8,background:"linear-gradient(135deg,#3B82F6,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:13,fontFamily:"Space Mono"}}>AI</div>
-          <span style={{color:"#fff",fontWeight:600,fontSize:18}}>AIComply<span style={{color:"#3B82F6"}}>.it</span> <span style={{color:"#475569",fontSize:13,fontWeight:400}}>Pro</span></span>
+          <span style={{color:"#fff",fontWeight:600,fontSize:18}}>AIComply<span style={{color:"#3B82F6"}}>.it</span> <span style={{color:"#475569",fontSize:13}}>Pro</span></span>
         </div>
-
         <div className="card" style={{padding:28}}>
           <h2 style={{color:"#fff",fontSize:20,fontWeight:700,marginBottom:4}}>{mode==="login"?"Accedi":"Crea account"}</h2>
-          <p style={{color:"#64748B",fontSize:13,marginBottom:20}}>{mode==="login"?"Entra nella tua dashboard":"Registrati per iniziare"}</p>
-
+          <p style={{color:"#64748B",fontSize:13,marginBottom:20}}>{mode==="login"?"Entra nella dashboard":
+            (()=>{try{const d=localStorage.getItem("aicomply_data");return d?"I dati del tuo test verranno importati automaticamente":"Registrati per iniziare"}catch(x){return "Registrati per iniziare"}})()}</p>
           <form onSubmit={handle} style={{display:"flex",flexDirection:"column",gap:12}}>
-            {mode==="register"&&<input placeholder="Nome azienda" value={name} onChange={e=>setName(e.target.value)} required/>}
+            {mode==="register"&&<input placeholder="Nome azienda / Studio" value={name} onChange={e=>setName(e.target.value)} required/>}
             <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required/>
-            <input type="password" placeholder="Password" value={pass} onChange={e=>setPass(e.target.value)} required minLength={6}/>
+            <input type="password" placeholder="Password (min. 6 caratteri)" value={pass} onChange={e=>setPass(e.target.value)} required minLength={6}/>
             {err&&<p style={{color:"#EF4444",fontSize:12}}>{err}</p>}
-            <button className="bp" type="submit" disabled={loading} style={{width:"100%",marginTop:4}}>
-              {loading?"...":(mode==="login"?"Accedi":"Registrati")}
-            </button>
+            <button className="bp" type="submit" disabled={loading} style={{width:"100%",marginTop:4}}>{loading?"...":(mode==="login"?"Accedi":"Registrati")}</button>
           </form>
-
-          <p style={{color:"#475569",fontSize:12,marginTop:16,textAlign:"center"}}>
+          <p style={{color:"#475569",fontSize:12,marginTop:14,textAlign:"center"}}>
             {mode==="login"?<>Non hai un account? <button onClick={()=>{setMode("register");setErr("")}} style={{background:"none",border:"none",color:"#60A5FA",cursor:"pointer",fontSize:12}}>Registrati</button></>:
             <>Hai già un account? <button onClick={()=>{setMode("login");setErr("")}} style={{background:"none",border:"none",color:"#60A5FA",cursor:"pointer",fontSize:12}}>Accedi</button></>}
           </p>
         </div>
+        <p style={{color:"#334155",fontSize:10,textAlign:"center",marginTop:16}}>{DISC}</p>
       </div>
     </div>
   );
 }
 
 /* ═══════ SIDEBAR ═══════ */
+const PAGES=[{id:"dash",icon:"📊",label:"Dashboard"},{id:"reg",icon:"🗂️",label:"Registro IA"},{id:"docs",icon:"📄",label:"Documenti"},{id:"train",icon:"📚",label:"Formazione"},{id:"alerts",icon:"🔔",label:"Alert"}];
+
 function Sidebar({page,setPage,onLogout,companyName}){
-  const items=[
-    {id:"dash",icon:"📊",label:"Dashboard"},
-    {id:"registry",icon:"🗂️",label:"Registro IA"},
-    {id:"docs",icon:"📄",label:"Documenti"},
-    {id:"training",icon:"📚",label:"Formazione"},
-    {id:"alerts",icon:"🔔",label:"Alert"},
-  ];
-  return(
-    <div style={{width:220,borderRight:"1px solid rgba(255,255,255,.04)",display:"flex",flexDirection:"column",padding:"16px 12px",flexShrink:0,background:"rgba(0,0,0,.15)"}}>
-      <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",marginBottom:28}}>
-        <div style={{width:28,height:28,borderRadius:7,background:"linear-gradient(135deg,#3B82F6,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:11,fontFamily:"Space Mono"}}>AI</div>
-        <span style={{color:"#fff",fontWeight:600,fontSize:15}}>AIComply <span style={{color:"#3B82F6",fontSize:12}}>Pro</span></span>
-      </div>
-      <div style={{flex:1,display:"flex",flexDirection:"column",gap:2}}>
-        {items.map(i=><button key={i.id} className={"sidebar-item"+(page===i.id?" active":"")} onClick={()=>setPage(i.id)}>
-          <span style={{fontSize:16}}>{i.icon}</span>{i.label}
-        </button>)}
-      </div>
-      <div style={{borderTop:"1px solid rgba(255,255,255,.04)",paddingTop:12}}>
-        <div style={{color:"#475569",fontSize:11,padding:"0 16px",marginBottom:8}}>{companyName}</div>
-        <button className="sidebar-item" onClick={onLogout}><span style={{fontSize:14}}>🚪</span>Esci</button>
-      </div>
+  return(<div className="sidebar">
+    <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",marginBottom:24}}>
+      <div style={{width:26,height:26,borderRadius:6,background:"linear-gradient(135deg,#3B82F6,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:10,fontFamily:"Space Mono"}}>AI</div>
+      <span style={{color:"#fff",fontWeight:600,fontSize:14}}>AIComply <span style={{color:"#3B82F6",fontSize:11}}>Pro</span></span>
     </div>
-  );
+    <div style={{flex:1,display:"flex",flexDirection:"column",gap:2}}>
+      {PAGES.map(p=><button key={p.id} className={"sb-item"+(page===p.id?" active":"")} onClick={()=>setPage(p.id)}>
+        <span style={{fontSize:15}}>{p.icon}</span>{p.label}
+      </button>)}
+    </div>
+    <div style={{borderTop:"1px solid var(--border)",paddingTop:12}}>
+      <div style={{color:"#475569",fontSize:11,padding:"0 14px",marginBottom:6,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{companyName}</div>
+      <button className="sb-item" onClick={onLogout}><span style={{fontSize:13}}>🚪</span>Esci</button>
+    </div>
+  </div>);
 }
 
-/* ═══════ DASHBOARD PAGE ═══════ */
-function DashPage({systems,trainings,alerts}){
+function MobileNav({page,setPage}){
+  return(<div className="mob-nav">{PAGES.map(p=><button key={p.id} className={"mob-btn"+(page===p.id?" active":"")} onClick={()=>setPage(p.id)}>
+    <span style={{fontSize:18}}>{p.icon}</span>{p.label}
+  </button>)}</div>);
+}
+
+/* ═══════ DASHBOARD ═══════ */
+function DashPage({systems,trainings,alerts,docs}){
   const total=systems.length;
   const hi=systems.filter(s=>s.category==="alto"||s.category==="vietato").length;
   const trained=trainings.length;
-  const score=Math.max(10,Math.min(95,70-hi*15+trained*5+(total>0?10:0)));
+  const signedDocs=docs.filter(d=>d.status==="signed").length;
+  const totalDocs=docs.length||4;
+
+  /* Score composito */
+  const sysScore=total>0?20:0;
+  const hiPenalty=hi*12;
+  const trainScore=Math.min(trained*5,20);
+  const docScore=Math.round((signedDocs/totalDocs)*30);
+  const baseScore=30;
+  const score=Math.max(5,Math.min(98,baseScore+sysScore-hiPenalty+trainScore+docScore));
   const lc=score>=70?"#10B981":score>=40?"#F59E0B":"#EF4444";
 
-  return(
-    <div className="fade-in" style={{display:"flex",flexDirection:"column",gap:16}}>
-      <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Dashboard</h1>
+  /* Blocchi */
+  const blocks=[];
+  if(docs.some(d=>d.doc_type==="policy"&&d.status!=="signed"))blocks.push({t:"Policy Interna non firmata",s:"Genera, firma e carica la Policy dalla sezione Documenti",ref:"AI Act + L.132/2025"});
+  if(docs.some(d=>d.doc_type==="info_dip"&&d.status!=="signed"))blocks.push({t:"Informativa dipendenti non firmata",s:"Obbligo Art. 11 L.132/2025 — genera e fai firmare",ref:"Art. 11 L.132/2025"});
+  if(trained===0&&total>0)blocks.push({t:"Nessuna formazione registrata",s:"L'Art. 4 AI Act richiede l'alfabetizzazione IA del personale",ref:"Art. 4 AI Act"});
+  if(hi>0)blocks.push({t:hi+" sistema/i ad alto rischio o vietato/i rilevato/i",s:"Verifica immediatamente nella sezione Registro IA",ref:"Art. 5/6 AI Act"});
 
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))",gap:12}}>
-        <div className="card" style={{textAlign:"center",padding:24}}>
-          <div className="mono" style={{color:lc,fontSize:36,fontWeight:700}}>{score}</div>
-          <div style={{color:"#64748B",fontSize:12,marginTop:4}}>Punteggio compliance</div>
-        </div>
-        <div className="card" style={{textAlign:"center",padding:24}}>
-          <div className="mono" style={{color:"#fff",fontSize:36,fontWeight:700}}>{total}</div>
-          <div style={{color:"#64748B",fontSize:12,marginTop:4}}>Sistemi IA registrati</div>
-        </div>
-        <div className="card" style={{textAlign:"center",padding:24}}>
-          <div className="mono" style={{color:hi>0?"#EF4444":"#10B981",fontSize:36,fontWeight:700}}>{hi}</div>
-          <div style={{color:"#64748B",fontSize:12,marginTop:4}}>Alto rischio / Vietati</div>
-        </div>
-        <div className="card" style={{textAlign:"center",padding:24}}>
-          <div className="mono" style={{color:"#fff",fontSize:36,fontWeight:700}}>{trained}</div>
-          <div style={{color:"#64748B",fontSize:12,marginTop:4}}>Formazioni registrate</div>
-        </div>
+  return(<div className="fade-in">
+    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Dashboard</h1>
+
+    {/* Progress bar */}
+    <div className="card" style={{marginBottom:16}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+        <span style={{color:"#94A3B8",fontSize:13}}>Conformità complessiva</span>
+        <span className="mono" style={{color:lc,fontSize:18,fontWeight:700}}>{score}%</span>
       </div>
-
-      {hi>0&&<div style={{background:"rgba(239,68,68,.04)",border:"1px solid rgba(239,68,68,.12)",borderRadius:10,padding:16}}>
-        <p style={{color:"#FCA5A5",fontSize:14,fontWeight:600}}>⚠️ Hai {hi} sistema/i ad alto rischio o vietato/i</p>
-        <p style={{color:"#64748B",fontSize:13,marginTop:4}}>Verifica immediatamente i sistemi classificati come "vietato" e adotta le misure richieste per quelli ad "alto rischio".</p>
-      </div>}
-
-      {alerts.length>0&&<div>
-        <h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:10}}>🔔 Ultimi alert normativi</h3>
-        {alerts.slice(0,3).map(a=><div key={a.id} className="card" style={{marginBottom:8,padding:14}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-            <span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{a.title}</span>
-            <span className="badge" style={{background:a.severity==="critical"?"rgba(239,68,68,.12)":a.severity==="warning"?"rgba(245,158,11,.12)":"rgba(59,130,246,.1)",
-              color:a.severity==="critical"?"#FCA5A5":a.severity==="warning"?"#FCD34D":"#93C5FD"}}>{a.severity}</span>
-          </div>
-          <p style={{color:"#64748B",fontSize:12,marginTop:4}}>{a.content?.substring(0,120)}...</p>
-          <span className="mono" style={{color:"#334155",fontSize:10}}>{new Date(a.published_at).toLocaleDateString("it-IT")}</span>
-        </div>)}
-      </div>}
+      <div className="progress-track">
+        <div className="progress-bar" style={{width:score+"%",background:`linear-gradient(90deg,${lc},${score>=70?"#34D399":score>=40?"#FBBF24":"#F87171"})`}}/>
+      </div>
+      <div style={{display:"flex",justifyContent:"space-between",marginTop:8,color:"#475569",fontSize:11}}>
+        <span>Sistemi: {total}</span><span>Documenti firmati: {signedDocs}/{totalDocs}</span><span>Formazioni: {trained}</span>
+      </div>
     </div>
-  );
+
+    {/* Stats */}
+    <div className="grid g4" style={{marginBottom:16}}>
+      {[{n:total,l:"Sistemi IA",c:"#fff"},{n:hi,l:"Alto rischio",c:hi?"#EF4444":"#10B981"},{n:signedDocs+"/"+totalDocs,l:"Docs firmati",c:signedDocs>=totalDocs?"#10B981":"#F59E0B"},{n:trained,l:"Formazioni",c:"#fff"}].map((s,i)=>
+        <div key={i} className="card" style={{textAlign:"center",padding:16}}>
+          <div className="mono" style={{color:s.c,fontSize:28,fontWeight:700}}>{s.n}</div>
+          <div style={{color:"#64748B",fontSize:11,marginTop:2}}>{s.l}</div>
+        </div>
+      )}
+    </div>
+
+    {/* Blocking alerts */}
+    {blocks.length>0&&<div style={{background:"rgba(239,68,68,.03)",border:"1px solid rgba(239,68,68,.1)",borderRadius:12,padding:18,marginBottom:16}}>
+      <h3 style={{color:"#FCA5A5",fontSize:14,fontWeight:600,marginBottom:10}}>🚨 Azioni bloccanti ({blocks.length})</h3>
+      {blocks.map((b,i)=><div key={i} style={{padding:"8px 0",borderBottom:i<blocks.length-1?"1px solid rgba(239,68,68,.06)":"none"}}>
+        <div style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{b.t}</div>
+        <div style={{color:"#64748B",fontSize:12,marginTop:2}}>{b.s}</div>
+        <span style={{color:"#475569",fontSize:10}}>Fonte: {b.ref}</span>
+      </div>)}
+    </div>}
+
+    {/* Recent alerts */}
+    {alerts.length>0&&<div>
+      <h3 style={{color:"#fff",fontSize:14,fontWeight:600,marginBottom:8}}>🔔 Ultimi aggiornamenti normativi</h3>
+      {alerts.slice(0,3).map(a=><div key={a.id} className="card" style={{marginBottom:8,padding:14}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8}}>
+          <span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{a.title}</span>
+          <span className="badge" style={{background:a.severity==="critical"?"rgba(239,68,68,.1)":a.severity==="warning"?"rgba(245,158,11,.1)":"rgba(59,130,246,.08)",
+            color:a.severity==="critical"?"#FCA5A5":a.severity==="warning"?"#FCD34D":"#93C5FD",flexShrink:0}}>{a.severity}</span>
+        </div>
+        {a.impact&&<p style={{color:"#F59E0B",fontSize:11,marginTop:6}}>💡 {a.impact}</p>}
+      </div>)}
+    </div>}
+
+    <div className="disclaimer">{DISC}</div>
+  </div>);
 }
 
-/* ═══════ REGISTRY PAGE ═══════ */
-function RegistryPage({systems,companyId,refresh}){
+/* ═══════ REGISTRY ═══════ */
+function RegPage({systems,companyId,refresh}){
   const[showForm,setShowForm]=useState(false);
-  const[form,setForm]=useState({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",notes:""});
+  const[form,setForm]=useState({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",notes:"",vendor_key:""});
   const[editing,setEditing]=useState(null);
+  const[vendorAlert,setVendorAlert]=useState(null);
+
+  const pickVendor=(key)=>{
+    const v=VENDORS[key];if(!v)return;
+    setForm(f=>({...f,name:v.name||f.name,provider:v.provider||f.provider,category:v.cat||f.category,vendor_key:key}));
+    if(v.risks?.length)setVendorAlert(v);
+  };
 
   const save=async()=>{
     if(!form.name)return;
-    if(editing){
-      await sb.from("ai_systems").update({...form,updated_at:new Date().toISOString()}).eq("id",editing);
-    }else{
-      await sb.from("ai_systems").insert({...form,company_id:companyId});
-    }
-    setShowForm(false);setEditing(null);setForm({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",notes:""});
+    if(editing){await sb.from("ai_systems").update({...form,updated_at:new Date().toISOString()}).eq("id",editing)}
+    else{await sb.from("ai_systems").insert({...form,company_id:companyId})}
+    setShowForm(false);setEditing(null);setVendorAlert(null);
+    setForm({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",notes:"",vendor_key:""});
     refresh();
   };
-  const edit=(s)=>{setForm({name:s.name,provider:s.provider||"",category:s.category,status:s.status,obligation:s.obligation||"",notes:s.notes||""});setEditing(s.id);setShowForm(true)};
-  const del=async(id)=>{if(confirm("Eliminare questo sistema?")){await sb.from("ai_systems").delete().eq("id",id);refresh()}};
 
-  return(
-    <div className="fade-in">
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-        <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Registro IA</h1>
-        <button className="bp" onClick={()=>{setEditing(null);setForm({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",notes:""});setShowForm(true)}}>+ Aggiungi sistema</button>
-      </div>
+  const edit=(s)=>{setForm({name:s.name,provider:s.provider||"",category:s.category,status:s.status,obligation:s.obligation||"",notes:s.notes||"",vendor_key:s.vendor_key||""});setEditing(s.id);setShowForm(true)};
+  const del=async(id)=>{if(confirm("Eliminare?")){await sb.from("ai_systems").delete().eq("id",id);refresh()}};
 
-      {systems.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B",fontSize:14}}>Nessun sistema IA registrato. Aggiungi il primo.</p></div>:
-      <div>
-        <div style={{display:"grid",gridTemplateColumns:"2fr 1fr 1fr 1fr 80px",padding:"8px 16px",color:"#475569",fontSize:11,fontWeight:600,textTransform:"uppercase",letterSpacing:".05em"}}>
-          <span>Sistema</span><span>Categoria</span><span>Stato</span><span>Data</span><span></span>
-        </div>
-        {systems.map(s=>{const cat=CATS[s.category]||{l:s.category,c:"#64748B",bg:"rgba(100,116,139,.1)"};return(
-          <div key={s.id} className="table-row" style={{gridTemplateColumns:"2fr 1fr 1fr 1fr 80px"}}>
-            <div><span style={{color:"#E2E8F0",fontWeight:500}}>{s.name}</span>{s.provider&&<span style={{color:"#475569",fontSize:11,marginLeft:8}}>{s.provider}</span>}</div>
-            <span className="badge" style={{background:cat.bg,color:cat.c}}>{cat.l}</span>
-            <span style={{color:s.status==="attivo"?"#10B981":"#64748B",fontSize:12}}>{s.status}</span>
-            <span className="mono" style={{color:"#475569",fontSize:11}}>{new Date(s.created_at).toLocaleDateString("it-IT")}</span>
-            <div style={{display:"flex",gap:6}}>
-              <button onClick={()=>edit(s)} style={{background:"none",border:"none",color:"#60A5FA",fontSize:12,cursor:"pointer"}}>✏️</button>
-              <button onClick={()=>del(s.id)} style={{background:"none",border:"none",color:"#EF4444",fontSize:12,cursor:"pointer"}}>🗑️</button>
+  return(<div className="fade-in">
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
+      <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Registro IA</h1>
+      <button className="bp" onClick={()=>{setEditing(null);setVendorAlert(null);setForm({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",notes:"",vendor_key:""});setShowForm(true)}}>+ Aggiungi sistema</button>
+    </div>
+
+    {systems.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B"}}>Nessun sistema registrato.</p></div>:
+    <div>{systems.map(s=>{const cat=CATS[s.category]||{l:s.category,c:"#64748B",bg:"rgba(100,116,139,.1)",ic:"⚪"};return(
+      <div key={s.id} className="card" style={{marginBottom:8,padding:16}}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8}}>
+          <div style={{flex:1}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+              <span>{cat.ic}</span>
+              <span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{s.name}</span>
+              {s.provider&&<span style={{color:"#475569",fontSize:12}}>({s.provider})</span>}
+              <span className="badge" style={{background:cat.bg,color:cat.c}}>{cat.l}</span>
+              <span style={{color:s.status==="attivo"?"#10B981":"#64748B",fontSize:11}}>{s.status}</span>
             </div>
+            {s.obligation&&<p style={{color:"#5A6B7F",fontSize:12,marginTop:6,lineHeight:1.5}}>{s.obligation}</p>}
           </div>
-        )})}
+          <div style={{display:"flex",gap:4,flexShrink:0}}>
+            <button onClick={()=>edit(s)} style={{background:"none",border:"none",color:"#60A5FA",fontSize:13,cursor:"pointer"}}>✏️</button>
+            <button onClick={()=>del(s.id)} style={{background:"none",border:"none",color:"#EF4444",fontSize:13,cursor:"pointer"}}>🗑️</button>
+          </div>
+        </div>
+      </div>
+    )})}</div>}
+
+    {showForm&&<div className="modal-bg" onClick={()=>{setShowForm(false);setVendorAlert(null)}}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:16}}>{editing?"Modifica sistema":"Nuovo sistema IA"}</h3>
+
+      {/* Vendor quick-pick */}
+      {!editing&&<div style={{marginBottom:16}}>
+        <label style={{color:"#64748B",fontSize:12,marginBottom:6,display:"block"}}>Riconoscimento rapido (opzionale)</label>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {Object.entries(VENDORS).filter(([k])=>k!=="custom").map(([k,v])=>
+            <button key={k} className="bs" style={{fontSize:11,padding:"5px 10px"}} onClick={()=>pickVendor(k)}>{v.name}</button>
+          )}
+        </div>
       </div>}
 
-      {showForm&&<div className="modal-overlay" onClick={()=>setShowForm(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
-        <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:16}}>{editing?"Modifica sistema":"Nuovo sistema IA"}</h3>
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Nome del sistema *</label>
-          <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Es: ChatGPT per customer service"/></div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Fornitore</label>
-          <input value={form.provider} onChange={e=>setForm({...form,provider:e.target.value})} placeholder="Es: OpenAI"/></div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Categoria di rischio</label>
-          <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>
-            <option value="vietato">⛔ Pratica Vietata</option>
-            <option value="alto">🔴 Alto Rischio</option>
-            <option value="trasparenza">🟡 Rischio Trasparenza</option>
-            <option value="gpai">🔵 IA Generativa</option>
-            <option value="minimo">🟢 Rischio Minimo</option>
-          </select></div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Stato</label>
-          <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
-            <option value="attivo">Attivo</option>
-            <option value="in valutazione">In valutazione</option>
-            <option value="dismesso">Dismesso</option>
-          </select></div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Obbligo normativo</label>
-          <textarea value={form.obligation} onChange={e=>setForm({...form,obligation:e.target.value})} rows={2} placeholder="Es: Obbligo di trasparenza Art. 50"/></div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Note</label>
-          <textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} rows={2}/></div>
-          <div style={{display:"flex",gap:10,marginTop:4}}>
-            <button className="bp" onClick={save}>{editing?"Salva modifiche":"Aggiungi"}</button>
-            <button className="bs" onClick={()=>setShowForm(false)}>Annulla</button>
-          </div>
+      {/* Vendor alert */}
+      {vendorAlert&&<div style={{background:"rgba(245,158,11,.04)",border:"1px solid rgba(245,158,11,.12)",borderRadius:8,padding:14,marginBottom:14}}>
+        <div style={{color:"#FCD34D",fontSize:12,fontWeight:600,marginBottom:6}}>⚠️ Rischi specifici — {vendorAlert.name} ({vendorAlert.provider})</div>
+        {vendorAlert.risks.map((r,i)=><div key={i} style={{color:"#94A3B8",fontSize:12,lineHeight:1.5,paddingLeft:12,marginBottom:3}}>• {r}</div>)}
+        <div style={{color:"#475569",fontSize:10,marginTop:8}}>Dati: {vendorAlert.dataLocation} · Policy aggiornata: {vendorAlert.policyDate}</div>
+      </div>}
+
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Nome del sistema *</label>
+        <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Es: ChatGPT"/></div>
+        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Fornitore</label>
+        <input value={form.provider} onChange={e=>setForm({...form,provider:e.target.value})} placeholder="Es: OpenAI"/></div>
+        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Categoria di rischio</label>
+        <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})}>
+          {Object.entries(CATS).map(([k,v])=><option key={k} value={k}>{v.ic} {v.l}</option>)}
+        </select></div>
+        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Stato</label>
+        <select value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>
+          <option value="attivo">Attivo</option><option value="in valutazione">In valutazione</option><option value="dismesso">Dismesso</option>
+        </select></div>
+        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Obbligo normativo</label>
+        <textarea value={form.obligation} onChange={e=>setForm({...form,obligation:e.target.value})} rows={2} placeholder="Es: Obbligo trasparenza Art. 50"/></div>
+        <div style={{display:"flex",gap:10}}>
+          <button className="bp" onClick={save}>{editing?"Salva":"Aggiungi"}</button>
+          <button className="bs" onClick={()=>{setShowForm(false);setVendorAlert(null)}}>Annulla</button>
         </div>
-      </div></div>}
-    </div>
-  );
+      </div>
+      <div className="disclaimer" style={{marginTop:14}}>{DISC}</div>
+    </div></div>}
+  </div>);
 }
 
-/* ═══════ DOCS PAGE ═══════ */
-function DocsPage({company,systems}){
+/* ═══════ DOCUMENTS (LOCK-IN WORKFLOW) ═══════ */
+function DocsPage({docs,company,systems,companyId,refresh}){
   const[viewing,setViewing]=useState(null);
 
-  const docs=[
-    {id:"policy",title:"Policy Interna sull'uso dell'IA",desc:"Documento che regola l'utilizzo di sistemi IA in azienda. Conforme all'AI Act e L.132/2025.",icon:"📋"},
-    {id:"info_dip",title:"Informativa IA per i dipendenti",desc:"Informativa scritta sull'uso di IA nei processi aziendali. Art. 11 L.132/2025.",icon:"👥"},
-    {id:"info_cli",title:"Informativa trasparenza per clienti",desc:"Avviso sull'utilizzo di sistemi IA. Art. 50 AI Act.",icon:"🤝"},
-    {id:"registro",title:"Registro IA formale (stampabile)",desc:"Versione formale del registro con data e firma per ispezioni.",icon:"🗂️"},
-  ];
-
-  const genDoc=(type)=>{
+  const genText=(type)=>{
     const n=company?.name||"[Nome Azienda]";
-    const sect=company?.sector||"[Settore]";
-    const syslist=systems.filter(s=>s.status==="attivo").map(s=>`• ${s.name} (${CATS[s.category]?.l||s.category}) — ${s.obligation||"Nessun obbligo specifico"}`).join("\n");
     const date=new Date().toLocaleDateString("it-IT",{day:"numeric",month:"long",year:"numeric"});
+    const syslist=systems.filter(s=>s.status==="attivo").map(s=>`• ${s.name} (${CATS[s.category]?.l||s.category}) — Fornitore: ${s.provider||"N/D"} — ${s.obligation||""}`).join("\n");
+    const footer="\n\n---\nDocumento generato con AIComply.it — Strumento informativo. Non costituisce consulenza legale.\nLa responsabilità della firma e dei contenuti è del Titolare.\nFonti: Reg. (UE) 2024/1689, L. 132/2025.";
 
-    if(type==="policy")return`POLICY INTERNA SULL'USO DELL'INTELLIGENZA ARTIFICIALE\n${n}\nData: ${date}\n\n1. PREMESSA\nLa presente policy disciplina l'utilizzo dei sistemi di intelligenza artificiale in ${n}, in conformità al Regolamento (UE) 2024/1689 (AI Act) e alla Legge 23 settembre 2025, n. 132.\n\n2. AMBITO DI APPLICAZIONE\nLa presente policy si applica a tutti i dipendenti, collaboratori e soggetti che operano per conto di ${n} e che utilizzano, direttamente o indirettamente, sistemi di intelligenza artificiale nello svolgimento delle proprie attività.\n\n3. SISTEMI IA AUTORIZZATI\nI seguenti sistemi IA sono autorizzati per l'uso aziendale:\n${syslist||"Nessun sistema registrato."}\n\n4. PRINCIPI DI UTILIZZO\n- L'IA è utilizzata esclusivamente come strumento di supporto\n- Il lavoro intellettuale umano deve prevalere in ogni decisione\n- L'utilizzo deve rispettare la dignità, la sicurezza e i diritti fondamentali\n- È vietato l'uso di sistemi IA per pratiche proibite dall'Art. 5 dell'AI Act\n\n5. OBBLIGHI DEI DIPENDENTI\n- Utilizzare solo i sistemi IA autorizzati dalla presente policy\n- Non inserire dati personali, riservati o sensibili in sistemi IA esterni senza autorizzazione\n- Segnalare eventuali anomalie o risultati discriminatori\n- Partecipare ai programmi di formazione sull'alfabetizzazione IA\n\n6. TRASPARENZA\n- I contenuti generati dall'IA devono essere revisionati prima della pubblicazione\n- I clienti/utenti devono essere informati quando interagiscono con un sistema IA\n- I deepfake o contenuti sintetici devono essere etichettati\n\n7. FORMAZIONE\nIn conformità all'Art. 4 del Reg. (UE) 2024/1689, ${n} garantisce un livello sufficiente di alfabetizzazione IA a tutto il personale che utilizza sistemi di IA.\n\n8. AGGIORNAMENTO\nLa presente policy viene revisionata con cadenza almeno semestrale e aggiornata in occasione di modifiche normative rilevanti.\n\nFirma del legale rappresentante\n______________________________\nData: ${date}`;
+    if(type==="policy")return`POLICY INTERNA SULL'USO DELL'INTELLIGENZA ARTIFICIALE\n\n${n}\nData: ${date}\n\n1. PREMESSA\nLa presente policy disciplina l'utilizzo dei sistemi di intelligenza artificiale in ${n}, in conformità al Regolamento (UE) 2024/1689 (AI Act) e alla Legge 23 settembre 2025, n. 132.\n\n2. AMBITO DI APPLICAZIONE\nSi applica a tutti i dipendenti, collaboratori e soggetti che utilizzano sistemi di IA per conto di ${n}.\n\n3. SISTEMI IA AUTORIZZATI\n${syslist||"Nessun sistema registrato."}\n\n4. PRINCIPI DI UTILIZZO\n- L'IA è utilizzata esclusivamente come strumento di supporto\n- Il lavoro intellettuale umano deve prevalere\n- È vietato l'uso per pratiche proibite dall'Art. 5 AI Act\n- I dati personali non devono essere inseriti in sistemi IA senza autorizzazione\n\n5. OBBLIGHI DEI DIPENDENTI\n- Utilizzare solo i sistemi autorizzati\n- Segnalare anomalie o risultati discriminatori\n- Partecipare ai programmi di formazione IA\n- Non pubblicare output IA senza revisione umana\n\n6. TRASPARENZA\n- I contenuti generati dall'IA devono essere revisionati prima della pubblicazione\n- I clienti devono essere informati quando interagiscono con sistemi IA\n\n7. FORMAZIONE (Art. 4 AI Act)\n${n} garantisce un livello sufficiente di alfabetizzazione IA al personale.\n\nFirma del legale rappresentante: ________________________\nData: ${date}${footer}`;
 
-    if(type==="info_dip")return`INFORMATIVA SULL'UTILIZZO DI SISTEMI DI INTELLIGENZA ARTIFICIALE\n(ai sensi dell'Art. 11, Legge 23 settembre 2025, n. 132)\n\n${n}\nData: ${date}\n\nGentile dipendente/collaboratore,\n\ncon la presente La informiamo che ${n} utilizza i seguenti sistemi di intelligenza artificiale nei propri processi aziendali:\n\n${syslist||"Nessun sistema registrato."}\n\nFINALITÀ\nI sistemi sopra elencati sono utilizzati esclusivamente come strumenti di supporto alle attività aziendali, al fine di migliorare l'efficienza operativa. In nessun caso sostituiscono il giudizio umano nelle decisioni che riguardano i lavoratori.\n\nLOGICHE DI FUNZIONAMENTO\nI sistemi di IA utilizzati elaborano dati sulla base di modelli statistici e algoritmi di apprendimento automatico. I risultati prodotti sono sempre soggetti a revisione umana.\n\nLIMITI\nI sistemi di IA possono produrre risultati inesatti, incompleti o non contestualizzati. Pertanto, ogni output viene verificato dal personale competente prima di essere utilizzato per decisioni aziendali.\n\nDIRITTI DEL LAVORATORE\n- Ha diritto a contestare decisioni basate su output di sistemi IA\n- Ha diritto a richiedere l'intervento umano\n- Ha diritto a ricevere formazione adeguata sull'uso dei sistemi IA\n- Ha diritto a segnalare anomalie o comportamenti discriminatori\n\nTRATTAMENTO DEI DATI\nI dati personali eventualmente elaborati dai sistemi IA sono trattati in conformità al Reg. (UE) 2016/679 (GDPR) e al D.Lgs. 196/2003.\n\nLa presente informativa è stata consegnata in data ${date} in conformità all'Art. 11 della Legge 132/2025.\n\nFirma del datore di lavoro: ______________________________\nFirma del lavoratore per ricevuta: ______________________________`;
+    if(type==="info_dip")return`INFORMATIVA SULL'USO DI SISTEMI DI IA NEI PROCESSI AZIENDALI\n(Art. 11, L. 23 settembre 2025, n. 132)\n\n${n} — Data: ${date}\n\nGentile dipendente/collaboratore,\n\nLa informiamo che ${n} utilizza i seguenti sistemi di IA:\n\n${syslist||"Nessun sistema registrato."}\n\nFINALITÀ: Supporto alle attività aziendali.\nLOGICHE: Modelli statistici e algoritmi soggetti a revisione umana.\nLIMITI: I risultati possono essere inesatti e vengono verificati dal personale.\n\nDIRITTI DEL LAVORATORE:\n- Contestare decisioni basate su output IA\n- Richiedere intervento umano\n- Ricevere formazione\n- Segnalare anomalie\n\nFirma datore di lavoro: ________________________\nFirma lavoratore per ricevuta: ________________________\nData: ${date}${footer}`;
 
-    if(type==="info_cli")return`INFORMATIVA SULL'UTILIZZO DI SISTEMI DI INTELLIGENZA ARTIFICIALE\n(ai sensi dell'Art. 50, Reg. UE 2024/1689)\n\n${n}\n\nGentile cliente/utente,\n\nLa informiamo che ${n} utilizza sistemi di intelligenza artificiale nelle proprie attività. In particolare:\n\n${syslist||"Nessun sistema registrato."}\n\nTRASPARENZA\nIn conformità al Regolamento (UE) 2024/1689 (AI Act), La informiamo che:\n- Quando interagisce con un chatbot o assistente virtuale, sta comunicando con un sistema di intelligenza artificiale\n- I contenuti generati dall'IA vengono identificati come tali\n- I Suoi dati vengono trattati in conformità al GDPR\n\nDIRITTI\n- Ha diritto a richiedere l'interazione con un operatore umano\n- Ha diritto a conoscere quali sistemi IA sono utilizzati\n- Ha diritto a non essere soggetto a decisioni esclusivamente automatizzate\n\nCONTATTI\nPer informazioni sull'uso dell'IA in ${n}, contattare: [inserire contatto]\n\nData: ${date}`;
+    if(type==="info_cli")return`INFORMATIVA SULL'USO DI SISTEMI DI IA\n(Art. 50, Reg. UE 2024/1689)\n\n${n}\n\nLa informiamo che ${n} utilizza sistemi di intelligenza artificiale.\n\nSISTEMI UTILIZZATI:\n${syslist||"Nessun sistema registrato."}\n\nTRASPARENZA:\n- Se interagisce con un chatbot, sta comunicando con un'IA\n- I contenuti generati dall'IA vengono identificati come tali\n\nDIRITTI:\n- Richiedere l'interazione con un operatore umano\n- Conoscere quali sistemi IA sono utilizzati\n\nData: ${date}${footer}`;
 
-    if(type==="registro")return`REGISTRO DEI SISTEMI DI INTELLIGENZA ARTIFICIALE\n${n}\nAggiornato al: ${date}\n\n${"=".repeat(60)}\n\n${systems.length===0?"Nessun sistema registrato.":systems.map((s,i)=>`SISTEMA #${i+1}\nNome: ${s.name}\nFornitore: ${s.provider||"N/D"}\nCategoria di rischio: ${CATS[s.category]?.l||s.category}\nStato: ${s.status}\nObbligo normativo: ${s.obligation||"Nessuno"}\nData registrazione: ${new Date(s.created_at).toLocaleDateString("it-IT")}\nNote: ${s.notes||"Nessuna"}\n${"—".repeat(40)}`).join("\n\n")}\n\n${"=".repeat(60)}\n\nIl presente registro è tenuto in conformità al Reg. (UE) 2024/1689 e alla L. 132/2025.\n\nFirma del legale rappresentante: ______________________________\nData: ${date}`;
-
+    if(type==="registro")return`REGISTRO DEI SISTEMI DI INTELLIGENZA ARTIFICIALE\n\n${n} — Aggiornato al: ${date}\n${"=".repeat(50)}\n\n${systems.length===0?"Nessun sistema registrato.":systems.map((s,i)=>`SISTEMA #${i+1}\nNome: ${s.name}\nFornitore: ${s.provider||"N/D"}\nCategoria: ${CATS[s.category]?.l||s.category}\nStato: ${s.status}\nObbligo: ${s.obligation||"Nessuno"}\nRegistrato il: ${new Date(s.created_at).toLocaleDateString("it-IT")}\n${"—".repeat(30)}`).join("\n\n")}\n\nFirma legale rappresentante: ________________________\nData: ${date}${footer}`;
     return"";
   };
 
-  return(
-    <div className="fade-in">
-      <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Documenti di Compliance</h1>
-      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:12}}>
-        {docs.map(d=><div key={d.id} className="card" style={{cursor:"pointer"}} onClick={()=>setViewing(d.id)}>
-          <div style={{fontSize:28,marginBottom:10}}>{d.icon}</div>
-          <h3 style={{color:"#fff",fontSize:14,fontWeight:600,marginBottom:4}}>{d.title}</h3>
-          <p style={{color:"#64748B",fontSize:12,lineHeight:1.5}}>{d.desc}</p>
-          <button className="bs" style={{marginTop:12,fontSize:12}}>Visualizza →</button>
-        </div>)}
-      </div>
+  const markGenerated=async(docType)=>{
+    await sb.from("documents").update({status:"generated",generated_at:new Date().toISOString()}).eq("company_id",companyId).eq("doc_type",docType);
+    const txt=genText(docType);const b=new Blob([txt],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=docType+"-"+company?.name?.replace(/\s/g,"-")+".txt";a.click();URL.revokeObjectURL(u);
+    refresh();
+  };
 
-      {viewing&&<div className="modal-overlay" onClick={()=>setViewing(null)}><div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:640,maxHeight:"85vh"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-          <h3 style={{color:"#fff",fontSize:16,fontWeight:700}}>{docs.find(d=>d.id===viewing)?.title}</h3>
-          <div style={{display:"flex",gap:8}}>
-            <button className="bs" onClick={()=>{const t=genDoc(viewing);const b=new Blob([t],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=viewing+".txt";a.click();URL.revokeObjectURL(u)}}>📥 Scarica</button>
-            <button className="bs" onClick={()=>setViewing(null)}>✕</button>
+  const markSigned=async(docType)=>{
+    await sb.from("documents").update({status:"signed",signed_at:new Date().toISOString(),signed_file_name:"Confermato manualmente"}).eq("company_id",companyId).eq("doc_type",docType);
+    refresh();
+  };
+
+  const statusColors={missing:{bg:"rgba(239,68,68,.08)",c:"#FCA5A5",l:"⚠️ Mancante"},generated:{bg:"rgba(245,158,11,.08)",c:"#FCD34D",l:"📝 Generato — firma richiesta"},signed:{bg:"rgba(16,185,129,.08)",c:"#6EE7B7",l:"✅ Firmato"}};
+
+  return(<div className="fade-in">
+    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:6}}>Documenti Audit-Ready</h1>
+    <p style={{color:"#64748B",fontSize:13,marginBottom:16}}>Genera, firma e archivia. Il rischio si riduce solo quando il documento è firmato e confermato.</p>
+
+    <div className="grid g2">
+      {REQ_DOCS.map(rd=>{
+        const doc=docs.find(d=>d.doc_type===rd.type)||{status:"missing"};
+        const st=statusColors[doc.status]||statusColors.missing;
+        return(
+          <div key={rd.type} className="card" style={{borderColor:doc.status==="signed"?"rgba(16,185,129,.15)":doc.status==="generated"?"rgba(245,158,11,.15)":"rgba(239,68,68,.1)"}}>
+            <div style={{fontSize:28,marginBottom:8}}>{rd.icon}</div>
+            <h3 style={{color:"#fff",fontSize:14,fontWeight:600,marginBottom:4}}>{rd.title}</h3>
+            <p style={{color:"#64748B",fontSize:12,marginBottom:8,lineHeight:1.5}}>{rd.desc}</p>
+            <span className="badge" style={{background:st.bg,color:st.c,marginBottom:12}}>{st.l}</span>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:8}}>
+              {doc.status==="missing"&&<button className="bp" style={{fontSize:12,padding:"8px 14px"}} onClick={()=>markGenerated(rd.type)}>Genera e scarica</button>}
+              {doc.status==="generated"&&<>
+                <button className="bs" style={{fontSize:11}} onClick={()=>markGenerated(rd.type)}>📥 Riscarica</button>
+                <button className="bp" style={{fontSize:12,padding:"8px 14px"}} onClick={()=>markSigned(rd.type)}>✅ Confermo: firmato</button>
+              </>}
+              {doc.status==="signed"&&<div style={{color:"#6EE7B7",fontSize:12}}>Firmato il {doc.signed_at?new Date(doc.signed_at).toLocaleDateString("it-IT"):"-"}</div>}
+            </div>
+            <div style={{color:"#334155",fontSize:10,marginTop:8}}>Riferimento: {rd.ref}</div>
           </div>
-        </div>
-        <pre style={{color:"#B8C5D6",fontSize:13,lineHeight:1.7,whiteSpace:"pre-wrap",fontFamily:"DM Sans",background:"rgba(0,0,0,.2)",padding:20,borderRadius:8,maxHeight:"60vh",overflowY:"auto"}}>{genDoc(viewing)}</pre>
-      </div></div>}
+        );
+      })}
     </div>
-  );
+    <div className="disclaimer">{DISC}</div>
+  </div>);
 }
 
-/* ═══════ TRAINING PAGE ═══════ */
-function TrainingPage({trainings,companyId,refresh}){
+/* ═══════ TRAINING ═══════ */
+function TrainPage({trainings,companyId,refresh}){
+  const[showModule,setShowModule]=useState(null);
   const[showForm,setShowForm]=useState(false);
-  const[form,setForm]=useState({employee_name:"",topic:"AI Literacy — Alfabetizzazione IA (Art. 4)",duration_hours:1,completed_at:new Date().toISOString().split("T")[0],notes:""});
+  const[form,setForm]=useState({employee_name:"",topic:MODULES[0]?.title||"",duration_hours:0.5,completed_at:new Date().toISOString().split("T")[0],module_id:"",notes:""});
 
-  const save=async()=>{
+  const saveRecord=async(moduleId,empName)=>{
+    const mod=MODULES.find(m=>m.id===moduleId);
+    await sb.from("training_records").insert({
+      company_id:companyId,employee_name:empName||"Titolare",
+      topic:mod?.title||form.topic,duration_hours:mod?.duration||form.duration_hours,
+      completed_at:form.completed_at,module_id:moduleId||"",notes:""
+    });
+    refresh();
+  };
+
+  const saveManual=async()=>{
     if(!form.employee_name)return;
-    await sb.from("training_records").insert({...form,company_id:companyId});
-    setShowForm(false);setForm({employee_name:"",topic:"AI Literacy — Alfabetizzazione IA (Art. 4)",duration_hours:1,completed_at:new Date().toISOString().split("T")[0],notes:""});
+    await sb.from("training_records").insert({company_id:companyId,...form});
+    setShowForm(false);setForm({employee_name:"",topic:MODULES[0]?.title||"",duration_hours:0.5,completed_at:new Date().toISOString().split("T")[0],module_id:"",notes:""});
     refresh();
   };
 
   const genCert=(t)=>{
-    const txt=`\n${"═".repeat(50)}\n           ATTESTATO DI FORMAZIONE\n          ALFABETIZZAZIONE IA (AI LITERACY)\n${"═".repeat(50)}\n\nSi attesta che:\n\n   ${t.employee_name}\n\nha completato il programma di formazione su:\n\n   "${t.topic}"\n\nin data ${new Date(t.completed_at).toLocaleDateString("it-IT")}\nDurata: ${t.duration_hours} ora/e\n\nLa formazione è stata erogata in conformità all'Art. 4\ndel Regolamento (UE) 2024/1689 (AI Act).\n\n${t.notes?"Note: "+t.notes+"\n":""}\nData rilascio attestato: ${new Date().toLocaleDateString("it-IT")}\n\nFirma del responsabile: ______________________________\n\n${"═".repeat(50)}\n   Documento generato da AIComply.it\n${"═".repeat(50)}\n`;
+    const txt=`${"═".repeat(50)}\n     ATTESTATO DI FORMAZIONE\n    ALFABETIZZAZIONE IA (AI LITERACY)\n${"═".repeat(50)}\n\nSi attesta che:\n\n  ${t.employee_name}\n\nha completato il programma:\n\n  "${t.topic}"\n\nin data ${new Date(t.completed_at).toLocaleDateString("it-IT")}\nDurata: ${t.duration_hours} ora/e\n\nFormazione erogata in conformità all'Art. 4\ndel Regolamento (UE) 2024/1689 (AI Act).\n\nData rilascio: ${new Date().toLocaleDateString("it-IT")}\nFirma responsabile: ________________________\n\n${"═".repeat(50)}\nGenerato da AIComply.it\n${DISC}\n${"═".repeat(50)}`;
     const b=new Blob([txt],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=`attestato-${t.employee_name.replace(/\s/g,"-")}.txt`;a.click();URL.revokeObjectURL(u);
   };
 
-  return(
-    <div className="fade-in">
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
-        <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Formazione Tracciata</h1>
-        <button className="bp" onClick={()=>setShowForm(true)}>+ Registra formazione</button>
-      </div>
-
-      {trainings.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B",fontSize:14}}>Nessuna formazione registrata. L'Art. 4 AI Act richiede l'alfabetizzazione IA del personale.</p></div>:
-      <div>
-        <div style={{display:"grid",gridTemplateColumns:"2fr 2fr 1fr 1fr 60px",padding:"8px 16px",color:"#475569",fontSize:11,fontWeight:600,textTransform:"uppercase",letterSpacing:".05em"}}>
-          <span>Dipendente</span><span>Argomento</span><span>Data</span><span>Ore</span><span></span>
-        </div>
-        {trainings.map(t=>(
-          <div key={t.id} className="table-row" style={{gridTemplateColumns:"2fr 2fr 1fr 1fr 60px"}}>
-            <span style={{color:"#E2E8F0",fontWeight:500}}>{t.employee_name}</span>
-            <span style={{color:"#94A3B8",fontSize:12}}>{t.topic}</span>
-            <span className="mono" style={{color:"#475569",fontSize:11}}>{new Date(t.completed_at).toLocaleDateString("it-IT")}</span>
-            <span style={{color:"#64748B",fontSize:12}}>{t.duration_hours}h</span>
-            <button onClick={()=>genCert(t)} title="Scarica attestato" style={{background:"none",border:"none",color:"#60A5FA",fontSize:14,cursor:"pointer"}}>📜</button>
-          </div>
-        ))}
-      </div>}
-
-      {showForm&&<div className="modal-overlay" onClick={()=>setShowForm(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
-        <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:16}}>Registra formazione</h3>
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Nome dipendente *</label>
-          <input value={form.employee_name} onChange={e=>setForm({...form,employee_name:e.target.value})} placeholder="Mario Rossi"/></div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Argomento</label>
-          <select value={form.topic} onChange={e=>setForm({...form,topic:e.target.value})}>
-            <option>AI Literacy — Alfabetizzazione IA (Art. 4)</option>
-            <option>Uso responsabile di ChatGPT/IA Generativa</option>
-            <option>Trasparenza IA verso clienti (Art. 50)</option>
-            <option>Pratiche vietate dall'AI Act (Art. 5)</option>
-            <option>Obblighi L.132/2025 — IA nel lavoro</option>
-            <option>Policy aziendale sull'uso dell'IA</option>
-            <option>Altro</option>
-          </select></div>
-          <div style={{display:"flex",gap:12}}>
-            <div style={{flex:1}}><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Data</label>
-            <input type="date" value={form.completed_at} onChange={e=>setForm({...form,completed_at:e.target.value})}/></div>
-            <div style={{flex:1}}><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Durata (ore)</label>
-            <input type="number" min="0.5" step="0.5" value={form.duration_hours} onChange={e=>setForm({...form,duration_hours:parseFloat(e.target.value)})}/></div>
-          </div>
-          <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Note</label>
-          <textarea value={form.notes} onChange={e=>setForm({...form,notes:e.target.value})} rows={2}/></div>
-          <div style={{display:"flex",gap:10,marginTop:4}}>
-            <button className="bp" onClick={save}>Registra</button>
-            <button className="bs" onClick={()=>setShowForm(false)}>Annulla</button>
-          </div>
-        </div>
-      </div></div>}
+  return(<div className="fade-in">
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
+      <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Formazione e Alfabetizzazione IA</h1>
+      <button className="bp" onClick={()=>setShowForm(true)}>+ Registra formazione</button>
     </div>
-  );
+
+    {/* Moduli formativi */}
+    <h3 style={{color:"#94A3B8",fontSize:13,fontWeight:600,marginBottom:10,textTransform:"uppercase",letterSpacing:".04em"}}>Moduli formativi (Art. 4 AI Act)</h3>
+    <div className="grid g2" style={{marginBottom:24}}>
+      {MODULES.map(m=><div key={m.id} className="card" style={{cursor:"pointer"}} onClick={()=>setShowModule(m)}>
+        <h4 style={{color:"#fff",fontSize:14,fontWeight:600,marginBottom:4}}>{m.title}</h4>
+        <p style={{color:"#64748B",fontSize:12}}>Durata: {m.duration}h</p>
+        <button className="bs" style={{marginTop:10,fontSize:11}}>Leggi il modulo →</button>
+      </div>)}
+    </div>
+
+    {/* Formazioni registrate */}
+    <h3 style={{color:"#94A3B8",fontSize:13,fontWeight:600,marginBottom:10,textTransform:"uppercase",letterSpacing:".04em"}}>Registro formazioni ({trainings.length})</h3>
+    {trainings.length===0?<div className="card" style={{padding:24,textAlign:"center"}}><p style={{color:"#64748B",fontSize:13}}>Nessuna formazione registrata.</p></div>:
+    <div>{trainings.map(t=><div key={t.id} className="card" style={{marginBottom:6,padding:14}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:6}}>
+        <div>
+          <span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{t.employee_name}</span>
+          <span style={{color:"#475569",fontSize:12,marginLeft:8}}>{t.topic}</span>
+        </div>
+        <div style={{display:"flex",alignItems:"center",gap:8}}>
+          <span className="mono" style={{color:"#475569",fontSize:11}}>{new Date(t.completed_at).toLocaleDateString("it-IT")}</span>
+          <span style={{color:"#64748B",fontSize:11}}>{t.duration_hours}h</span>
+          <button onClick={()=>genCert(t)} title="Scarica attestato" style={{background:"none",border:"none",color:"#60A5FA",cursor:"pointer"}}>📜</button>
+        </div>
+      </div>
+    </div>)}</div>}
+
+    {/* Module viewer */}
+    {showModule&&<div className="modal-bg" onClick={()=>setShowModule(null)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:12}}>{showModule.title}</h3>
+      <pre style={{color:"#B8C5D6",fontSize:13,lineHeight:1.7,whiteSpace:"pre-wrap",fontFamily:"DM Sans",background:"rgba(0,0,0,.2)",padding:18,borderRadius:8,maxHeight:"50vh",overflowY:"auto"}}>{showModule.content}</pre>
+      <div style={{marginTop:14}}>
+        <label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Nome dipendente che ha completato il modulo</label>
+        <div style={{display:"flex",gap:8}}>
+          <input placeholder="Es: Mario Rossi" id={"emp_"+showModule.id}/>
+          <button className="bp" style={{flexShrink:0}} onClick={()=>{const el=document.getElementById("emp_"+showModule.id);saveRecord(showModule.id,el?.value||"");setShowModule(null)}}>Registra completamento</button>
+        </div>
+      </div>
+      <div className="disclaimer">{DISC}</div>
+    </div></div>}
+
+    {/* Manual form */}
+    {showForm&&<div className="modal-bg" onClick={()=>setShowForm(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:16}}>Registra formazione</h3>
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <input placeholder="Nome dipendente *" value={form.employee_name} onChange={e=>setForm({...form,employee_name:e.target.value})}/>
+        <select value={form.topic} onChange={e=>setForm({...form,topic:e.target.value})}>
+          {MODULES.map(m=><option key={m.id} value={m.title}>{m.title}</option>)}
+          <option value="Formazione esterna">Formazione esterna</option>
+          <option value="Altro">Altro</option>
+        </select>
+        <div style={{display:"flex",gap:12}}>
+          <input type="date" value={form.completed_at} onChange={e=>setForm({...form,completed_at:e.target.value})} style={{flex:1}}/>
+          <input type="number" min="0.5" step="0.5" value={form.duration_hours} onChange={e=>setForm({...form,duration_hours:parseFloat(e.target.value)||0.5})} style={{flex:1}} placeholder="Ore"/>
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <button className="bp" onClick={saveManual}>Registra</button>
+          <button className="bs" onClick={()=>setShowForm(false)}>Annulla</button>
+        </div>
+      </div>
+    </div></div>}
+
+    <div className="disclaimer">{DISC}</div>
+  </div>);
 }
 
-/* ═══════ ALERTS PAGE ═══════ */
+/* ═══════ ALERTS ═══════ */
 function AlertsPage({alerts}){
-  return(
-    <div className="fade-in">
-      <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Alert Normativi</h1>
-      {alerts.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B",fontSize:14}}>Nessun alert al momento. Ti avviseremo quando ci saranno aggiornamenti normativi rilevanti.</p></div>:
-      <div style={{display:"flex",flexDirection:"column",gap:10}}>
-        {alerts.map(a=><div key={a.id} className="card" style={{padding:18}}>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-            <h3 style={{color:"#fff",fontSize:15,fontWeight:600}}>{a.title}</h3>
-            <span className="badge" style={{background:a.severity==="critical"?"rgba(239,68,68,.12)":a.severity==="warning"?"rgba(245,158,11,.12)":"rgba(59,130,246,.1)",
-              color:a.severity==="critical"?"#FCA5A5":a.severity==="warning"?"#FCD34D":"#93C5FD",flexShrink:0}}>{a.severity==="critical"?"Critico":a.severity==="warning"?"Importante":"Info"}</span>
-          </div>
-          <p style={{color:"#94A3B8",fontSize:13,lineHeight:1.6,marginBottom:8}}>{a.content}</p>
-          {a.impact&&<p style={{color:"#F59E0B",fontSize:12,background:"rgba(245,158,11,.06)",padding:"6px 10px",borderRadius:6,marginBottom:8}}>💡 Impatto sulla tua azienda: {a.impact}</p>}
-          <div style={{display:"flex",gap:16}}>
-            <span className="mono" style={{color:"#334155",fontSize:10}}>{new Date(a.published_at).toLocaleDateString("it-IT")}</span>
-            {a.source&&<span style={{color:"#334155",fontSize:10}}>Fonte: {a.source}</span>}
-          </div>
-        </div>)}
-      </div>}
-    </div>
-  );
+  return(<div className="fade-in">
+    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Alert Normativi</h1>
+    {alerts.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B"}}>Nessun alert al momento.</p></div>:
+    <div>{alerts.map(a=><div key={a.id} className="card" style={{marginBottom:10,padding:18}}>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8,flexWrap:"wrap"}}>
+        <h3 style={{color:"#fff",fontSize:15,fontWeight:600}}>{a.title}</h3>
+        <span className="badge" style={{background:a.severity==="critical"?"rgba(239,68,68,.1)":a.severity==="warning"?"rgba(245,158,11,.1)":"rgba(59,130,246,.08)",
+          color:a.severity==="critical"?"#FCA5A5":a.severity==="warning"?"#FCD34D":"#93C5FD",flexShrink:0}}>{a.severity==="critical"?"Critico":a.severity==="warning"?"Importante":"Info"}</span>
+      </div>
+      <p style={{color:"#94A3B8",fontSize:13,lineHeight:1.6,marginTop:8}}>{a.content}</p>
+      {a.impact&&<p style={{color:"#F59E0B",fontSize:12,background:"rgba(245,158,11,.04)",padding:"8px 10px",borderRadius:6,marginTop:8}}>💡 Impatto sulla tua azienda: {a.impact}</p>}
+      <div style={{display:"flex",gap:16,marginTop:8}}>
+        <span className="mono" style={{color:"#334155",fontSize:10}}>{new Date(a.published_at).toLocaleDateString("it-IT")}</span>
+        {a.source&&<span style={{color:"#334155",fontSize:10}}>Fonte: {a.source}</span>}
+      </div>
+    </div>)}</div>}
+    <div className="disclaimer">{DISC}</div>
+  </div>);
 }
 
 /* ═══════ MAIN APP ═══════ */
@@ -442,15 +600,18 @@ function App(){
   const[systems,setSystems]=useState([]);
   const[trainings,setTrainings]=useState([]);
   const[alerts,setAlerts]=useState([]);
+  const[docs,setDocs]=useState([]);
 
   const loadData=useCallback(async(uid)=>{
     const{data:co}=await sb.from("companies").select("*").eq("user_id",uid).single();
     setCompany(co);
     if(co){
-      const{data:sys}=await sb.from("ai_systems").select("*").eq("company_id",co.id).order("created_at",{ascending:false});
-      setSystems(sys||[]);
-      const{data:tr}=await sb.from("training_records").select("*").eq("company_id",co.id).order("completed_at",{ascending:false});
-      setTrainings(tr||[]);
+      const[{data:sys},{data:tr},{data:dc}]=await Promise.all([
+        sb.from("ai_systems").select("*").eq("company_id",co.id).order("created_at",{ascending:false}),
+        sb.from("training_records").select("*").eq("company_id",co.id).order("completed_at",{ascending:false}),
+        sb.from("documents").select("*").eq("company_id",co.id),
+      ]);
+      setSystems(sys||[]);setTrainings(tr||[]);setDocs(dc||[]);
     }
     const{data:al}=await sb.from("alerts").select("*").order("published_at",{ascending:false});
     setAlerts(al||[]);
@@ -471,19 +632,20 @@ function App(){
   const logout=async()=>{await sb.auth.signOut();setUser(null);setCompany(null)};
   const refresh=()=>user&&loadData(user.id);
 
-  if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#080C16"}}><span style={{color:"#475569"}}>Caricamento...</span></div>;
+  if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#475569"}}>Caricamento...</span></div>;
   if(!user)return<Auth onAuth={(u)=>{setUser(u);loadData(u.id)}}/>;
 
   return(
     <div style={{display:"flex",height:"100vh"}}>
       <Sidebar page={page} setPage={setPage} onLogout={logout} companyName={company?.name||""}/>
-      <div style={{flex:1,overflow:"auto",padding:"24px 32px"}}>
-        {page==="dash"&&<DashPage systems={systems} trainings={trainings} alerts={alerts}/>}
-        {page==="registry"&&<RegistryPage systems={systems} companyId={company?.id} refresh={refresh}/>}
-        {page==="docs"&&<DocsPage company={company} systems={systems}/>}
-        {page==="training"&&<TrainingPage trainings={trainings} companyId={company?.id} refresh={refresh}/>}
+      <div className="main-content" style={{flex:1,overflow:"auto",padding:"20px 24px"}}>
+        {page==="dash"&&<DashPage systems={systems} trainings={trainings} alerts={alerts} docs={docs}/>}
+        {page==="reg"&&<RegPage systems={systems} companyId={company?.id} refresh={refresh}/>}
+        {page==="docs"&&<DocsPage docs={docs} company={company} systems={systems} companyId={company?.id} refresh={refresh}/>}
+        {page==="train"&&<TrainPage trainings={trainings} companyId={company?.id} refresh={refresh}/>}
         {page==="alerts"&&<AlertsPage alerts={alerts}/>}
       </div>
+      <MobileNav page={page} setPage={setPage}/>
     </div>
   );
 }
