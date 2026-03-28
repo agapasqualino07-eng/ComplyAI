@@ -3,462 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIComply.it — Verifica la compliance AI Act della tua azienda</title>
-<meta name="description" content="Verifica gratuitamente se la tua azienda è a norma con la Legge Europea sull'IA (AI Act). Report immediato, obblighi specifici, punteggio di compliance.">
+<title>AIComply.it — La tua azienda usa l'IA? Verifica gratis se sei a norma.</title>
+<meta name="description" content="Verifica gratuitamente se la tua azienda rispetta la Legge Europea sull'IA (AI Act). Questionario guidato, report immediato, obblighi chiari. Per PMI italiane.">
+<meta property="og:title" content="AIComply.it — Sei a norma con l'AI Act?">
+<meta property="og:description" content="Check gratuito in 5 minuti. Scopri quali obblighi ha la tua azienda secondo la Legge Europea sull'IA.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'DM Sans',sans-serif;overflow-x:hidden;background:#060910}
-.glow{text-shadow:0 0 60px rgba(59,130,246,0.15)}
-.card{transition:all 0.25s ease;border:1px solid rgba(255,255,255,0.05)}
-.card:hover{border-color:rgba(59,130,246,0.25);transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,0,0,0.2)}
-.pulse-btn{animation:pulse 2.8s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(59,130,246,0.35)}50%{box-shadow:0 0 0 14px rgba(59,130,246,0)}}
-.mono{font-family:'Space Mono',monospace}
-.opt{transition:all 0.2s ease;border:1px solid rgba(255,255,255,0.07);cursor:pointer;font-family:'DM Sans',sans-serif}
-.opt:hover{border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.05)}
-.fade{opacity:0;transform:translateY(16px);animation:fadeUp 0.5s ease forwards}
-.d1{animation-delay:0.15s}.d2{animation-delay:0.3s}.d3{animation-delay:0.45s}.d4{animation-delay:0.6s}
-@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:5px}
-button{font-family:'DM Sans',sans-serif}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}body{font-family:'DM Sans',sans-serif;overflow-x:hidden;background:#060910;color:#CBD5E1}a{color:#60A5FA;text-decoration:none}.mono{font-family:'Space Mono',monospace}.card{transition:all .25s ease;border:1px solid rgba(255,255,255,.05);background:rgba(255,255,255,.015);border-radius:14px}.card:hover{border-color:rgba(59,130,246,.2)}.bp{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;border:none;padding:14px 32px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:transform .15s}.bp:hover{transform:translateY(-1px)}.bg{background:0 0;border:1px solid rgba(255,255,255,.12);color:#fff;padding:10px 22px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif}.opt{transition:all .2s;border:1px solid rgba(255,255,255,.07);cursor:pointer;font-family:'DM Sans',sans-serif;border-radius:10px;background:rgba(255,255,255,.015);color:#D1D9E6}.opt:hover{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.04)}.oa{border-color:rgba(59,130,246,.5)!important;background:rgba(59,130,246,.08)!important}.fade{opacity:0;transform:translateY(14px);animation:fu .5s ease forwards}.d1{animation-delay:.12s}.d2{animation-delay:.24s}.d3{animation-delay:.36s}.d4{animation-delay:.48s}@keyframes fu{to{opacity:1;transform:translateY(0)}}.sec{max-width:1060px;margin:0 auto;padding:0 28px}.st{color:#fff;font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}.ss{color:#64748B;font-size:15px;line-height:1.6;margin-bottom:28px;max-width:540px}.tag{display:inline-block;border-radius:100px;padding:4px 14px;font-size:12px;font-weight:500}.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}.dv{height:1px;background:rgba(255,255,255,.04);margin:56px 0}@media(max-width:600px){.sec{padding:0 18px}}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect} = React;
-
-const TIMELINE = [
-  {date:"1 agosto 2024",label:"Entrata in vigore della Legge sull'IA",status:"done"},
-  {date:"2 febbraio 2025",label:"Pratiche vietate + obbligo alfabetizzazione IA",status:"done"},
-  {date:"2 agosto 2025",label:"Regole governance + obblighi modelli GPAI",status:"done"},
-  {date:"2 agosto 2026",label:"Sistemi ad alto rischio + obblighi trasparenza",status:"upcoming"},
-  {date:"2 agosto 2027",label:"Sistemi ad alto rischio in prodotti regolamentati",status:"future"},
+const{useState,useEffect}=React;
+const TL=[{d:"1 ago 2024",l:"Entrata in vigore della Legge sull'IA",s:"done"},{d:"2 feb 2025",l:"Divieto pratiche vietate + obbligo alfabetizzazione IA",s:"done"},{d:"2 ago 2025",l:"Regole governance + obblighi modelli GPAI",s:"done"},{d:"2 ago 2026",l:"Obblighi sistemi ad alto rischio + trasparenza",s:"next"},{d:"2 ago 2027",l:"Sistemi ad alto rischio in prodotti regolamentati",s:"future"}];
+const PRH=["Manipolazione e inganno dannosi","Sfruttamento delle vulnerabilità","Punteggio sociale (social scoring)","Previsione del rischio di reato individuale","Scraping non mirato per riconoscimento facciale","Riconoscimento emozioni sul lavoro e a scuola","Categorizzazione biometrica per caratteristiche protette","Identificazione biometrica remota in tempo reale"];
+const SAN=[{n:"€35M o 7%",d:"Pratiche vietate"},{n:"€15M o 3%",d:"Obblighi principali"},{n:"€7,5M o 1,5%",d:"Violazioni procedurali"}];
+const QS=[
+{id:"sector",q:"In quale settore opera la tua azienda?",t:"sel",os:[{l:"Servizi e consulenza",v:"sv",r:0},{l:"Commercio e retail",v:"cm",r:1},{l:"Ristorazione e hospitality",v:"rs",r:0},{l:"Manifattura",v:"mn",r:1},{l:"Sanità",v:"sn",r:2},{l:"Edilizia e artigianato",v:"ed",r:0},{l:"Tech e digitale",v:"tc",r:2},{l:"Finanza e assicurazioni",v:"fn",r:3},{l:"Istruzione",v:"is",r:2},{l:"HR e recruiting",v:"hr",r:3},{l:"Altro",v:"al",r:0}]},
+{id:"emp",q:"Quanti dipendenti ha la tua azienda?",t:"sel",os:[{l:"Solo io",v:"1",r:0},{l:"2–9",v:"9",r:1},{l:"10–49",v:"49",r:2},{l:"50–249",v:"249",r:3}]},
+{id:"gai",q:"Usate strumenti di IA generativa per lavoro?",ds:"ChatGPT, Gemini, Copilot, Claude, Midjourney — per testi, traduzioni, immagini, analisi dati",t:"yn",ry:2,rn:0,ct:"gpai",sy:"IA Generativa (ChatGPT, Gemini, Copilot…)",ob:"Obbligo di trasparenza sui contenuti generati e di alfabetizzazione IA per il personale (già in vigore)."},
+{id:"cb",q:"Avete un chatbot o assistente virtuale per i clienti?",ds:"Su sito web, WhatsApp, social, app — qualsiasi sistema che risponde in automatico alle persone",t:"yn",ry:3,rn:0,ct:"tr",sy:"Chatbot / Assistente Virtuale",ob:"Obbligo di informare l'utente che sta interagendo con un'IA (Art. 50). In vigore da agosto 2026."},
+{id:"cnt",q:"Pubblicate contenuti creati con IA per il pubblico?",ds:"Post social, articoli, immagini, video generati con IA pubblicati come contenuto aziendale",t:"yn",ry:3,rn:0,ct:"tr",sy:"Contenuti IA per il pubblico",ob:"I contenuti generati dall'IA devono essere etichettati. I deepfake contrassegnati esplicitamente."},
+{id:"rec",q:"Il vostro software suggerisce prodotti o offerte ai clienti?",ds:"Raccomandazioni e-commerce, suggerimenti CRM, personalizzazione email automatica",t:"yn",ry:1,rn:0,ct:"mn",sy:"Raccomandazioni automatiche",ob:"Rischio minimo: nessun obbligo specifico, ma buona pratica documentare l'uso."},
+{id:"hra",q:"Usate software con IA per selezionare o valutare il personale?",ds:"Screening automatico CV, ranking candidati, analisi performance, scoring dipendenti",t:"yn",ry:6,rn:0,ct:"al",sy:"Software HR con IA",ob:"ALTO RISCHIO — Valutazione rischi, qualità dati, documentazione, sorveglianza umana obbligatorie. Da agosto 2026."},
+{id:"crd",q:"Usate sistemi automatizzati per valutare credito o rischio clienti?",ds:"Scoring per prestiti, rateizzazioni, valutazione rischio assicurativo",t:"yn",ry:6,rn:0,ct:"al",sy:"Scoring credito / Valutazione rischio",ob:"ALTO RISCHIO — Caso esplicitamente citato dalla Legge sull'IA."},
+{id:"bio",q:"Usate riconoscimento facciale o identificazione biometrica?",ds:"Telecamere con riconoscimento, accesso biometrico, categorizzazione persone",t:"yn",ry:6,rn:0,ct:"al",sy:"Identificazione biometrica",ob:"ALTO RISCHIO o VIETATO — L'identificazione biometrica remota in spazi pubblici è vietata."},
+{id:"emo",q:"Usate sistemi che rilevano emozioni di dipendenti o studenti?",ds:"Software che analizza espressioni facciali, voce, comportamento per dedurre emozioni",t:"yn",ry:8,rn:0,ct:"vt",sy:"Riconoscimento emozioni (lavoro/istruzione)",ob:"⛔ VIETATO — Divieto in vigore dal 2 febbraio 2025."},
+{id:"ssc",q:"Usate sistemi che classificano persone per comportamento sociale?",ds:"Punteggi di affidabilità basati su condotta sociale, ranking reputazionale",t:"yn",ry:8,rn:0,ct:"vt",sy:"Punteggio sociale",ob:"⛔ VIETATO — Divieto in vigore dal 2 febbraio 2025."},
+{id:"pol",q:"Avete una policy interna scritta sull'uso dell'IA?",t:"yn",ry:-3,rn:3,cp:true},
+{id:"trn",q:"Il personale ha ricevuto formazione sull'IA?",ds:"L'Art. 4 AI Act impone l'alfabetizzazione IA per il personale. Obbligo in vigore dal 2 febbraio 2025.",t:"yn",ry:-4,rn:5,cp:true},
+{id:"trs",q:"Informate gli utenti quando interagiscono con un'IA?",ds:"Es: 'Stai parlando con un assistente virtuale' — obbligo Art. 50",t:"yn",ry:-2,rn:3,cp:true},
 ];
+const RM={vt:{l:"Pratica Vietata",c:"#DC2626",i:"⛔",bg:"rgba(220,38,38,.06)",br:"rgba(220,38,38,.2)"},al:{l:"Alto Rischio",c:"#EF4444",i:"🔴",bg:"rgba(239,68,68,.05)",br:"rgba(239,68,68,.18)"},tr:{l:"Rischio Trasparenza",c:"#F59E0B",i:"🟡",bg:"rgba(245,158,11,.05)",br:"rgba(245,158,11,.18)"},gpai:{l:"IA Generativa",c:"#3B82F6",i:"🔵",bg:"rgba(59,130,246,.05)",br:"rgba(59,130,246,.18)"},mn:{l:"Rischio Minimo",c:"#10B981",i:"🟢",bg:"rgba(16,185,129,.05)",br:"rgba(16,185,129,.18)"}};
 
-const PROHIBITED = [
-  "Manipolazione e inganno dannosi basati sull'IA",
-  "Sfruttamento dannoso delle vulnerabilità basato sull'IA",
-  "Punteggio sociale (social scoring)",
-  "Valutazione o previsione del rischio di reato individuale",
-  "Scraping non mirato di Internet o CCTV per banche dati di riconoscimento facciale",
-  "Riconoscimento delle emozioni nei luoghi di lavoro e negli istituti di istruzione",
-  "Categorizzazione biometrica per dedurre caratteristiche protette",
-  "Identificazione biometrica remota in tempo reale in spazi pubblici",
-];
+const Sh=({ch})=><div style={{minHeight:"100vh",background:"linear-gradient(170deg,#060910,#0C1221 50%,#0A0F1E)"}}>{ch}</div>;
+const Nv=({r})=><nav style={{padding:"16px 28px",display:"flex",justifyContent:"space-between",alignItems:"center",maxWidth:1060,margin:"0 auto"}}><div style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer"}}><div style={{width:30,height:30,borderRadius:7,background:"linear-gradient(135deg,#3B82F6,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:12,fontFamily:"Space Mono"}}>AI</div><span style={{color:"#fff",fontWeight:600,fontSize:17}}>AIComply<span style={{color:"#3B82F6"}}>.it</span></span></div>{r}</nav>;
 
-const SANCTIONS = [
-  {amount:"35 milioni o 7%",desc:"Per pratiche vietate e mancata cooperazione con le autorità",level:"max"},
-  {amount:"15 milioni o 3%",desc:"Per violazione degli obblighi principali (inclusa mancata alfabetizzazione IA)",level:"mid"},
-  {amount:"7,5 milioni o 1,5%",desc:"Per violazioni procedurali (documentazione inesatta, mancate informazioni)",level:"low"},
-];
+function Landing({go}){return(<Sh ch={<div><Nv r={<button className="bg" onClick={go}>Check Gratuito →</button>}/>
+<div className="sec" style={{paddingTop:56,paddingBottom:48}}>
+<div className="tag" style={{background:"rgba(59,130,246,.08)",border:"1px solid rgba(59,130,246,.2)",color:"#93C5FD",marginBottom:20}}>Regolamento (UE) 2024/1689 — primi obblighi già in vigore</div>
+<h1 style={{color:"#fff",fontSize:"clamp(30px,4.5vw,52px)",lineHeight:1.1,fontWeight:700,letterSpacing:"-0.03em",maxWidth:680,marginBottom:18}}>Usi l'IA in azienda?<br/>Verifica in 5 minuti se sei a norma.</h1>
+<p style={{color:"#8896AB",fontSize:17,lineHeight:1.7,maxWidth:540,marginBottom:32}}>La Legge Europea sull'IA (AI Act) introduce obblighi per tutte le aziende che usano intelligenza artificiale — anche solo ChatGPT. Il nostro check gratuito ti dice esattamente cosa devi fare.</p>
+<div style={{display:"flex",gap:14,flexWrap:"wrap",alignItems:"center"}}><button className="bp" onClick={go}>Fai il Check Gratuito →</button><span style={{color:"#4B5B73",fontSize:13}}>Nessuna registrazione richiesta</span></div>
+</div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">Il problema</div><div className="ss">Se usi sistemi di IA, hai obblighi normativi. Ma capire quali è complicato.</div>
+<div className="g3">{[{i:"⏱️",t:"Non hai tempo",d:"Leggere 144 pagine di regolamento europeo non è il tuo lavoro."},{i:"🧩",t:"Non hai esperti interni",d:"Servirebbero competenze legali e tecniche che una PMI non ha."},{i:"💸",t:"I consulenti costano troppo",d:"Un adeguamento parte da €2-5.000. Per una PMI è insostenibile."}].map((p,i)=><div key={i} className="card" style={{padding:22}}><div style={{fontSize:24,marginBottom:10}}>{p.i}</div><h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:5}}>{p.t}</h3><p style={{color:"#64748B",fontSize:13,lineHeight:1.6}}>{p.d}</p></div>)}</div></div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">La soluzione</div><div className="ss">AIComply traduce la normativa in azioni concrete. Senza legalese, senza consulenti.</div>
+<div className="g2">{[{i:"🗂️",t:"Mappatura automatica",d:"15 domande e identifichiamo tutti i sistemi IA in uso, anche quelli che non sapevi di avere."},{i:"🎯",t:"Classificazione del rischio",d:"Ogni sistema classificato nei 4 livelli dell'AI Act: vietato, alto, trasparenza, minimo."},{i:"📋",t:"Obblighi chiari",d:"Per ogni sistema, cosa devi fare e entro quando. Con riferimento all'articolo di legge."},{i:"📊",t:"Punteggio di compliance",d:"Un numero da 0 a 100 che ti dice subito quanto sei a norma."}].map((f,i)=><div key={i} className="card" style={{padding:24}}><div style={{fontSize:28,marginBottom:10}}>{f.i}</div><h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:5}}>{f.t}</h3><p style={{color:"#64748B",fontSize:13,lineHeight:1.6}}>{f.d}</p></div>)}</div></div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">Come funziona</div>
+<div style={{display:"flex",flexDirection:"column",gap:20,maxWidth:520,marginTop:20}}>{[{n:"1",t:"Rispondi al questionario",d:"15 domande semplici. 5 minuti."},{n:"2",t:"Ricevi il report gratuito",d:"Sistemi IA rilevati, classificazione rischio, punteggio."},{n:"3",t:"Mettiti a norma con Pro",d:"Registro vivo, documenti, alert, formazione. €29/mese."}].map((s,i)=><div key={i} style={{display:"flex",gap:16,alignItems:"flex-start"}}><div style={{width:36,height:36,borderRadius:10,background:"rgba(59,130,246,.1)",border:"1px solid rgba(59,130,246,.2)",display:"flex",alignItems:"center",justifyContent:"center",color:"#60A5FA",fontWeight:700,fontSize:14,flexShrink:0,fontFamily:"Space Mono"}}>{s.n}</div><div><h4 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:3}}>{s.t}</h4><p style={{color:"#64748B",fontSize:13,lineHeight:1.5}}>{s.d}</p></div></div>)}</div></div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">Calendario ufficiale AI Act</div><div className="ss">Le scadenze del Regolamento (UE) 2024/1689.</div>
+<div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:540}}>{TL.map((t,i)=>{const cl=t.s==="done"?"#10B981":t.s==="next"?"#F59E0B":"#334155";return<div key={i} style={{display:"flex",gap:12,alignItems:"flex-start"}}><div style={{width:9,height:9,borderRadius:"50%",background:cl,flexShrink:0,marginTop:6}}/><div><span className="mono" style={{color:cl,fontSize:11}}>{t.d}</span>{t.s==="done"&&<span style={{color:"#10B981",fontSize:10,marginLeft:6,fontWeight:600}}>✓ IN VIGORE</span>}{t.s==="next"&&<span style={{color:"#F59E0B",fontSize:10,marginLeft:6,fontWeight:600}}>PROSSIMA</span>}<div style={{color:"#B8C5D6",fontSize:13,marginTop:1}}>{t.l}</div></div></div>})}</div></div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">Le sanzioni previste</div><div className="ss">Tre livelli proporzionati alla gravità.</div>
+<div className="g3">{SAN.map((s,i)=><div key={i} className="card" style={{padding:20}}><div className="mono" style={{color:["#F87171","#FBBF24","#FB923C"][i],fontSize:20,fontWeight:700,marginBottom:4}}>{s.n}</div><div style={{color:"#64748B",fontSize:12,lineHeight:1.5}}>del fatturato — {s.d}</div></div>)}</div></div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">Le 8 pratiche vietate</div><div className="ss">In vigore dal 2 febbraio 2025.</div>
+<div className="g2">{PRH.map((p,i)=><div key={i} style={{display:"flex",gap:8,alignItems:"center",background:"rgba(220,38,38,.04)",border:"1px solid rgba(220,38,38,.1)",borderRadius:8,padding:"10px 14px"}}><span style={{color:"#EF4444",fontSize:13,flexShrink:0}}>⛔</span><span style={{color:"#D1D9E6",fontSize:13}}>{p}</span></div>)}</div></div>
+<div className="sec dv"/>
+<div className="sec" style={{paddingBottom:48}}><div className="st">Prezzi semplici</div>
+<div className="g2" style={{maxWidth:580,marginTop:20}}>
+<div className="card" style={{padding:24}}><div style={{color:"#64748B",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Check Gratuito</div><div className="mono" style={{color:"#fff",fontSize:28,fontWeight:700,marginBottom:14}}>€0</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Questionario 15 domande</li><li>✓ Sistemi IA + classificazione</li><li>✓ Punteggio compliance</li><li>✓ Obblighi e scadenze</li></ul><button className="bp" onClick={go} style={{width:"100%",marginTop:16,fontSize:14,padding:"12px 0"}}>Inizia →</button></div>
+<div style={{background:"linear-gradient(135deg,rgba(59,130,246,.05),rgba(124,58,237,.05))",border:"1px solid rgba(59,130,246,.18)",borderRadius:14,padding:24}}><div style={{color:"#60A5FA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Pro</div><div className="mono" style={{color:"#fff",fontSize:28,fontWeight:700}}>€29<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:14}}>Cancelli quando vuoi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Free</li><li style={{color:"#93C5FD"}}>✓ Registro IA Vivo</li><li style={{color:"#93C5FD"}}>✓ Documenti generati</li><li style={{color:"#93C5FD"}}>✓ Alert normativi</li><li style={{color:"#93C5FD"}}>✓ Formazione + attestati</li></ul></div>
+</div></div>
+<div className="sec" style={{textAlign:"center",paddingTop:32,paddingBottom:64}}><button className="bp" onClick={go} style={{fontSize:17,padding:"16px 40px"}}>Fai il Check Gratuito →</button><p style={{color:"#3D4B5E",fontSize:11,marginTop:20,maxWidth:460,margin:"20px auto 0",lineHeight:1.6}}>AIComply.it non fornisce consulenza legale. Fonte: Regolamento (UE) 2024/1689, Legge 132/2025.</p></div>
+</div>}/>)}
 
-const QUESTIONS = [
-  {id:"sector",question:"In quale settore opera la tua azienda?",type:"select",
-    options:[
-      {label:"Servizi e consulenza",value:"servizi",risk:0},
-      {label:"Commercio e retail",value:"commercio",risk:1},
-      {label:"Ristorazione e hospitality",value:"ristorazione",risk:0},
-      {label:"Manifattura e produzione",value:"manifattura",risk:1},
-      {label:"Sanità e benessere",value:"sanita",risk:2},
-      {label:"Edilizia e artigianato",value:"edilizia",risk:0},
-      {label:"Tech e digitale",value:"tech",risk:2},
-      {label:"Finanza, credito e assicurazioni",value:"finanza",risk:3},
-      {label:"Istruzione e formazione",value:"formazione",risk:2},
-      {label:"Risorse umane e recruiting",value:"hr_sector",risk:3},
-      {label:"Altro",value:"altro",risk:0},
-    ]},
-  {id:"employees",question:"Quanti dipendenti ha la tua azienda?",type:"select",
-    options:[
-      {label:"Solo io (freelance/autonomo)",value:"1",risk:0},
-      {label:"2-9 dipendenti",value:"2-9",risk:1},
-      {label:"10-49 dipendenti",value:"10-49",risk:2},
-      {label:"50-249 dipendenti",value:"50-249",risk:3},
-    ]},
-  {id:"chatgpt",question:"Tu o i tuoi dipendenti usate strumenti di IA generativa per lavoro?",
-    description:"Es: ChatGPT, Gemini, Copilot, Claude — per scrivere email, generare testi, analizzare dati, tradurre, creare immagini",
-    type:"yesno",riskYes:2,riskNo:0,category:"gpai",
-    aiSystem:"IA Generativa (ChatGPT, Gemini, Copilot, Claude, Midjourney)",
-    obligation:"Obbligo di trasparenza: i contenuti generati dall'IA devono essere identificabili. Obbligo di alfabetizzazione IA per il personale (già in vigore)."},
-  {id:"chatbot",question:"Hai un chatbot o assistente virtuale che interagisce con clienti o utenti?",
-    description:"Qualsiasi sistema automatizzato che conversa con le persone — su sito web, WhatsApp, social, app",
-    type:"yesno",riskYes:3,riskNo:0,category:"trasparenza",
-    aiSystem:"Chatbot / Assistente Virtuale",
-    obligation:"Gli utenti devono essere informati che stanno interagendo con un sistema di IA, non con una persona (Art. 50 AI Act). In vigore da agosto 2026."},
-  {id:"content_gen",question:"Pubblicate contenuti generati dall'IA destinati al pubblico?",
-    description:"Post social, articoli, immagini, video, audio creati con IA e pubblicati come contenuto aziendale",
-    type:"yesno",riskYes:3,riskNo:0,category:"trasparenza",
-    aiSystem:"Generazione contenuti IA per il pubblico",
-    obligation:"I contenuti generati dall'IA devono essere etichettati in modo chiaro e visibile. I deepfake devono essere contrassegnati esplicitamente."},
-  {id:"crm_recommender",question:"Il tuo software suggerisce automaticamente prodotti, offerte o azioni ai clienti?",
-    description:"Es: raccomandazioni e-commerce, suggerimenti CRM, personalizzazione automatica email, dynamic pricing",
-    type:"yesno",riskYes:1,riskNo:0,category:"minimo",
-    aiSystem:"Sistemi di raccomandazione / Personalizzazione automatica",
-    obligation:"Rischio minimo: nessun obbligo specifico, ma buona pratica tenere un registro interno."},
-  {id:"hr_ai",question:"Usate software con IA per la selezione del personale o la valutazione dei dipendenti?",
-    description:"Es: screening automatico CV, ranking candidati, analisi performance con scoring, decisioni su promozioni",
-    type:"yesno",riskYes:6,riskNo:0,category:"alto",
-    aiSystem:"Software HR con IA (selezione / valutazione personale)",
-    obligation:"ALTO RISCHIO — Obblighi rigorosi: valutazione dei rischi, qualità dei dati, documentazione dettagliata, sorveglianza umana, tracciabilità. In vigore da agosto 2026."},
-  {id:"credit_scoring",question:"Usate sistemi automatizzati per valutare l'affidabilità creditizia o il rischio dei clienti?",
-    description:"Es: scoring automatico per concedere prestiti o rateizzazioni, valutazione rischio assicurativo, accesso a servizi essenziali",
-    type:"yesno",riskYes:6,riskNo:0,category:"alto",
-    aiSystem:"Scoring credito / Valutazione rischio automatica",
-    obligation:"ALTO RISCHIO — Il punteggio di credito che nega la possibilità di ottenere un prestito è esplicitamente citato come caso ad alto rischio dalla Legge sull'IA."},
-  {id:"biometric",question:"Usate sistemi di identificazione biometrica o riconoscimento facciale?",
-    description:"Es: telecamere con riconoscimento facciale, accesso biometrico, categorizzazione persone per caratteristiche fisiche",
-    type:"yesno",riskYes:6,riskNo:0,category:"alto",
-    aiSystem:"Identificazione biometrica / Riconoscimento facciale",
-    obligation:"ALTO RISCHIO o VIETATO — L'identificazione biometrica remota in tempo reale in spazi pubblici è VIETATA. Altri usi biometrici sono ad alto rischio."},
-  {id:"emotion",question:"Usate sistemi che rilevano le emozioni di dipendenti o studenti?",
-    description:"Es: software che analizza espressioni facciali, tono di voce, comportamento per dedurre lo stato emotivo",
-    type:"yesno",riskYes:8,riskNo:0,category:"vietato",
-    aiSystem:"Riconoscimento emozioni sul luogo di lavoro/istruzione",
-    obligation:"⛔ PRATICA VIETATA — Il riconoscimento delle emozioni nei luoghi di lavoro e negli istituti di istruzione è esplicitamente vietato dall'AI Act. Divieto già in vigore dal 2 febbraio 2025."},
-  {id:"social_scoring",question:"Usate sistemi che classificano le persone in base al loro comportamento sociale?",
-    description:"Es: punteggi di affidabilità basati su condotta sociale, classificazione clienti per comportamento personale, ranking reputazionale",
-    type:"yesno",riskYes:8,riskNo:0,category:"vietato",
-    aiSystem:"Punteggio sociale (social scoring)",
-    obligation:"⛔ PRATICA VIETATA — Il punteggio sociale è esplicitamente vietato dall'AI Act. Divieto già in vigore dal 2 febbraio 2025."},
-  {id:"policy",question:"Hai una policy interna scritta che regola l'uso dell'IA in azienda?",
-    type:"yesno",riskYes:-3,riskNo:3,isCompliance:true},
-  {id:"training",question:"Il personale che usa sistemi di IA ha ricevuto formazione sull'alfabetizzazione IA?",
-    description:"L'Art. 4 della Legge sull'IA impone che fornitori e deployer garantiscano un livello sufficiente di alfabetizzazione IA al personale. Obbligo già in vigore dal 2 febbraio 2025.",
-    type:"yesno",riskYes:-4,riskNo:5,isCompliance:true},
-  {id:"transparency_check",question:"Informate gli utenti quando interagiscono con un sistema di IA o vedono contenuti generati dall'IA?",
-    description:"Es: 'Questo messaggio è generato da un assistente IA' — obbligo di trasparenza Art. 50 AI Act",
-    type:"yesno",riskYes:-2,riskNo:3,isCompliance:true},
-];
+function Quiz({done}){
+const[c,sC]=useState(0);const[a,sA]=useState({});const q=QS[c];
+const pk=(v)=>{const n={...a,[q.id]:v};sA(n);if(c<QS.length-1)setTimeout(()=>sC(c+1),260);else setTimeout(()=>done(n),320)};
+return(<Sh ch={<div><Nv r={<span className="mono" style={{color:"#475569",fontSize:12}}>{c+1}/{QS.length}</span>}/>
+<div className="sec" style={{maxWidth:700}}><div style={{height:3,background:"rgba(255,255,255,.04)",borderRadius:10,marginBottom:48}}><div style={{height:"100%",width:(c/QS.length*100)+"%",background:"linear-gradient(90deg,#3B82F6,#7C3AED)",borderRadius:10,transition:"width .35s ease"}}/></div></div>
+<div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"55vh",padding:"0 28px"}}><div style={{maxWidth:560,width:"100%"}}>
+<h2 style={{color:"#fff",fontSize:"clamp(19px,2.6vw,26px)",fontWeight:600,lineHeight:1.35,marginBottom:8}}>{q.q}</h2>
+{q.ds&&<p style={{color:"#64748B",fontSize:13,marginBottom:28,lineHeight:1.6}}>{q.ds}</p>}
+{!q.ds&&<div style={{height:18}}/>}
+{q.t==="sel"&&<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(180px,1fr))",gap:9}}>{q.os.map(o=><button key={o.v} className={"opt"+(a[q.id]===o.v?" oa":"")} onClick={()=>pk(o.v)} style={{padding:"13px 16px",fontSize:14,textAlign:"left"}}>{o.l}</button>)}</div>}
+{q.t==="yn"&&<div style={{display:"flex",gap:12}}>{[{l:"Sì",v:"yes"},{l:"No",v:"no"},...(!q.cp?[{l:"Non so",v:"un"}]:[])].map(o=><button key={o.v} className={"opt"+(a[q.id]===o.v?" oa":"")} onClick={()=>pk(o.v)} style={{flex:1,padding:"15px 18px",fontSize:15,fontWeight:500,textAlign:"center"}}>{o.l}</button>)}</div>}
+</div></div></div>}/>)}
 
-const RISK_META = {
-  vietato:{label:"Pratica Vietata",color:"#7F1D1D",icon:"⛔",bg:"#7F1D1D18",border:"#DC262640"},
-  alto:{label:"Alto Rischio",color:"#DC2626",icon:"🔴",bg:"#DC262610",border:"#DC262630"},
-  trasparenza:{label:"Rischio Trasparenza",color:"#F59E0B",icon:"🟡",bg:"#F59E0B10",border:"#F59E0B30"},
-  gpai:{label:"IA per finalità generali",color:"#3B82F6",icon:"🔵",bg:"#3B82F610",border:"#3B82F630"},
-  minimo:{label:"Rischio Minimo",color:"#10B981",icon:"🟢",bg:"#10B98110",border:"#10B98130"},
-};
+function Report({ans,rst}){
+const[sh,setSh]=useState(false);useEffect(()=>{setTimeout(()=>setSh(true),450)},[]);
+let rk=0;const sys=[];const act=[];
+QS.forEach(q=>{const a=ans[q.id];if(q.t==="sel"){const o=q.os.find(x=>x.v===a);if(o)rk+=o.r}else if(q.t==="yn"){if(a==="yes")rk+=(q.ry||0);else if(a==="no")rk+=(q.rn||0);else if(a==="un")rk+=Math.max((q.ry||0)-1,0);if(q.sy&&(a==="yes"||a==="un")){const m=RM[q.ct]||{};sys.push({n:q.sy,ct:q.ct,st:a==="yes"?"confermato":"da verificare",m,ob:q.ob})}}});
+if(ans.pol==="no")act.push({t:"Mancanza di policy interna sull'uso dell'IA",u:"alta",d:"Consigliato subito"});
+if(ans.trn==="no")act.push({t:"Formazione alfabetizzazione IA non effettuata (Art. 4)",u:"critica",d:"Già in vigore"});
+if(ans.trs==="no"&&sys.some(s=>s.ct==="tr"))act.push({t:"Mancata informativa trasparenza IA (Art. 50)",u:"critica",d:"Agosto 2026"});
+if(sys.some(s=>s.ct==="vt"))act.push({t:"Possibile uso di pratica vietata dall'AI Act",u:"critica",d:"Già in vigore"});
+const sc=100-Math.min(Math.max(Math.round((rk/50)*100),5),98);
+let lv,lc;if(sc>=70){lv="BASSO";lc="#10B981"}else if(sc>=40){lv="MEDIO";lc="#F59E0B"}else{lv="CRITICO";lc="#EF4444"}
+const SL="https://buy.stripe.com/IL_TUO_LINK";
+return(<Sh ch={<div><Nv r={null}/>
+<div className="sec" style={{maxWidth:640,paddingTop:16,paddingBottom:60}}>
+<div className="fade" style={{textAlign:"center",marginBottom:32}}><div className="tag" style={{background:lc+"10",border:"1px solid "+lc+"28",color:lc,marginBottom:14}}>Livello di rischio: {lv}</div><h1 style={{color:"#fff",fontSize:"clamp(22px,3.2vw,32px)",fontWeight:700}}>Il tuo report AI Act</h1></div>
+<div className="fade d1 card" style={{padding:32,marginBottom:16,textAlign:"center"}}><div style={{position:"relative",width:144,height:144,margin:"0 auto 16px"}}><svg viewBox="0 0 144 144" style={{transform:"rotate(-90deg)"}}><circle cx="72" cy="72" r="62" fill="none" stroke="rgba(255,255,255,.04)" strokeWidth="9"/><circle cx="72" cy="72" r="62" fill="none" stroke={lc} strokeWidth="9" strokeLinecap="round" strokeDasharray={(sh?(sc/100)*390:0)+" 390"} style={{transition:"stroke-dasharray .9s ease"}}/></svg><div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}><div className="mono" style={{color:lc,fontSize:36,fontWeight:700,lineHeight:1}}>{sh?sc:0}</div><div style={{color:"#475569",fontSize:10,marginTop:2}}>su 100</div></div></div><p style={{color:"#7A8BA0",fontSize:13}}>Sistemi IA: <strong style={{color:"#fff"}}>{sys.length}</strong> · Azioni: <strong style={{color:act.length?"#F87171":"#10B981"}}>{act.length}</strong></p></div>
+{sys.length>0&&<div className="fade d2 card" style={{padding:24,marginBottom:16}}><h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:14}}>🗂️ Sistemi IA rilevati ({sys.length})</h3>{sys.map((s,i)=><div key={i} style={{padding:"12px 0",borderBottom:i<sys.length-1?"1px solid rgba(255,255,255,.04)":"none"}}><div style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}><span style={{fontSize:14}}>{s.m.i||"⚪"}</span><span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{s.n}</span>{s.st==="da verificare"&&<span style={{color:"#F59E0B",fontSize:10,background:"rgba(245,158,11,.08)",padding:"2px 7px",borderRadius:4}}>da verificare</span>}</div><div style={{marginLeft:22}}><span style={{color:s.m.c,fontSize:11,fontWeight:600,background:s.m.bg,border:"1px solid "+s.m.br,padding:"2px 7px",borderRadius:4}}>{s.m.l}</span>{s.ob&&<p style={{color:"#5A6B7F",fontSize:12,marginTop:5,lineHeight:1.5}}>{s.ob}</p>}</div></div>)}</div>}
+{act.length>0&&<div className="fade d3" style={{background:"rgba(239,68,68,.025)",border:"1px solid rgba(239,68,68,.1)",borderRadius:14,padding:24,marginBottom:16}}><h3 style={{color:"#FCA5A5",fontSize:15,fontWeight:600,marginBottom:14}}>🚨 Azioni da intraprendere</h3>{act.map((a,i)=><div key={i} style={{display:"flex",gap:8,alignItems:"flex-start",padding:"8px 0",borderBottom:i<act.length-1?"1px solid rgba(239,68,68,.06)":"none"}}><span style={{background:a.u==="critica"?"rgba(239,68,68,.12)":"rgba(245,158,11,.12)",color:a.u==="critica"?"#FCA5A5":"#FCD34D",fontSize:9,fontWeight:700,padding:"2px 6px",borderRadius:3,textTransform:"uppercase",flexShrink:0,marginTop:2}}>{a.u}</span><div><span style={{color:"#D1D9E6",fontSize:13}}>{a.t}</span><div className="mono" style={{color:"#4B5B73",fontSize:10,marginTop:2}}>Scadenza: {a.d}</div></div></div>)}</div>}
+<div className="fade d4" style={{background:"linear-gradient(135deg,rgba(59,130,246,.04),rgba(124,58,237,.04))",border:"1px solid rgba(59,130,246,.15)",borderRadius:14,padding:28,textAlign:"center",marginBottom:16}}><h3 style={{color:"#fff",fontSize:18,fontWeight:700,marginBottom:8}}>Vuoi metterti a norma?</h3><p style={{color:"#7A8BA0",fontSize:13,lineHeight:1.6,maxWidth:420,margin:"0 auto 18px"}}>Registro IA vivo, documenti pronti, alert normativi, formazione tracciata. €29/mese, cancelli quando vuoi.</p><button className="bp" onClick={function(){window.open(SL,"_blank")}}>Attiva AIComply Pro — €29/mese</button></div>
+<div style={{textAlign:"center",paddingTop:12}}><p style={{color:"#3D4B5E",fontSize:10,maxWidth:440,margin:"0 auto 10px",lineHeight:1.5}}>Fonte: Regolamento (UE) 2024/1689, Legge 132/2025. Non costituisce consulenza legale.</p><button onClick={rst} style={{background:"transparent",border:"none",color:"#475569",fontSize:12,cursor:"pointer",textDecoration:"underline"}}>← Rifai il check</button></div>
+</div></div>}/>)}
 
-function Shell({children}){
-  return React.createElement("div",{style:{minHeight:"100vh",background:"linear-gradient(165deg,#060910 0%,#0C1221 50%,#0A0F1E 100%)"}},children);
-}
-
-function NavBar({right}){
-  return React.createElement("nav",{style:{padding:"18px 32px",display:"flex",justifyContent:"space-between",alignItems:"center",maxWidth:1100,margin:"0 auto"}},
-    React.createElement("div",{style:{display:"flex",alignItems:"center",gap:9}},
-      React.createElement("div",{style:{width:32,height:32,borderRadius:8,background:"linear-gradient(135deg,#3B82F6,#7C3AED)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:13,fontFamily:"Space Mono"}},"AI"),
-      React.createElement("span",{style:{color:"#fff",fontWeight:600,fontSize:18,letterSpacing:"-0.02em"}},
-        "AIComply",React.createElement("span",{style:{color:"#3B82F6"}},".it"))
-    ),
-    right
-  );
-}
-
-function Landing({onStart}){
-  return (
-    <Shell>
-      <NavBar right={<button onClick={onStart} style={{background:"transparent",border:"1px solid rgba(255,255,255,0.12)",color:"#fff",padding:"9px 22px",borderRadius:8,cursor:"pointer",fontSize:13,fontWeight:500}}>Check Gratuito →</button>} />
-      <div style={{maxWidth:1100,margin:"0 auto",padding:"60px 32px 40px"}}>
-        <div style={{display:"inline-block",background:"rgba(220,38,38,0.08)",border:"1px solid rgba(220,38,38,0.25)",borderRadius:100,padding:"5px 14px",marginBottom:20}}>
-          <span style={{color:"#FCA5A5",fontSize:12,fontWeight:500}}>⚠️ Obblighi già in vigore — Regolamento (UE) 2024/1689</span>
-        </div>
-        <h1 className="glow" style={{color:"#fff",fontSize:"clamp(32px,4.5vw,58px)",lineHeight:1.08,fontWeight:700,letterSpacing:"-0.03em",maxWidth:750,marginBottom:20}}>
-          La tua azienda usa l'IA?<br/><span style={{color:"#3B82F6"}}>La Legge Europea sull'IA è già in vigore.</span>
-        </h1>
-        <p style={{color:"#8896AB",fontSize:17,lineHeight:1.7,maxWidth:580,marginBottom:36}}>
-          La Legge sull'IA (AI Act) è il primo quadro giuridico al mondo sull'intelligenza artificiale. Se usi ChatGPT, un chatbot, o qualsiasi sistema di IA — hai obblighi specifici da rispettare. Alcuni sono già operativi dal 2 febbraio 2025.
-        </p>
-        <div style={{display:"flex",gap:14,flexWrap:"wrap",alignItems:"center",marginBottom:56}}>
-          <button onClick={onStart} className="pulse-btn" style={{background:"linear-gradient(135deg,#3B82F6,#2563EB)",color:"#fff",border:"none",padding:"15px 34px",borderRadius:11,fontSize:16,fontWeight:600,cursor:"pointer"}}>Verifica la tua azienda — Gratis →</button>
-          <span style={{color:"#4B5B73",fontSize:13}}>5 minuti · 15 domande · Report immediato</span>
-        </div>
-
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))",gap:16,marginBottom:64}}>
-          {SANCTIONS.map((s,i)=>(
-            <div key={i} className="card" style={{background:"rgba(255,255,255,0.015)",borderRadius:14,padding:22}}>
-              <div className="mono" style={{color:["#F87171","#FBBF24","#FB923C"][i],fontSize:22,fontWeight:700,marginBottom:4}}>€{s.amount}</div>
-              <div style={{color:"#64748B",fontSize:12,lineHeight:1.5}}>{s.desc}</div>
-            </div>
-          ))}
-        </div>
-
-        <h2 style={{color:"#fff",fontSize:24,fontWeight:700,marginBottom:24,letterSpacing:"-0.02em"}}>Calendario ufficiale di applicazione</h2>
-        <div style={{display:"flex",flexDirection:"column",gap:12,marginBottom:64,maxWidth:600}}>
-          {TIMELINE.map((t,i)=>(
-            <div key={i} style={{display:"flex",gap:14,alignItems:"flex-start"}}>
-              <div className="tl-dot" style={{background:t.status==="done"?"#10B981":t.status==="upcoming"?"#F59E0B":"#334155"}} />
-              <div>
-                <span className="mono" style={{color:t.status==="done"?"#10B981":t.status==="upcoming"?"#F59E0B":"#475569",fontSize:12}}>{t.date}</span>
-                {t.status==="done" && <span style={{color:"#10B981",fontSize:10,marginLeft:8,fontWeight:600}}>✓ IN VIGORE</span>}
-                {t.status==="upcoming" && <span style={{color:"#F59E0B",fontSize:10,marginLeft:8,fontWeight:600}}>↗ PROSSIMA SCADENZA</span>}
-                <div style={{color:"#CBD5E1",fontSize:14,marginTop:2}}>{t.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <h2 style={{color:"#fff",fontSize:24,fontWeight:700,marginBottom:8,letterSpacing:"-0.02em"}}>Le 8 pratiche di IA vietate</h2>
-        <p style={{color:"#64748B",fontSize:14,marginBottom:20}}>Divieti già in vigore dal 2 febbraio 2025. Sanzione: fino a €35 milioni o 7% del fatturato globale.</p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:10,marginBottom:64}}>
-          {PROHIBITED.map((p,i)=>(
-            <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start",background:"rgba(127,29,29,0.06)",border:"1px solid rgba(220,38,38,0.12)",borderRadius:10,padding:"12px 16px"}}>
-              <span style={{color:"#EF4444",fontSize:14,flexShrink:0}}>⛔</span>
-              <span style={{color:"#E2E8F0",fontSize:13,lineHeight:1.5}}>{p}</span>
-            </div>
-          ))}
-        </div>
-
-        <h2 style={{color:"#fff",fontSize:24,fontWeight:700,marginBottom:8}}>Perché non basta chiedere a ChatGPT</h2>
-        <p style={{color:"#64748B",fontSize:14,marginBottom:24,maxWidth:520}}>Un documento generato una tantum diventa obsoleto al primo cambio normativo. Ti serve un sistema vivo.</p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(240px,1fr))",gap:16,marginBottom:64}}>
-          {[
-            {icon:"🗂️",title:"Registro IA Vivo",desc:"Ogni sistema IA mappato con classificazione di rischio, storico e timestamp. Prova di compliance aggiornata."},
-            {icon:"🔔",title:"Alert Normativi",desc:"Quando cambia la legge, ti avvisiamo con l'impatto specifico sulla tua azienda."},
-            {icon:"📚",title:"Formazione Tracciata",desc:"Registro chi ha fatto formazione, quando, su cosa. Attestati con data certa. Obbligo Art. 4 AI Act."},
-            {icon:"📊",title:"Punteggio Live",desc:"Score di compliance che si aggiorna in tempo reale. Apri l'app, vedi subito se sei a norma."},
-          ].map((f,i)=>(
-            <div key={i} className="card" style={{background:"rgba(255,255,255,0.015)",borderRadius:14,padding:24}}>
-              <div style={{fontSize:28,marginBottom:12}}>{f.icon}</div>
-              <h3 style={{color:"#fff",fontSize:15,fontWeight:600,marginBottom:6}}>{f.title}</h3>
-              <p style={{color:"#64748B",fontSize:13,lineHeight:1.6}}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(270px,1fr))",gap:24,marginBottom:64,background:"rgba(255,255,255,0.015)",border:"1px solid rgba(255,255,255,0.05)",borderRadius:18,padding:32}}>
-          <div>
-            <div style={{color:"#64748B",fontSize:12,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>Check Gratuito</div>
-            <div className="mono" style={{color:"#fff",fontSize:32,fontWeight:700}}>€0</div>
-            <ul style={{color:"#8896AB",fontSize:13,lineHeight:2.1,listStyle:"none",padding:0,marginTop:14}}>
-              <li>✓ Questionario 15 domande</li>
-              <li>✓ Classificazione sistemi IA rilevati</li>
-              <li>✓ Punteggio di rischio</li>
-              <li>✓ Obblighi specifici per la tua azienda</li>
-              <li style={{color:"#3D4B5E"}}>✗ Registro IA Vivo</li>
-              <li style={{color:"#3D4B5E"}}>✗ Documenti di compliance</li>
-            </ul>
-          </div>
-          <div style={{background:"linear-gradient(135deg,rgba(59,130,246,0.06),rgba(124,58,237,0.06))",borderRadius:14,padding:24,border:"1px solid rgba(59,130,246,0.18)"}}>
-            <div style={{color:"#60A5FA",fontSize:12,textTransform:"uppercase",letterSpacing:"0.05em",marginBottom:6}}>Pro — Monitoraggio continuo</div>
-            <div className="mono" style={{color:"#fff",fontSize:32,fontWeight:700}}>€29<span style={{fontSize:14,color:"#64748B"}}>/mese</span></div>
-            <ul style={{color:"#8896AB",fontSize:13,lineHeight:2.1,listStyle:"none",padding:0,marginTop:14}}>
-              <li>✓ Tutto del piano Free</li>
-              <li style={{color:"#60A5FA"}}>✓ Registro IA Vivo con storico</li>
-              <li style={{color:"#60A5FA"}}>✓ Policy, registro, informativa generati</li>
-              <li style={{color:"#60A5FA"}}>✓ Alert normativi personalizzati</li>
-              <li style={{color:"#60A5FA"}}>✓ Formazione tracciata + attestati</li>
-              <li style={{color:"#60A5FA"}}>✓ Punteggio compliance in tempo reale</li>
-            </ul>
-          </div>
-        </div>
-
-        <div style={{textAlign:"center",paddingBottom:60}}>
-          <button onClick={onStart} style={{background:"linear-gradient(135deg,#3B82F6,#2563EB)",color:"#fff",border:"none",padding:"15px 36px",borderRadius:11,fontSize:16,fontWeight:600,cursor:"pointer",marginBottom:16}}>Inizia il Check Gratuito →</button>
-          <p style={{color:"#3D4B5E",fontSize:12,maxWidth:500,margin:"0 auto",lineHeight:1.6}}>
-            AIComply.it non fornisce consulenza legale. Per sistemi ad alto rischio o situazioni complesse raccomandiamo di consultare un professionista. Fonte normativa: Regolamento (UE) 2024/1689.
-          </p>
-        </div>
-      </div>
-    </Shell>
-  );
-}
-
-function Quiz({onComplete}){
-  const [cur,setCur] = useState(0);
-  const [ans,setAns] = useState({});
-  const q = QUESTIONS[cur];
-
-  const pick = (v) => {
-    const next = {...ans,[q.id]:v};
-    setAns(next);
-    if(cur < QUESTIONS.length-1) setTimeout(()=>setCur(cur+1),280);
-    else setTimeout(()=>onComplete(next),350);
-  };
-
-  return (
-    <Shell>
-      <NavBar right={<span className="mono" style={{color:"#475569",fontSize:13}}>{cur+1}/{QUESTIONS.length}</span>} />
-      <div style={{maxWidth:740,margin:"0 auto",padding:"0 32px"}}>
-        <div style={{height:3,background:"rgba(255,255,255,0.04)",borderRadius:10,marginBottom:50}}>
-          <div style={{height:"100%",width:(cur/QUESTIONS.length*100)+"%",background:"linear-gradient(90deg,#3B82F6,#7C3AED)",borderRadius:10,transition:"width 0.4s ease"}} />
-        </div>
-      </div>
-      <div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"60vh",padding:"0 32px"}}>
-        <div style={{maxWidth:600,width:"100%"}}>
-          <h2 style={{color:"#fff",fontSize:"clamp(20px,2.8vw,28px)",fontWeight:600,lineHeight:1.3,marginBottom:10,letterSpacing:"-0.015em"}}>{q.question}</h2>
-          {q.description && <p style={{color:"#64748B",fontSize:14,marginBottom:32,lineHeight:1.6}}>{q.description}</p>}
-          {!q.description && <div style={{height:20}}/>}
-
-          {q.type==="select" && (
-            <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(200px,1fr))",gap:10}}>
-              {q.options.map(o=>(
-                <button key={o.value} className="opt" onClick={()=>pick(o.value)}
-                  style={{background:ans[q.id]===o.value?"rgba(59,130,246,0.1)":"rgba(255,255,255,0.015)",
-                    borderColor:ans[q.id]===o.value?"rgba(59,130,246,0.4)":undefined,
-                    color:"#D1D9E6",padding:"14px 18px",borderRadius:10,fontSize:14,textAlign:"left"}}>
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {q.type==="yesno" && (
-            <div style={{display:"flex",gap:14}}>
-              {[
-                {label:"Sì",val:"yes"},
-                {label:"No",val:"no"},
-                ...(!q.isCompliance?[{label:"Non so",val:"unsure"}]:[]),
-              ].map(o=>(
-                <button key={o.val} className="opt" onClick={()=>pick(o.val)}
-                  style={{flex:1,background:ans[q.id]===o.val?"rgba(59,130,246,0.1)":"rgba(255,255,255,0.015)",
-                    borderColor:ans[q.id]===o.val?"rgba(59,130,246,0.4)":undefined,
-                    color:"#D1D9E6",padding:"16px 20px",borderRadius:10,fontSize:16,fontWeight:500}}>
-                  {o.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    </Shell>
-  );
-}
-
-function Report({answers,onRestart}){
-  const [show,setShow] = useState(false);
-  useEffect(()=>{setTimeout(()=>setShow(true),500)},[]);
-
-  let risk=0;
-  const systems=[];
-  const obligations=[];
-
-  QUESTIONS.forEach(q=>{
-    const a=answers[q.id];
-    if(q.type==="select"){const o=q.options.find(x=>x.value===a);if(o)risk+=o.risk}
-    else if(q.type==="yesno"){
-      if(a==="yes")risk+=q.riskYes;
-      else if(a==="no")risk+=q.riskNo;
-      else if(a==="unsure")risk+=Math.max((q.riskYes||0)-1,0);
-      if(q.aiSystem&&(a==="yes"||a==="unsure")){
-        const m=RISK_META[q.category]||{};
-        systems.push({name:q.aiSystem,category:q.category,status:a==="yes"?"confermato":"da verificare",meta:m,obligation:q.obligation});
-      }
-    }
-  });
-
-  if(answers.policy==="no")obligations.push({text:"Nessuna policy interna sull'uso dell'IA in azienda",urgency:"alta",deadline:"Subito"});
-  if(answers.training==="no")obligations.push({text:"Formazione alfabetizzazione IA non effettuata — obbligo Art. 4 AI Act",urgency:"critica",deadline:"Già in vigore"});
-  if(answers.transparency_check==="no"&&systems.some(s=>s.category==="trasparenza"))
-    obligations.push({text:"Mancata informativa trasparenza verso utenti che interagiscono con IA — Art. 50",urgency:"critica",deadline:"Agosto 2026"});
-  if(systems.some(s=>s.category==="vietato"))
-    obligations.push({text:"ATTENZIONE: possibile uso di pratica vietata dall'AI Act — rischio sanzione massima",urgency:"critica",deadline:"Già in vigore"});
-
-  const maxR=50;
-  const pct=Math.min(Math.max(Math.round((risk/maxR)*100),5),98);
-  const score=100-pct;
-  let lvl,lc;
-  if(score>=70){lvl="BASSO";lc="#10B981"}
-  else if(score>=40){lvl="MEDIO";lc="#F59E0B"}
-  else{lvl="CRITICO";lc="#EF4444"}
-
-  return (
-    <Shell>
-      <NavBar right={null}/>
-      <div style={{maxWidth:680,margin:"0 auto",padding:"20px 24px 60px"}}>
-        <div className="fade" style={{textAlign:"center",marginBottom:40}}>
-          <div style={{display:"inline-block",background:lc+"12",border:"1px solid "+lc+"30",borderRadius:100,padding:"5px 16px",marginBottom:16}}>
-            <span style={{color:lc,fontSize:12,fontWeight:600}}>LIVELLO DI RISCHIO: {lvl}</span>
-          </div>
-          <h1 style={{color:"#fff",fontSize:"clamp(24px,3.5vw,36px)",fontWeight:700,letterSpacing:"-0.02em"}}>Risultato del check</h1>
-        </div>
-
-        <div className="fade d1" style={{background:"rgba(255,255,255,0.015)",border:"1px solid rgba(255,255,255,0.05)",borderRadius:18,padding:36,marginBottom:20,textAlign:"center"}}>
-          <div style={{position:"relative",width:160,height:160,margin:"0 auto 20px"}}>
-            <svg viewBox="0 0 160 160" style={{transform:"rotate(-90deg)"}}>
-              <circle cx="80" cy="80" r="68" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="10"/>
-              <circle cx="80" cy="80" r="68" fill="none" stroke={lc} strokeWidth="10" strokeLinecap="round"
-                strokeDasharray={(show?(score/100)*427:0)+" 427"} style={{transition:"stroke-dasharray 1s ease"}}/>
-            </svg>
-            <div style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
-              <div className="mono" style={{color:lc,fontSize:40,fontWeight:700,lineHeight:1}}>{show?score:0}</div>
-              <div style={{color:"#475569",fontSize:11,marginTop:3}}>su 100</div>
-            </div>
-          </div>
-          <p style={{color:"#8896AB",fontSize:14}}>
-            Sistemi IA rilevati: <strong style={{color:"#fff"}}>{systems.length}</strong> · Azioni urgenti: <strong style={{color:obligations.length>0?"#F87171":"#10B981"}}>{obligations.length}</strong>
-          </p>
-        </div>
-
-        {systems.length>0 && (
-          <div className="fade d2" style={{background:"rgba(255,255,255,0.015)",border:"1px solid rgba(255,255,255,0.05)",borderRadius:18,padding:28,marginBottom:20}}>
-            <h3 style={{color:"#fff",fontSize:16,fontWeight:600,marginBottom:16}}>🗂️ Sistemi IA rilevati nella tua azienda</h3>
-            {systems.map((s,i)=>(
-              <div key={i} style={{padding:"14px 0",borderBottom:i<systems.length-1?"1px solid rgba(255,255,255,0.04)":"none"}}>
-                <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}>
-                  <span style={{fontSize:16}}>{s.meta.icon||"⚪"}</span>
-                  <span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{s.name}</span>
-                  {s.status==="da verificare"&&<span style={{color:"#F59E0B",fontSize:11,background:"rgba(245,158,11,0.1)",padding:"2px 8px",borderRadius:4}}>da verificare</span>}
-                </div>
-                <div style={{marginLeft:26}}>
-                  <span style={{color:s.meta.color,fontSize:12,fontWeight:600,background:s.meta.bg,border:"1px solid "+s.meta.border,padding:"2px 8px",borderRadius:4}}>{s.meta.label}</span>
-                  {s.obligation&&<p style={{color:"#64748B",fontSize:12,marginTop:6,lineHeight:1.5}}>{s.obligation}</p>}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {obligations.length>0 && (
-          <div className="fade d3" style={{background:"rgba(239,68,68,0.03)",border:"1px solid rgba(239,68,68,0.12)",borderRadius:18,padding:28,marginBottom:20}}>
-            <h3 style={{color:"#FCA5A5",fontSize:16,fontWeight:600,marginBottom:16}}>🚨 Azioni da intraprendere</h3>
-            {obligations.map((o,i)=>(
-              <div key={i} style={{display:"flex",gap:10,alignItems:"flex-start",padding:"10px 0",borderBottom:i<obligations.length-1?"1px solid rgba(239,68,68,0.06)":"none"}}>
-                <span style={{background:o.urgency==="critica"?"rgba(239,68,68,0.15)":"rgba(245,158,11,0.15)",color:o.urgency==="critica"?"#FCA5A5":"#FCD34D",
-                  fontSize:10,fontWeight:700,padding:"3px 8px",borderRadius:4,textTransform:"uppercase",flexShrink:0,marginTop:2}}>{o.urgency}</span>
-                <div>
-                  <span style={{color:"#E2E8F0",fontSize:13,lineHeight:1.5}}>{o.text}</span>
-                  <div className="mono" style={{color:"#64748B",fontSize:11,marginTop:3}}>Scadenza: {o.deadline}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        <div className="fade d4" style={{background:"linear-gradient(135deg,rgba(59,130,246,0.06),rgba(124,58,237,0.06))",border:"1px solid rgba(59,130,246,0.18)",borderRadius:18,padding:32,textAlign:"center",marginBottom:20}}>
-          <h3 style={{color:"#fff",fontSize:20,fontWeight:700,marginBottom:10}}>Mettiti a norma con AIComply Pro</h3>
-          <p style={{color:"#8896AB",fontSize:14,lineHeight:1.7,marginBottom:20,maxWidth:460,margin:"0 auto 20px"}}>
-            Registro IA con storico, alert quando cambia la legge, formazione tracciata con attestati, documenti auto-generati. Tutto a €29/mese.
-          </p>
-          <button onClick={function(){window.open("https://buy.stripe.com/test","_blank")}}
-            style={{background:"linear-gradient(135deg,#3B82F6,#2563EB)",color:"#fff",border:"none",padding:"14px 36px",borderRadius:10,fontSize:16,fontWeight:600,cursor:"pointer",marginBottom:8}}>
-            Attiva AIComply Pro — €29/mese
-          </button>
-          <p style={{color:"#3D4B5E",fontSize:11}}>Cancelli quando vuoi. Nessun vincolo.</p>
-        </div>
-
-        <div style={{textAlign:"center",padding:"16px 0"}}>
-          <p style={{color:"#3D4B5E",fontSize:11,maxWidth:480,margin:"0 auto 12px",lineHeight:1.5}}>
-            Fonte normativa: Regolamento (UE) 2024/1689 — Legge sull'IA. AIComply.it non fornisce consulenza legale.
-          </p>
-          <button onClick={onRestart} style={{background:"transparent",border:"none",color:"#475569",fontSize:13,cursor:"pointer",textDecoration:"underline"}}>← Rifai il check</button>
-        </div>
-      </div>
-    </Shell>
-  );
-}
-
-function App(){
-  const [view,setView] = useState("landing");
-  const [ans,setAns] = useState({});
-  if(view==="landing") return React.createElement(Landing,{onStart:function(){setView("quiz")}});
-  if(view==="quiz") return React.createElement(Quiz,{onComplete:function(a){setAns(a);setView("report")}});
-  return React.createElement(Report,{answers:ans,onRestart:function(){setAns({});setView("landing")}});
-}
-
+function App(){const[v,sV]=useState("l");const[a,sA]=useState({});
+if(v==="l")return React.createElement(Landing,{go:function(){sV("q");window.scrollTo(0,0)}});
+if(v==="q")return React.createElement(Quiz,{done:function(x){sA(x);sV("r");window.scrollTo(0,0)}});
+return React.createElement(Report,{ans:a,rst:function(){sA({});sV("l");window.scrollTo(0,0)}});}
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
 </script>
 </body>
