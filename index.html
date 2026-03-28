@@ -23,8 +23,8 @@
 const{useState,useEffect}=React;
 
 /* ═══════ ANALYTICS ANONIME ═══════ */
-const SUPABASE_URL="https://IL_TUO_PROGETTO.supabase.co";
-const SUPABASE_KEY="IL_TUO_ANON_KEY";
+const SUPABASE_URL="https://uuktxbqjemizafizxhzz.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1a3R4YnFqZW1pemFmaXp4aHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTAyMzYsImV4cCI6MjA5MDI2NjIzNn0.3aNOEbNNCWpJgWMmQHPkOG4KeSdkndVsHy9tch5p78Q";
 const sb=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 const trackQuiz=async(data)=>{try{if(sb)await sb.from("quiz_completions").insert(data)}catch(e){}};
 
