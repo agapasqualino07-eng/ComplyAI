@@ -23,8 +23,8 @@
 const{useState,useEffect}=React;
 
 /* ═══════ ANALYTICS ANONIME ═══════ */
-const SUPABASE_URL="https://uuktxbqjemizafizxhzz.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1a3R4YnFqZW1pemFmaXp4aHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTAyMzYsImV4cCI6MjA5MDI2NjIzNn0.3aNOEbNNCWpJgWMmQHPkOG4KeSdkndVsHy9tch5p78Q";
+const SUPABASE_URL="https://IL_TUO_PROGETTO.supabase.co";
+const SUPABASE_KEY="IL_TUO_ANON_KEY";
 const sb=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
 const trackQuiz=async(data)=>{try{if(sb)await sb.from("quiz_completions").insert(data)}catch(e){}};
 
@@ -35,6 +35,7 @@ const trackQuiz=async(data)=>{try{if(sb)await sb.from("quiz_completions").insert
    ═══════════════════════════════════════════════════════════ */
 
 const STRIPE_LINK="https://buy.stripe.com/eVq5kDaPJbt9aa65czfYY01";
+
 
 const TL=[
   {d:"1 ago 2024",l:"Entrata in vigore della Legge sull'IA (AI Act)",s:"done"},
@@ -197,7 +198,7 @@ function Landing({go,goTerms,goPrivacy}){return(<Sh ch={<div><Nv r={<button clas
 <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(230px,1fr))",gap:14,marginTop:20,maxWidth:800}}>
 <div className="card" style={{padding:22}}><div style={{color:"#64748B",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Check Gratuito</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700,marginBottom:12}}>€0</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Questionario 17 domande</li><li>✓ Sistemi IA + classificazione</li><li>✓ Punteggio compliance</li><li>✓ Obblighi AI Act + L.132/2025</li></ul><button className="bp" onClick={go} style={{width:"100%",marginTop:14,fontSize:13,padding:"10px 0"}}>Inizia →</button></div>
 <div style={{background:"linear-gradient(135deg,rgba(59,130,246,.05),rgba(124,58,237,.05))",border:"1px solid rgba(59,130,246,.18)",borderRadius:14,padding:22}}><div style={{color:"#60A5FA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Pro — Singola azienda</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700}}>€29<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:12}}>Cancelli quando vuoi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Free</li><li style={{color:"#93C5FD"}}>✓ Registro IA Vivo</li><li style={{color:"#93C5FD"}}>✓ Documenti compliance</li><li style={{color:"#93C5FD"}}>✓ Alert normativi</li><li style={{color:"#93C5FD"}}>✓ Formazione + attestati</li></ul></div>
-<div style={{background:"linear-gradient(135deg,rgba(139,92,246,.06),rgba(109,40,217,.06))",border:"1px solid rgba(139,92,246,.2)",borderRadius:14,padding:22}}><div style={{color:"#A78BFA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Enterprise — Studi e Partner</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700}}>€199<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:12}}>10 clienti PMI inclusi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Pro</li><li style={{color:"#C4B5FD"}}>✓ Dashboard multi-cliente</li><li style={{color:"#C4B5FD"}}>✓ White-label (logo e colori)</li><li style={{color:"#C4B5FD"}}>✓ Audit trail completo</li><li style={{color:"#C4B5FD"}}>✓ Report attività mensile</li></ul><button onClick={function(){window.location.href="/enterprise.html"}} style={{width:"100%",marginTop:14,fontSize:13,padding:"10px 0",background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",color:"#fff",border:"none",borderRadius:8,fontWeight:600,cursor:"pointer"}}>Scopri Enterprise →</button></div>
+<div style={{background:"linear-gradient(135deg,rgba(139,92,246,.06),rgba(109,40,217,.06))",border:"1px solid rgba(139,92,246,.2)",borderRadius:14,padding:22}}><div style={{color:"#A78BFA",fontSize:11,textTransform:"uppercase",letterSpacing:".05em",marginBottom:4}}>Enterprise — Studi e Partner</div><div className="mono" style={{color:"#fff",fontSize:26,fontWeight:700}}>€199<span style={{fontSize:13,color:"#64748B"}}>/mese</span></div><div style={{color:"#475569",fontSize:12,marginBottom:12}}>10 clienti PMI inclusi</div><ul style={{color:"#7A8BA0",fontSize:13,lineHeight:2,listStyle:"none"}}><li>✓ Tutto del Pro</li><li style={{color:"#C4B5FD"}}>✓ Dashboard multi-cliente</li><li style={{color:"#C4B5FD"}}>✓ White-label (logo e colori)</li><li style={{color:"#C4B5FD"}}>✓ Audit trail completo</li><li style={{color:"#C4B5FD"}}>✓ Report attività mensile</li></ul><button onClick={function(){window.open("https://buy.stripe.com/9B68wPaPJ2WDbea0WjfYY02","_blank")}} style={{width:"100%",marginTop:14,fontSize:13,padding:"10px 0",background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",color:"#fff",border:"none",borderRadius:8,fontWeight:600,cursor:"pointer"}}>Attiva Enterprise — €199/mese</button></div>
 </div></div>
 
 {/* FINAL CTA + DISCLAIMER */}
