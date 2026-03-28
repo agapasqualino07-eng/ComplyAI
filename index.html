@@ -101,7 +101,7 @@ if(ans.trs==="no"&&sys.some(s=>s.ct==="tr"))act.push({t:"Mancata informativa tra
 if(sys.some(s=>s.ct==="vt"))act.push({t:"Possibile uso di pratica vietata dall'AI Act",u:"critica",d:"Già in vigore"});
 const sc=100-Math.min(Math.max(Math.round((rk/50)*100),5),98);
 let lv,lc;if(sc>=70){lv="BASSO";lc="#10B981"}else if(sc>=40){lv="MEDIO";lc="#F59E0B"}else{lv="CRITICO";lc="#EF4444"}
-const SL="https://buy.stripe.com/IL_TUO_LINK";
+const SL="https://buy.stripe.com/eVq5kDaPJbt9aa65czfYY01";
 return(<Sh ch={<div><Nv r={null}/>
 <div className="sec" style={{maxWidth:640,paddingTop:16,paddingBottom:60}}>
 <div className="fade" style={{textAlign:"center",marginBottom:32}}><div className="tag" style={{background:lc+"10",border:"1px solid "+lc+"28",color:lc,marginBottom:14}}>Livello di rischio: {lv}</div><h1 style={{color:"#fff",fontSize:"clamp(22px,3.2vw,32px)",fontWeight:700}}>Il tuo report AI Act</h1></div>
