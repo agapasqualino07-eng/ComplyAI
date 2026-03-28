@@ -81,6 +81,29 @@ return(<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justify
 </div><p style={{color:"#334155",fontSize:10,textAlign:"center",marginTop:16}}>Dopo il pagamento su Stripe, registrati qui per accedere alla dashboard.</p>
 </div></div>)}
 
+/* ═══════ PAYWALL ENTERPRISE ═══════ */
+function Paywall({email,onLogout}){
+  const STRIPE_ENT="https://buy.stripe.com/9B68wPaPJ2WDbea0WjfYY02";
+  return(
+    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}>
+      <div style={{maxWidth:440,width:"100%",textAlign:"center"}}>
+        <div style={{width:56,height:56,borderRadius:14,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:20,fontFamily:"Space Mono",margin:"0 auto 20px"}}>AI</div>
+        <h1 style={{color:"#fff",fontSize:24,fontWeight:700,marginBottom:8}}>Abbonamento Enterprise non attivo</h1>
+        <p style={{color:"#64748B",fontSize:14,lineHeight:1.6,marginBottom:8}}>Per accedere alla dashboard Enterprise e gestire i tuoi clienti, devi prima attivare l'abbonamento.</p>
+        <div style={{color:"#F59E0B",fontSize:12,lineHeight:1.5,marginBottom:24,background:"rgba(245,158,11,.06)",border:"1px solid rgba(245,158,11,.15)",borderRadius:8,padding:"10px 16px"}}>
+          <strong>Importante:</strong> usa la stessa email sia per il pagamento Stripe sia per la registrazione qui.<br/>La tua email: <strong style={{color:"#FCD34D"}}>{email}</strong>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:300,margin:"0 auto"}}>
+          <a href={STRIPE_ENT} target="_blank" rel="noopener noreferrer" style={{display:"block",background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",color:"#fff",padding:"12px 24px",borderRadius:8,fontSize:14,fontWeight:600,textDecoration:"none",textAlign:"center"}}>Attiva Enterprise — €199/mese</a>
+          <button onClick={function(){window.location.reload()}} style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.06)",color:"#CBD5E1",padding:"10px 24px",borderRadius:8,fontSize:13,fontWeight:500,cursor:"pointer"}}>Ho già pagato — Verifica</button>
+          <button onClick={onLogout} style={{background:"none",border:"none",color:"#475569",fontSize:12,cursor:"pointer",marginTop:4}}>← Esci</button>
+        </div>
+        <p style={{color:"#334155",fontSize:10,marginTop:24}}>Dopo il pagamento, clicca "Ho già pagato" o ricarica la pagina.</p>
+      </div>
+    </div>
+  );
+}
+
 /* ═══════ MAIN APP ═══════ */
 function App(){
 const[user,setUser]=useState(null);const[loading,setLoading]=useState(true);
@@ -89,6 +112,16 @@ const[clients,setClients]=useState([]);const[alerts,setAlerts]=useState([]);
 const[selClient,setSelClient]=useState(null); // selected client for workspace
 const[clientTab,setClientTab]=useState("reg"); // sub-tab inside client workspace
 const[cSys,setCSys]=useState([]);const[cTr,setCTr]=useState([]);const[cDocs,setCDocs]=useState([]);
+const[activeSub,setActiveSub]=useState(null);const[subChecked,setSubChecked]=useState(false);
+
+/* Controlla subscription Enterprise */
+const checkSub=useCallback(async()=>{
+  try{
+    const{data}=await sb.from("subscriptions").select("*").in("status",["active","canceling"]).eq("plan","enterprise");
+    const found=data&&data.length>0?data[0]:null;
+    setActiveSub(found);setSubChecked(true);return found;
+  }catch(e){setSubChecked(true);return null}
+},[]);
 
 const loadData=useCallback(async(uid)=>{
   const{data:p}=await sb.from("partners").select("*").eq("user_id",uid).single();setPartner(p);
@@ -111,14 +144,21 @@ const loadClient=async(c)=>{
 const refreshClient=async()=>{if(selClient)await loadClient(selClient);if(user)await loadData(user.id)};
 const refresh=()=>user&&loadData(user.id);
 
-useEffect(()=>{sb.auth.getSession().then(({data:{session}})=>{if(session?.user){setUser(session.user);loadData(session.user.id)}setLoading(false)});
-const{data:{subscription}}=sb.auth.onAuthStateChange((ev,session)=>{if(session?.user){setUser(session.user);loadData(session.user.id)}else{setUser(null);setPartner(null)}});
-return()=>subscription.unsubscribe()},[loadData]);
+useEffect(()=>{sb.auth.getSession().then(async({data:{session}})=>{
+  if(session?.user){setUser(session.user);const s=await checkSub();if(s)await loadData(session.user.id)}
+  setLoading(false)});
+const{data:{subscription:authListener}}=sb.auth.onAuthStateChange(async(ev,session)=>{
+  if(session?.user){setUser(session.user);const s=await checkSub();if(s)await loadData(session.user.id)}
+  else{setUser(null);setPartner(null);setActiveSub(null);setSubChecked(false)}});
+return()=>authListener.unsubscribe()},[loadData,checkSub]);
 
-const logout=async()=>{await sb.auth.signOut();setUser(null);setPartner(null)};
+const logout=async()=>{await sb.auth.signOut();setUser(null);setPartner(null);setActiveSub(null);setSubChecked(false)};
 
 if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#475569"}}>Caricamento...</span></div>;
-if(!user||!partner)return<Auth onAuth={u=>{setUser(u);loadData(u.id)}}/>;
+if(!user)return<Auth onAuth={async u=>{setUser(u);const s=await checkSub();if(s)await loadData(u.id)}}/>;
+if(!subChecked)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#475569"}}>Verifica abbonamento...</span></div>;
+if(!activeSub)return<Paywall email={user.email} onLogout={logout}/>;
+if(!partner)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}><div style={{textAlign:"center"}}><p style={{color:"#64748B",marginBottom:16}}>Account partner non trovato. Riprova la registrazione.</p><button onClick={logout} className="bs">← Esci</button></div></div>;
 
 /* ═══ SIDEBAR ═══ */
 const PAGES=[{id:"dash",icon:"📊",label:"Overview"},{id:"clients",icon:"🏢",label:"Clienti"},{id:"activity",icon:"📋",label:"Attività"},{id:"brand",icon:"🎨",label:"White-Label"},{id:"alerts",icon:"🔔",label:"Alert"}];
@@ -402,603 +442,6 @@ return(<div style={{display:"flex",height:"100vh"}}><SB/>
     {page==="brand"&&<Brand/>}
     {page==="alerts"&&<Alerts/>}
   </div><MN/></div>);
-}
-
-ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="it">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIComply Enterprise — Dashboard Partner</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-:root{--bg:#060A14;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#CBD5E1;--muted:#64748B;--white:#fff;--accent:#8B5CF6;--accent2:#6D28D9;--green:#10B981;--yellow:#F59E0B;--red:#EF4444;--blue:#3B82F6}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
-.mono{font-family:'Space Mono',monospace}
-input,textarea,select{font-family:inherit;background:rgba(255,255,255,.04);border:1px solid var(--border);color:#E2E8F0;border-radius:8px;padding:10px 14px;font-size:14px;width:100%;outline:0;transition:border .2s}
-input:focus,textarea:focus,select:focus{border-color:rgba(139,92,246,.5)}
-select option{background:#1E293B;color:#E2E8F0}
-button{font-family:inherit;cursor:pointer}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
-.bp{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;transition:transform .15s}
-.bp:hover{transform:translateY(-1px)}
-.bs{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;transition:all .2s}
-.bs:hover{border-color:rgba(139,92,246,.3)}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
-.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
-.fade-in{animation:fadeIn .4s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(3px)}
-.modal{background:#0F172A;border:1px solid var(--border);border-radius:14px;padding:28px;max-width:560px;width:92%;max-height:85vh;overflow-y:auto}
-.progress-track{height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
-.progress-bar{height:100%;border-radius:3px;transition:width .8s ease}
-.disclaimer{color:#475569;font-size:10px;line-height:1.6;padding:12px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.03);border-radius:8px;margin-top:16px}
-.sidebar{width:230px;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:16px 12px;flex-shrink:0;background:rgba(0,0,0,.2)}
-.sb-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:8px;transition:all .15s;color:var(--muted);font-size:13px;font-weight:500;border:none;background:none;width:100%;text-align:left}
-.sb-item:hover{background:rgba(139,92,246,.06);color:#A78BFA}
-.sb-item.active{background:rgba(139,92,246,.1);color:#A78BFA}
-.mob-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:#070B15;border-top:1px solid var(--border);z-index:50;padding:6px 0}
-.mob-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 0;border:none;background:none;color:var(--muted);font-size:10px;font-weight:500}
-.mob-btn.active{color:#A78BFA}
-.grid{display:grid;gap:12px}
-.g2{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-.g3{grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
-.g4{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
-.status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.client-row{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;cursor:pointer}
-.client-row:hover{background:rgba(139,92,246,.03)}
-@media(max-width:768px){
-  .sidebar{display:none}
-  .mob-nav{display:flex}
-  .main-content{padding-bottom:70px!important}
-  .g2,.g3,.g4{grid-template-columns:1fr}
-  .modal{width:96%;padding:20px;max-height:90vh}
-}
-@media(min-width:769px){.mob-nav{display:none!important}}
-</style>
-</head>
-<body>
-<div id="root"></div>
-<script type="text/babel">
-const{useState,useEffect,useCallback}=React;
-
-/* ═══════ CONFIG ═══════ */
-const SUPABASE_URL="https://uuktxbqjemizafizxhzz.supabase.co";
-const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1a3R4YnFqZW1pemFmaXp4aHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTAyMzYsImV4cCI6MjA5MDI2NjIzNn0.3aNOEbNNCWpJgWMmQHPkOG4KeSdkndVsHy9tch5p78Q";
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-const STRIPE_ENT="https://buy.stripe.com/9B68wPaPJ2WDbea0WjfYY02";
-
-const DISC="Strumento informativo — non costituisce consulenza legale. La responsabilità dei contenuti e della firma è del Titolare. Fonti: Reg. (UE) 2024/1689, L. 132/2025.";
-const CATS={vietato:{l:"Vietato",c:"#DC2626",ic:"⛔"},alto:{l:"Alto Rischio",c:"#EF4444",ic:"🔴"},trasparenza:{l:"Trasparenza",c:"#F59E0B",ic:"🟡"},gpai:{l:"IA Generativa",c:"#3B82F6",ic:"🔵"},minimo:{l:"Minimo",c:"#10B981",ic:"🟢"}};
-const STATUS_MAP={bozza:{l:"Bozza",c:"#64748B",bg:"rgba(100,116,139,.1)"},in_corso:{l:"In corso",c:"#F59E0B",bg:"rgba(245,158,11,.1)"},completato:{l:"Completato",c:"#10B981",bg:"rgba(16,185,129,.1)"},scaduto:{l:"Scaduto",c:"#EF4444",bg:"rgba(239,68,68,.1)"}};
-
-/* ═══════ AUDIT LOG HELPER ═══════ */
-const logAction=async(companyId,partnerId,userId,type,desc,meta={})=>{
-  try{await sb.from("compliance_logs").insert({company_id:companyId,partner_id:partnerId,action_by:userId,action_type:type,description:desc,metadata:meta})}catch(e){}
-};
-
-/* ═══════ AUTH ═══════ */
-function Auth({onAuth}){
-  const[mode,setMode]=useState("login");
-  const[email,setEmail]=useState("");const[pass,setPass]=useState("");
-  const[studio,setStudio]=useState("");const[contact,setContact]=useState("");
-  const[err,setErr]=useState("");const[loading,setLoading]=useState(false);
-
-  const handle=async(e)=>{
-    e.preventDefault();setErr("");setLoading(true);
-    try{
-      if(mode==="login"){
-        const{data,error}=await sb.auth.signInWithPassword({email,password:pass});
-        if(error)throw error;
-        /* Verifica che sia un partner */
-        const{data:p}=await sb.from("partners").select("id").eq("user_id",data.user.id).single();
-        if(!p){setErr("Questo account non è registrato come Partner Enterprise. Usa /app.html per il piano Pro.");setLoading(false);return}
-        onAuth(data.user);
-      }else{
-        const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{company_name:studio}}});
-        if(error)throw error;
-        if(data.user){
-          /* Imposta ruolo partner */
-          await sb.from("profiles").update({role:"partner",display_name:studio}).eq("id",data.user.id);
-          /* Crea record partner */
-          const{data:partner}=await sb.from("partners").insert({user_id:data.user.id,studio_name:studio,contact_name:contact,contact_email:email,client_slots:10}).select().single();
-          /* Crea settings white-label di default */
-          if(partner)await sb.from("partner_settings").insert({partner_id:partner.id});
-          onAuth(data.user);
-        }
-      }
-    }catch(e){setErr(e.message)}
-    setLoading(false);
-  };
-
-  return(
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}>
-      <div style={{maxWidth:400,width:"100%"}}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:32,justifyContent:"center"}}>
-          <div style={{width:34,height:34,borderRadius:8,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:14,fontFamily:"Space Mono"}}>AI</div>
-          <span style={{color:"#fff",fontWeight:600,fontSize:19}}>AIComply<span style={{color:"#A78BFA"}}>.it</span> <span style={{color:"#7C3AED",fontSize:13,fontWeight:500}}>Enterprise</span></span>
-        </div>
-        <div className="card" style={{padding:28}}>
-          <h2 style={{color:"#fff",fontSize:20,fontWeight:700,marginBottom:4}}>{mode==="login"?"Accedi come Partner":"Registra il tuo Studio"}</h2>
-          <p style={{color:"#64748B",fontSize:13,marginBottom:20}}>{mode==="login"?"Dashboard multi-cliente":"Gestisci la compliance dei tuoi clienti PMI"}</p>
-          <form onSubmit={handle} style={{display:"flex",flexDirection:"column",gap:12}}>
-            {mode==="register"&&<><input placeholder="Nome Studio / Ragione sociale" value={studio} onChange={e=>setStudio(e.target.value)} required/>
-            <input placeholder="Nome referente" value={contact} onChange={e=>setContact(e.target.value)} required/></>}
-            <input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required/>
-            <input type="password" placeholder="Password (min. 6 caratteri)" value={pass} onChange={e=>setPass(e.target.value)} required minLength={6}/>
-            {err&&<p style={{color:"#EF4444",fontSize:12}}>{err}</p>}
-            <button className="bp" type="submit" disabled={loading} style={{width:"100%",marginTop:4}}>{loading?"...":(mode==="login"?"Accedi":"Registra Studio")}</button>
-          </form>
-          <p style={{color:"#475569",fontSize:12,marginTop:14,textAlign:"center"}}>
-            {mode==="login"?<>Nuovo studio? <button onClick={()=>{setMode("register");setErr("")}} style={{background:"none",border:"none",color:"#A78BFA",cursor:"pointer",fontSize:12}}>Registrati</button></>:
-            <>Hai già un account? <button onClick={()=>{setMode("login");setErr("")}} style={{background:"none",border:"none",color:"#A78BFA",cursor:"pointer",fontSize:12}}>Accedi</button></>}
-          </p>
-        </div>
-        <p style={{color:"#334155",fontSize:10,textAlign:"center",marginTop:16}}>{DISC}</p>
-      </div>
-    </div>
-  );
-}
-
-/* ═══════ SIDEBAR ═══════ */
-const PAGES=[{id:"dash",icon:"📊",label:"Overview"},{id:"clients",icon:"🏢",label:"Clienti PMI"},{id:"activity",icon:"📋",label:"Attività"},{id:"brand",icon:"🎨",label:"White-Label"},{id:"alerts",icon:"🔔",label:"Alert"}];
-
-function Sidebar({page,setPage,onLogout,partner}){
-  return(<div className="sidebar">
-    <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",marginBottom:20}}>
-      <div style={{width:28,height:28,borderRadius:6,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:10,fontFamily:"Space Mono"}}>AI</div>
-      <span style={{color:"#fff",fontWeight:600,fontSize:14}}>AIComply <span style={{color:"#A78BFA",fontSize:11}}>Enterprise</span></span>
-    </div>
-    {partner&&<div style={{padding:"8px 14px",marginBottom:16,background:"rgba(139,92,246,.05)",borderRadius:8,border:"1px solid rgba(139,92,246,.1)"}}>
-      <div style={{color:"#A78BFA",fontSize:12,fontWeight:600}}>{partner.studio_name}</div>
-      <div style={{color:"#475569",fontSize:11,marginTop:2}}>Slot: {partner.clients_used}/{partner.client_slots}</div>
-    </div>}
-    <div style={{flex:1,display:"flex",flexDirection:"column",gap:2}}>
-      {PAGES.map(p=><button key={p.id} className={"sb-item"+(page===p.id?" active":"")} onClick={()=>setPage(p.id)}>
-        <span style={{fontSize:15}}>{p.icon}</span>{p.label}
-      </button>)}
-    </div>
-    <button className="sb-item" onClick={onLogout} style={{marginTop:8,borderTop:"1px solid var(--border)",paddingTop:12}}><span style={{fontSize:13}}>🚪</span>Esci</button>
-  </div>);
-}
-
-function MobileNav({page,setPage}){
-  return(<div className="mob-nav">{PAGES.map(p=><button key={p.id} className={"mob-btn"+(page===p.id?" active":"")} onClick={()=>setPage(p.id)}>
-    <span style={{fontSize:18}}>{p.icon}</span>{p.label}
-  </button>)}</div>);
-}
-
-/* ═══════ OVERVIEW DASHBOARD ═══════ */
-function DashPage({partner,clients,alerts}){
-  const total=clients.length;
-  const scores=clients.map(c=>c.compliance_score||0);
-  const avgScore=total?Math.round(scores.reduce((a,b)=>a+b,0)/total):0;
-  const bozza=clients.filter(c=>c.compliance_status==="bozza").length;
-  const corso=clients.filter(c=>c.compliance_status==="in_corso").length;
-  const completato=clients.filter(c=>c.compliance_status==="completato").length;
-  const scaduto=clients.filter(c=>c.compliance_status==="scaduto").length;
-  const slotsAvail=partner.client_slots-partner.clients_used;
-  const lc=avgScore>=70?"#10B981":avgScore>=40?"#F59E0B":"#EF4444";
-
-  return(<div className="fade-in">
-    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Overview Studio</h1>
-
-    {/* KPI */}
-    <div className="grid g4" style={{marginBottom:16}}>
-      {[
-        {n:total,l:"Clienti PMI",c:"#fff"},{n:avgScore+"%",l:"Score medio",c:lc},
-        {n:slotsAvail,l:"Slot disponibili",c:slotsAvail>0?"#10B981":"#EF4444"},
-        {n:completato,l:"Completati",c:"#10B981"},
-      ].map((s,i)=><div key={i} className="card" style={{textAlign:"center",padding:16}}>
-        <div className="mono" style={{color:s.c,fontSize:26,fontWeight:700}}>{s.n}</div>
-        <div style={{color:"#64748B",fontSize:11,marginTop:2}}>{s.l}</div>
-      </div>)}
-    </div>
-
-    {/* Status distribution */}
-    <div className="card" style={{marginBottom:16,padding:18}}>
-      <div style={{color:"#94A3B8",fontSize:13,marginBottom:10}}>Distribuzione stato compliance</div>
-      <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
-        {[{l:"Bozza",n:bozza,c:"#64748B"},{l:"In corso",n:corso,c:"#F59E0B"},{l:"Completato",n:completato,c:"#10B981"},{l:"Scaduto",n:scaduto,c:"#EF4444"}].map((s,i)=>
-          <div key={i} style={{display:"flex",alignItems:"center",gap:6}}>
-            <div className="status-dot" style={{background:s.c}}/>
-            <span style={{color:s.c,fontSize:13,fontWeight:500}}>{s.n}</span>
-            <span style={{color:"#475569",fontSize:12}}>{s.l}</span>
-          </div>
-        )}
-      </div>
-      {total>0&&<div className="progress-track" style={{marginTop:12}}>
-        <div style={{display:"flex",height:"100%"}}>
-          {completato>0&&<div style={{width:(completato/total*100)+"%",background:"#10B981",borderRadius:completato===total?"3px":"3px 0 0 3px"}}/>}
-          {corso>0&&<div style={{width:(corso/total*100)+"%",background:"#F59E0B"}}/>}
-          {bozza>0&&<div style={{width:(bozza/total*100)+"%",background:"#475569"}}/>}
-          {scaduto>0&&<div style={{width:(scaduto/total*100)+"%",background:"#EF4444",borderRadius:"0 3px 3px 0"}}/>}
-        </div>
-      </div>}
-    </div>
-
-    {/* Client list preview */}
-    {clients.length>0&&<div className="card" style={{padding:0,overflow:"hidden",marginBottom:16}}>
-      <div style={{padding:"14px 16px",borderBottom:"1px solid var(--border)",color:"#94A3B8",fontSize:12,fontWeight:600}}>Clienti — Score più basso in cima</div>
-      {[...clients].sort((a,b)=>(a.compliance_score||0)-(b.compliance_score||0)).slice(0,5).map(c=>{
-        const st=STATUS_MAP[c.compliance_status]||STATUS_MAP.bozza;
-        return(<div key={c.id} className="client-row" style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div>
-            <span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{c.name}</span>
-            <span style={{color:"#475569",fontSize:12,marginLeft:8}}>{c.sector}</span>
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <span className="badge" style={{background:st.bg,color:st.c}}>{st.l}</span>
-            <span className="mono" style={{color:c.compliance_score>=70?"#10B981":c.compliance_score>=40?"#F59E0B":"#EF4444",fontSize:14,fontWeight:700}}>{c.compliance_score||0}%</span>
-          </div>
-        </div>);
-      })}
-    </div>}
-
-    {/* Alerts */}
-    {alerts.length>0&&<div>
-      <h3 style={{color:"#94A3B8",fontSize:13,fontWeight:600,marginBottom:8}}>🔔 Ultimi alert normativi</h3>
-      {alerts.slice(0,2).map(a=><div key={a.id} className="card" style={{marginBottom:6,padding:12}}>
-        <span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{a.title}</span>
-        {a.impact&&<p style={{color:"#F59E0B",fontSize:11,marginTop:4}}>💡 {a.impact}</p>}
-      </div>)}
-    </div>}
-
-    <div className="disclaimer">{DISC}</div>
-  </div>);
-}
-
-/* ═══════ CLIENTS PAGE ═══════ */
-function ClientsPage({partner,clients,user,refresh}){
-  const[showAdd,setShowAdd]=useState(false);
-  const[form,setForm]=useState({name:"",sector:"altro",employees:"1",contact_email:""});
-  const[detail,setDetail]=useState(null);
-  const[clientSystems,setClientSystems]=useState([]);
-  const[clientTrainings,setClientTrainings]=useState([]);
-  const[clientDocs,setClientDocs]=useState([]);
-
-  const canAdd=partner.clients_used<partner.client_slots;
-
-  const addClient=async()=>{
-    if(!form.name||!canAdd)return;
-    const{data:co}=await sb.from("companies").insert({user_id:user.id,partner_id:partner.id,name:form.name,sector:form.sector,employees:form.employees,contact_email:form.contact_email,compliance_status:"bozza"}).select().single();
-    if(co){
-      await sb.from("partners").update({clients_used:partner.clients_used+1}).eq("id",partner.id);
-      /* Crea documenti richiesti */
-      const docs=[{doc_type:"policy",doc_title:"Policy Interna IA"},{doc_type:"info_dip",doc_title:"Informativa dipendenti"},{doc_type:"info_cli",doc_title:"Informativa clienti"},{doc_type:"registro",doc_title:"Registro IA formale"}];
-      await sb.from("documents").insert(docs.map(d=>({...d,company_id:co.id,status:"missing"})));
-      await logAction(co.id,partner.id,user.id,"client_added","Aggiunto cliente: "+form.name);
-    }
-    setShowAdd(false);setForm({name:"",sector:"altro",employees:"1",contact_email:""});
-    refresh();
-  };
-
-  const removeClient=async(c)=>{
-    if(!confirm("Rimuovere "+c.name+"? Tutti i dati verranno eliminati."))return;
-    await sb.from("companies").delete().eq("id",c.id);
-    await sb.from("partners").update({clients_used:Math.max(0,partner.clients_used-1)}).eq("id",partner.id);
-    await logAction(null,partner.id,user.id,"client_removed","Rimosso cliente: "+c.name);
-    setDetail(null);refresh();
-  };
-
-  const openDetail=async(c)=>{
-    const[{data:sys},{data:tr},{data:dc}]=await Promise.all([
-      sb.from("ai_systems").select("*").eq("company_id",c.id),
-      sb.from("training_records").select("*").eq("company_id",c.id),
-      sb.from("documents").select("*").eq("company_id",c.id),
-    ]);
-    setClientSystems(sys||[]);setClientTrainings(tr||[]);setClientDocs(dc||[]);setDetail(c);
-  };
-
-  const updateStatus=async(companyId,newStatus)=>{
-    await sb.from("companies").update({compliance_status:newStatus}).eq("id",companyId);
-    await logAction(companyId,partner.id,user.id,"score_updated","Stato aggiornato a: "+newStatus);
-    refresh();setDetail(d=>d?{...d,compliance_status:newStatus}:null);
-  };
-
-  return(<div className="fade-in">
-    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
-      <div>
-        <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Clienti PMI</h1>
-        <p style={{color:"#64748B",fontSize:13}}>Slot: {partner.clients_used}/{partner.client_slots} utilizzati</p>
-      </div>
-      <button className="bp" onClick={()=>setShowAdd(true)} disabled={!canAdd}
-        style={{opacity:canAdd?1:.5}}>{canAdd?"+ Aggiungi Cliente":"Slot esauriti"}</button>
-    </div>
-
-    {clients.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B"}}>Nessun cliente aggiunto. Clicca "+ Aggiungi Cliente" per iniziare.</p></div>:
-    <div className="card" style={{padding:0,overflow:"hidden"}}>
-      {clients.map((c,i)=>{const st=STATUS_MAP[c.compliance_status]||STATUS_MAP.bozza;return(
-        <div key={c.id} className="client-row" onClick={()=>openDetail(c)} style={{display:"flex",justifyContent:"space-between",alignItems:"center",borderBottom:i<clients.length-1?"1px solid rgba(255,255,255,.03)":"none"}}>
-          <div style={{flex:1}}>
-            <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
-              <span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{c.name}</span>
-              <span className="badge" style={{background:st.bg,color:st.c}}>{st.l}</span>
-            </div>
-            <div style={{color:"#475569",fontSize:12,marginTop:2}}>{c.sector} · {c.employees} dip. {c.contact_email?(" · "+c.contact_email):""}</div>
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span className="mono" style={{color:c.compliance_score>=70?"#10B981":c.compliance_score>=40?"#F59E0B":"#EF4444",fontSize:16,fontWeight:700}}>{c.compliance_score||0}%</span>
-            <span style={{color:"#475569",fontSize:14}}>→</span>
-          </div>
-        </div>
-      )})}
-    </div>}
-
-    {/* Add client modal */}
-    {showAdd&&<div className="modal-bg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
-      <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:16}}>Aggiungi Cliente PMI</h3>
-      <div style={{display:"flex",flexDirection:"column",gap:12}}>
-        <input placeholder="Ragione sociale *" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} required/>
-        <select value={form.sector} onChange={e=>setForm({...form,sector:e.target.value})}>
-          <option value="altro">Settore</option><option value="sv">Servizi</option><option value="cm">Commercio</option>
-          <option value="rs">Ristorazione</option><option value="mn">Manifattura</option><option value="sn">Sanità</option>
-          <option value="ed">Edilizia</option><option value="tc">Tech</option><option value="fn">Finanza</option>
-          <option value="is">Istruzione</option><option value="hr">HR</option><option value="pro">Studio professionale</option>
-        </select>
-        <select value={form.employees} onChange={e=>setForm({...form,employees:e.target.value})}>
-          <option value="1">Solo titolare</option><option value="9">2-9 dipendenti</option>
-          <option value="49">10-49 dipendenti</option><option value="249">50-249 dipendenti</option>
-        </select>
-        <input type="email" placeholder="Email referente (opzionale)" value={form.contact_email} onChange={e=>setForm({...form,contact_email:e.target.value})}/>
-        <div style={{display:"flex",gap:10}}>
-          <button className="bp" onClick={addClient}>Aggiungi</button>
-          <button className="bs" onClick={()=>setShowAdd(false)}>Annulla</button>
-        </div>
-      </div>
-    </div></div>}
-
-    {/* Client detail modal */}
-    {detail&&<div className="modal-bg" onClick={()=>setDetail(null)}><div className="modal" onClick={e=>e.stopPropagation()} style={{maxWidth:620}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:20}}>
-        <div>
-          <h3 style={{color:"#fff",fontSize:18,fontWeight:700}}>{detail.name}</h3>
-          <p style={{color:"#64748B",fontSize:12}}>{detail.sector} · {detail.employees} dip.</p>
-        </div>
-        <button className="bs" onClick={()=>setDetail(null)} style={{padding:"4px 12px"}}>✕</button>
-      </div>
-
-      {/* Status control */}
-      <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
-        {["bozza","in_corso","completato","scaduto"].map(s=>{const st=STATUS_MAP[s];return(
-          <button key={s} onClick={()=>updateStatus(detail.id,s)}
-            style={{padding:"6px 14px",borderRadius:6,fontSize:12,fontWeight:600,border:"1px solid",cursor:"pointer",
-              background:detail.compliance_status===s?st.bg:"transparent",
-              borderColor:detail.compliance_status===s?st.c+"40":"rgba(255,255,255,.06)",
-              color:detail.compliance_status===s?st.c:"#475569"}}>{st.l}</button>
-        )})}
-      </div>
-
-      {/* Systems */}
-      <div style={{marginBottom:16}}>
-        <h4 style={{color:"#94A3B8",fontSize:12,fontWeight:600,marginBottom:8}}>Sistemi IA ({clientSystems.length})</h4>
-        {clientSystems.length===0?<p style={{color:"#475569",fontSize:12}}>Nessun sistema registrato</p>:
-        clientSystems.map(s=><div key={s.id} style={{display:"flex",alignItems:"center",gap:6,padding:"4px 0"}}>
-          <span style={{fontSize:12}}>{CATS[s.category]?.ic||"⚪"}</span>
-          <span style={{color:"#D1D9E6",fontSize:13}}>{s.name}</span>
-          <span style={{color:"#475569",fontSize:11}}>({s.status})</span>
-        </div>)}
-      </div>
-
-      {/* Documents */}
-      <div style={{marginBottom:16}}>
-        <h4 style={{color:"#94A3B8",fontSize:12,fontWeight:600,marginBottom:8}}>Documenti</h4>
-        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          {clientDocs.map(d=>{
-            const cols={missing:{bg:"rgba(239,68,68,.08)",c:"#FCA5A5",l:"⚠️"},generated:{bg:"rgba(245,158,11,.08)",c:"#FCD34D",l:"📝"},signed:{bg:"rgba(16,185,129,.08)",c:"#6EE7B7",l:"✅"}};
-            const st=cols[d.status]||cols.missing;
-            return<span key={d.id} className="badge" style={{background:st.bg,color:st.c,padding:"4px 10px"}}>{st.l} {d.doc_type}</span>
-          })}
-        </div>
-      </div>
-
-      {/* Training */}
-      <div style={{marginBottom:16}}>
-        <h4 style={{color:"#94A3B8",fontSize:12,fontWeight:600,marginBottom:8}}>Formazioni ({clientTrainings.length})</h4>
-        {clientTrainings.length===0?<p style={{color:"#475569",fontSize:12}}>Nessuna formazione</p>:
-        clientTrainings.slice(0,5).map(t=><div key={t.id} style={{display:"flex",justifyContent:"space-between",padding:"4px 0",fontSize:12}}>
-          <span style={{color:"#D1D9E6"}}>{t.employee_name} — {t.topic}</span>
-          <span className="mono" style={{color:"#475569"}}>{new Date(t.completed_at).toLocaleDateString("it-IT")}</span>
-        </div>)}
-      </div>
-
-      <div style={{display:"flex",gap:8,borderTop:"1px solid var(--border)",paddingTop:12}}>
-        <button className="bs" onClick={()=>removeClient(detail)} style={{color:"#EF4444",borderColor:"rgba(239,68,68,.2)"}}>Rimuovi cliente</button>
-      </div>
-    </div></div>}
-  </div>);
-}
-
-/* ═══════ ACTIVITY / AUDIT TRAIL ═══════ */
-function ActivityPage({partner,clients}){
-  const[logs,setLogs]=useState([]);const[filter,setFilter]=useState("all");
-  useEffect(()=>{
-    (async()=>{
-      const{data}=await sb.from("compliance_logs").select("*").eq("partner_id",partner.id).order("created_at",{ascending:false}).limit(100);
-      setLogs(data||[]);
-    })();
-  },[partner.id]);
-
-  const filtered=filter==="all"?logs:logs.filter(l=>l.company_id===filter);
-  const downloadReport=(companyId)=>{
-    const cl=clients.find(c=>c.id===companyId);
-    const clLogs=logs.filter(l=>l.company_id===companyId);
-    const txt=`REPORT ATTIVITÀ MENSILE\n${cl?.name||"Cliente"}\nStudio: ${partner.studio_name}\nGenerato il: ${new Date().toLocaleDateString("it-IT")}\n${"=".repeat(50)}\n\n${clLogs.map(l=>`[${new Date(l.created_at).toLocaleString("it-IT")}] ${l.action_type}: ${l.description}`).join("\n\n")}\n\n${"=".repeat(50)}\n${DISC}`;
-    const b=new Blob([txt],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=`report-${cl?.name||"cliente"}.txt`;a.click();URL.revokeObjectURL(u);
-  };
-
-  return(<div className="fade-in">
-    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Registro Attività</h1>
-    <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
-      <select value={filter} onChange={e=>setFilter(e.target.value)} style={{maxWidth:250}}>
-        <option value="all">Tutti i clienti</option>
-        {clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
-      </select>
-      {filter!=="all"&&<button className="bs" onClick={()=>downloadReport(filter)} style={{fontSize:12}}>📥 Scarica Report</button>}
-    </div>
-    {filtered.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B"}}>Nessuna attività registrata.</p></div>:
-    <div>{filtered.map(l=>{const cl=clients.find(c=>c.id===l.company_id);return(
-      <div key={l.id} style={{padding:"10px 0",borderBottom:"1px solid rgba(255,255,255,.03)",display:"flex",gap:12,alignItems:"flex-start"}}>
-        <span className="mono" style={{color:"#334155",fontSize:10,flexShrink:0,marginTop:2}}>{new Date(l.created_at).toLocaleDateString("it-IT")}</span>
-        <div>
-          <span style={{color:"#D1D9E6",fontSize:13}}>{l.description}</span>
-          {cl&&<span style={{color:"#475569",fontSize:11,marginLeft:8}}>— {cl.name}</span>}
-          <div style={{color:"#3D4B5E",fontSize:11,marginTop:2}}>{l.action_type}</div>
-        </div>
-      </div>
-    )})}</div>}
-    <div className="disclaimer">{DISC}</div>
-  </div>);
-}
-
-/* ═══════ WHITE-LABEL SETTINGS ═══════ */
-function BrandPage({partner,settings,refresh}){
-  const[form,setForm]=useState({
-    logo_url:settings?.logo_url||"",brand_color:settings?.brand_color||"#3B82F6",
-    secondary_color:settings?.secondary_color||"#7C3AED",welcome_message:settings?.welcome_message||"",
-    footer_text:settings?.footer_text||""
-  });
-  const[saved,setSaved]=useState(false);
-
-  const save=async()=>{
-    await sb.from("partner_settings").update(form).eq("partner_id",partner.id);
-    await logAction(null,partner.id,null,"settings_updated","Impostazioni white-label aggiornate");
-    setSaved(true);setTimeout(()=>setSaved(false),2000);refresh();
-  };
-
-  return(<div className="fade-in">
-    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:6}}>White-Label</h1>
-    <p style={{color:"#64748B",fontSize:13,marginBottom:20}}>Personalizza i documenti generati per i tuoi clienti con il logo e i colori del tuo studio.</p>
-
-    <div className="card" style={{maxWidth:500}}>
-      <div style={{display:"flex",flexDirection:"column",gap:14}}>
-        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>URL Logo (PNG/JPG)</label>
-        <input placeholder="https://esempio.it/logo.png" value={form.logo_url} onChange={e=>setForm({...form,logo_url:e.target.value})}/>
-        <p style={{color:"#475569",fontSize:11,marginTop:4}}>Apparirà in testata su tutti i documenti generati. Consigliato: 200x60px.</p></div>
-
-        <div style={{display:"flex",gap:12}}>
-          <div style={{flex:1}}><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Colore primario</label>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            <input type="color" value={form.brand_color} onChange={e=>setForm({...form,brand_color:e.target.value})} style={{width:40,height:40,padding:2,borderRadius:6}}/>
-            <input value={form.brand_color} onChange={e=>setForm({...form,brand_color:e.target.value})} style={{flex:1}}/>
-          </div></div>
-          <div style={{flex:1}}><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Colore secondario</label>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            <input type="color" value={form.secondary_color} onChange={e=>setForm({...form,secondary_color:e.target.value})} style={{width:40,height:40,padding:2,borderRadius:6}}/>
-            <input value={form.secondary_color} onChange={e=>setForm({...form,secondary_color:e.target.value})} style={{flex:1}}/>
-          </div></div>
-        </div>
-
-        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Messaggio di benvenuto</label>
-        <textarea value={form.welcome_message} onChange={e=>setForm({...form,welcome_message:e.target.value})} rows={3} placeholder="Benvenuto nella piattaforma di compliance AI Act del nostro studio."/></div>
-
-        <div><label style={{color:"#64748B",fontSize:12,marginBottom:4,display:"block"}}>Testo footer documenti</label>
-        <input value={form.footer_text} onChange={e=>setForm({...form,footer_text:e.target.value})} placeholder="Studio [Nome] — P.IVA 00000000000"/></div>
-
-        <button className="bp" onClick={save}>{saved?"✅ Salvato!":"Salva impostazioni"}</button>
-      </div>
-    </div>
-
-    {/* Preview */}
-    <div className="card" style={{marginTop:16,maxWidth:500}}>
-      <div style={{color:"#94A3B8",fontSize:12,fontWeight:600,marginBottom:10}}>Anteprima intestazione documento</div>
-      <div style={{background:"#fff",borderRadius:8,padding:20,color:"#111"}}>
-        {form.logo_url?<img src={form.logo_url} alt="Logo" style={{maxHeight:50,marginBottom:10}} onError={e=>{e.target.style.display="none"}}/>:
-        <div style={{background:form.brand_color,color:"#fff",padding:"8px 16px",borderRadius:6,display:"inline-block",fontSize:14,fontWeight:700,marginBottom:10}}>{partner.studio_name}</div>}
-        <div style={{fontSize:11,color:"#666",borderTop:"2px solid "+form.brand_color,paddingTop:8}}>
-          Documento generato per conto di {partner.studio_name} tramite AIComply.it
-          {form.footer_text&&<span> — {form.footer_text}</span>}
-        </div>
-      </div>
-    </div>
-
-    <div className="disclaimer" style={{maxWidth:500}}>I documenti PDF generati per i clienti del tuo studio includeranno automaticamente il logo e i colori impostati sopra. {DISC}</div>
-  </div>);
-}
-
-/* ═══════ ALERTS ═══════ */
-function AlertsPage({alerts}){
-  return(<div className="fade-in">
-    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Alert Normativi</h1>
-    <p style={{color:"#64748B",fontSize:13,marginBottom:16}}>Aggiornamenti rilevanti per tutti i tuoi clienti PMI.</p>
-    {alerts.map(a=><div key={a.id} className="card" style={{marginBottom:10,padding:18}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:8,flexWrap:"wrap"}}>
-        <h3 style={{color:"#fff",fontSize:15,fontWeight:600}}>{a.title}</h3>
-        <span className="badge" style={{background:a.severity==="critical"?"rgba(239,68,68,.1)":a.severity==="warning"?"rgba(245,158,11,.1)":"rgba(59,130,246,.08)",
-          color:a.severity==="critical"?"#FCA5A5":a.severity==="warning"?"#FCD34D":"#93C5FD",flexShrink:0}}>{a.severity==="critical"?"Critico":a.severity==="warning"?"Importante":"Info"}</span>
-      </div>
-      <p style={{color:"#94A3B8",fontSize:13,lineHeight:1.6,marginTop:8}}>{a.content}</p>
-      {a.impact&&<p style={{color:"#F59E0B",fontSize:12,background:"rgba(245,158,11,.04)",padding:"8px 10px",borderRadius:6,marginTop:8}}>💡 Impatto: {a.impact}</p>}
-      <span className="mono" style={{color:"#334155",fontSize:10,marginTop:6,display:"block"}}>{new Date(a.published_at).toLocaleDateString("it-IT")} · {a.source}</span>
-    </div>)}
-    <div className="disclaimer">{DISC}</div>
-  </div>);
-}
-
-/* ═══════ MAIN APP ═══════ */
-function App(){
-  const[user,setUser]=useState(null);
-  const[loading,setLoading]=useState(true);
-  const[page,setPage]=useState("dash");
-  const[partner,setPartner]=useState(null);
-  const[settings,setSettings]=useState(null);
-  const[clients,setClients]=useState([]);
-  const[alerts,setAlerts]=useState([]);
-
-  const loadData=useCallback(async(uid)=>{
-    const{data:p}=await sb.from("partners").select("*").eq("user_id",uid).single();
-    setPartner(p);
-    if(p){
-      const[{data:cl},{data:ps},{data:al}]=await Promise.all([
-        sb.from("companies").select("*").eq("partner_id",p.id).order("name"),
-        sb.from("partner_settings").select("*").eq("partner_id",p.id).single(),
-        sb.from("alerts").select("*").order("published_at",{ascending:false}),
-      ]);
-      setClients(cl||[]);setSettings(ps);setAlerts(al||[]);
-    }
-  },[]);
-
-  useEffect(()=>{
-    sb.auth.getSession().then(({data:{session}})=>{
-      if(session?.user){setUser(session.user);loadData(session.user.id)}
-      setLoading(false);
-    });
-    const{data:{subscription}}=sb.auth.onAuthStateChange((ev,session)=>{
-      if(session?.user){setUser(session.user);loadData(session.user.id)}
-      else{setUser(null);setPartner(null)}
-    });
-    return()=>subscription.unsubscribe();
-  },[loadData]);
-
-  const logout=async()=>{await sb.auth.signOut();setUser(null);setPartner(null)};
-  const refresh=()=>user&&loadData(user.id);
-
-  if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#475569"}}>Caricamento...</span></div>;
-  if(!user||!partner)return<Auth onAuth={u=>{setUser(u);loadData(u.id)}}/>;
-
-  return(
-    <div style={{display:"flex",height:"100vh"}}>
-      <Sidebar page={page} setPage={setPage} onLogout={logout} partner={partner}/>
-      <div className="main-content" style={{flex:1,overflow:"auto",padding:"20px 24px"}}>
-        {page==="dash"&&<DashPage partner={partner} clients={clients} alerts={alerts}/>}
-        {page==="clients"&&<ClientsPage partner={partner} clients={clients} user={user} refresh={refresh}/>}
-        {page==="activity"&&<ActivityPage partner={partner} clients={clients}/>}
-        {page==="brand"&&<BrandPage partner={partner} settings={settings} refresh={refresh}/>}
-        {page==="alerts"&&<AlertsPage alerts={alerts}/>}
-      </div>
-      <MobileNav page={page} setPage={setPage}/>
-    </div>
-  );
 }
 
 ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
