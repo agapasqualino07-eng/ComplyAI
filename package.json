@@ -1,0 +1,9 @@
+{
+  "private": true,
+  "name": "aicomply",
+  "version": "1.0.0",
+  "dependencies": {
+    "stripe": "^17.4.0",
+    "@supabase/supabase-js": "^2.49.0"
+  }
+}
