@@ -636,7 +636,18 @@ function App(){
   };
 
   const loadData=useCallback(async(uid)=>{
-    const{data:co}=await sb.from("companies").select("*").eq("user_id",uid).single();
+    let{data:co}=await sb.from("companies").select("*").eq("user_id",uid).single();
+    /* Auto-crea company se l'utente non ne ha una (fix per utenti registrati prima del paywall) */
+    if(!co){
+      const{data:profile}=await sb.from("profiles").select("display_name").eq("id",uid).single();
+      const{data:newCo}=await sb.from("companies").insert({user_id:uid,name:profile?.display_name||"La mia azienda",sector:"altro",employees:"1",compliance_score:50}).select().single();
+      co=newCo;
+      /* Crea documenti richiesti */
+      if(co){
+        const REQ=[{type:"policy",title:"Policy Interna sull'uso dell'IA"},{type:"info_dip",title:"Informativa IA per i dipendenti"},{type:"info_cli",title:"Informativa trasparenza clienti"},{type:"registro",title:"Registro IA formale"}];
+        await sb.from("documents").insert(REQ.map(d=>({company_id:co.id,doc_type:d.type,doc_title:d.title,status:"missing"})));
+      }
+    }
     setCompany(co);
     if(co){
       const[{data:sys},{data:tr},{data:dc}]=await Promise.all([
