@@ -81,29 +81,6 @@ return(<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justify
 </div><p style={{color:"#334155",fontSize:10,textAlign:"center",marginTop:16}}>Dopo il pagamento su Stripe, registrati qui per accedere alla dashboard.</p>
 </div></div>)}
 
-/* ═══════ PAYWALL ENTERPRISE ═══════ */
-function Paywall({email,onLogout}){
-  const STRIPE_ENT="https://buy.stripe.com/9B68wPaPJ2WDbea0WjfYY02";
-  return(
-    <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}>
-      <div style={{maxWidth:440,width:"100%",textAlign:"center"}}>
-        <div style={{width:56,height:56,borderRadius:14,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:20,fontFamily:"Space Mono",margin:"0 auto 20px"}}>AI</div>
-        <h1 style={{color:"#fff",fontSize:24,fontWeight:700,marginBottom:8}}>Abbonamento Enterprise non attivo</h1>
-        <p style={{color:"#64748B",fontSize:14,lineHeight:1.6,marginBottom:8}}>Per accedere alla dashboard Enterprise e gestire i tuoi clienti, devi prima attivare l'abbonamento.</p>
-        <div style={{color:"#F59E0B",fontSize:12,lineHeight:1.5,marginBottom:24,background:"rgba(245,158,11,.06)",border:"1px solid rgba(245,158,11,.15)",borderRadius:8,padding:"10px 16px"}}>
-          <strong>Importante:</strong> usa la stessa email sia per il pagamento Stripe sia per la registrazione qui.<br/>La tua email: <strong style={{color:"#FCD34D"}}>{email}</strong>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:300,margin:"0 auto"}}>
-          <a href={STRIPE_ENT} target="_blank" rel="noopener noreferrer" style={{display:"block",background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",color:"#fff",padding:"12px 24px",borderRadius:8,fontSize:14,fontWeight:600,textDecoration:"none",textAlign:"center"}}>Attiva Enterprise — €199/mese</a>
-          <button onClick={function(){window.location.reload()}} style={{background:"rgba(255,255,255,.04)",border:"1px solid rgba(255,255,255,.06)",color:"#CBD5E1",padding:"10px 24px",borderRadius:8,fontSize:13,fontWeight:500,cursor:"pointer"}}>Ho già pagato — Verifica</button>
-          <button onClick={onLogout} style={{background:"none",border:"none",color:"#475569",fontSize:12,cursor:"pointer",marginTop:4}}>← Esci</button>
-        </div>
-        <p style={{color:"#334155",fontSize:10,marginTop:24}}>Dopo il pagamento, clicca "Ho già pagato" o ricarica la pagina.</p>
-      </div>
-    </div>
-  );
-}
-
 /* ═══════ MAIN APP ═══════ */
 function App(){
 const[user,setUser]=useState(null);const[loading,setLoading]=useState(true);
@@ -112,16 +89,15 @@ const[clients,setClients]=useState([]);const[alerts,setAlerts]=useState([]);
 const[selClient,setSelClient]=useState(null); // selected client for workspace
 const[clientTab,setClientTab]=useState("reg"); // sub-tab inside client workspace
 const[cSys,setCSys]=useState([]);const[cTr,setCTr]=useState([]);const[cDocs,setCDocs]=useState([]);
-const[activeSub,setActiveSub]=useState(null);const[subChecked,setSubChecked]=useState(false);
 
-/* Controlla subscription Enterprise */
-const checkSub=useCallback(async()=>{
-  try{
-    const{data}=await sb.from("subscriptions").select("*").in("status",["active","canceling"]).eq("plan","enterprise");
-    const found=data&&data.length>0?data[0]:null;
-    setActiveSub(found);setSubChecked(true);return found;
-  }catch(e){setSubChecked(true);return null}
-},[]);
+const[subActive,setSubActive]=useState(false);
+const[subChecked,setSubChecked]=useState(false);
+const[checking,setChecking]=useState(false);
+
+const checkSub=async(email)=>{
+  try{const{data}=await sb.from("subscriptions").select("status,plan").eq("customer_email",email.toLowerCase()).in("status",["active","canceling"]).limit(1);
+  return data&&data.length>0&&data.some(s=>s.plan==="enterprise"||s.plan==="pro")}catch(e){return false}
+};
 
 const loadData=useCallback(async(uid)=>{
   const{data:p}=await sb.from("partners").select("*").eq("user_id",uid).single();setPartner(p);
@@ -144,21 +120,48 @@ const loadClient=async(c)=>{
 const refreshClient=async()=>{if(selClient)await loadClient(selClient);if(user)await loadData(user.id)};
 const refresh=()=>user&&loadData(user.id);
 
-useEffect(()=>{sb.auth.getSession().then(async({data:{session}})=>{
-  if(session?.user){setUser(session.user);const s=await checkSub();if(s)await loadData(session.user.id)}
-  setLoading(false)});
-const{data:{subscription:authListener}}=sb.auth.onAuthStateChange(async(ev,session)=>{
-  if(session?.user){setUser(session.user);const s=await checkSub();if(s)await loadData(session.user.id)}
-  else{setUser(null);setPartner(null);setActiveSub(null);setSubChecked(false)}});
-return()=>authListener.unsubscribe()},[loadData,checkSub]);
+useEffect(()=>{
+  const timer=setTimeout(()=>setLoading(false),6000);
+  sb.auth.getSession().then(async({data:{session}})=>{
+    clearTimeout(timer);
+    if(session?.user){setUser(session.user);
+      const active=await checkSub(session.user.email);setSubActive(active);setSubChecked(true);
+      if(active)await loadData(session.user.id)}
+    setLoading(false)});
+  const{data:{subscription}}=sb.auth.onAuthStateChange(async(ev,session)=>{
+    if(session?.user){setUser(session.user);
+      const active=await checkSub(session.user.email);setSubActive(active);setSubChecked(true);
+      if(active)await loadData(session.user.id)}
+    else{setUser(null);setPartner(null);setSubActive(false);setSubChecked(false)}});
+  return()=>{clearTimeout(timer);subscription.unsubscribe()}},[loadData]);
 
-const logout=async()=>{await sb.auth.signOut();setUser(null);setPartner(null);setActiveSub(null);setSubChecked(false)};
+const recheck=async()=>{setChecking(true);await new Promise(r=>setTimeout(r,2000));const active=await checkSub(user.email);setSubActive(active);if(active)await loadData(user.id);setChecking(false)};
+const logout=async()=>{await sb.auth.signOut();setUser(null);setPartner(null);setSubActive(false);setSubChecked(false)};
 
-if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#475569"}}>Caricamento...</span></div>;
-if(!user)return<Auth onAuth={async u=>{setUser(u);const s=await checkSub();if(s)await loadData(u.id)}}/>;
-if(!subChecked)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center"}}><span style={{color:"#475569"}}>Verifica abbonamento...</span></div>;
-if(!activeSub)return<Paywall email={user.email} onLogout={logout}/>;
-if(!partner)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}><div style={{textAlign:"center"}}><p style={{color:"#64748B",marginBottom:16}}>Account partner non trovato. Riprova la registrazione.</p><button onClick={logout} className="bs">← Esci</button></div></div>;
+if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#060A14"}}>
+  <div style={{textAlign:"center"}}><div style={{width:40,height:40,border:"3px solid rgba(139,92,246,.2)",borderTopColor:"#8B5CF6",borderRadius:"50%",animation:"spin .8s linear infinite",margin:"0 auto 16px"}}/><span style={{color:"#475569",fontSize:14}}>Caricamento...</span><style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style></div></div>;
+
+if(!user)return<Auth onAuth={async u=>{setUser(u);const active=await checkSub(u.email);setSubActive(active);setSubChecked(true);if(active)await loadData(u.id)}}/>;
+
+/* PAYWALL Enterprise */
+if(subChecked&&!subActive)return(
+  <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}>
+    <div style={{maxWidth:400,width:"100%",textAlign:"center"}}>
+      <div style={{width:56,height:56,borderRadius:14,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:22,fontFamily:"Space Mono",margin:"0 auto 20px"}}>AI</div>
+      <h2 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:8}}>Abbonamento Enterprise non attivo</h2>
+      <p style={{color:"#64748B",fontSize:14,marginBottom:6}}>Accesso riservato ai Partner AIComply Enterprise.</p>
+      {user.email&&<p style={{color:"#475569",fontSize:12,marginBottom:24}}>Account: {user.email}</p>}
+      <button className="bp" onClick={()=>window.open("https://buy.stripe.com/IL_TUO_LINK_ENTERPRISE","_blank")} style={{width:"100%",marginBottom:12,padding:"14px 0",fontSize:16}}>Attiva Enterprise — €199/mese</button>
+      <button className="bs" onClick={recheck} disabled={checking} style={{width:"100%",padding:"12px 0"}}>{checking?"Verifico...":"Ho già pagato — Verifica"}</button>
+      <div style={{marginTop:20,display:"flex",gap:16,justifyContent:"center"}}>
+        <a href="/" style={{color:"#475569",fontSize:12,textDecoration:"none"}}>← Torna al sito</a>
+        <button onClick={logout} style={{background:"none",border:"none",color:"#475569",fontSize:12,cursor:"pointer"}}>Esci</button>
+      </div>
+    </div>
+  </div>);
+
+/* Se non è ancora partner (ha pagato ma non si è registrato come partner) */
+if(!partner)return<Auth onAuth={async u=>{setUser(u);await loadData(u.id)}}/>;
 
 /* ═══ SIDEBAR ═══ */
 const PAGES=[{id:"dash",icon:"📊",label:"Overview"},{id:"clients",icon:"🏢",label:"Clienti"},{id:"activity",icon:"📋",label:"Attività"},{id:"brand",icon:"🎨",label:"White-Label"},{id:"alerts",icon:"🔔",label:"Alert"}];
