@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIComply Enterprise — Dashboard Partner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.26.9/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#060A14;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.06);--text:#CBD5E1;--muted:#64748B;--white:#fff;--accent:#8B5CF6;--green:#10B981;--yellow:#F59E0B;--red:#EF4444;--blue:#3B82F6}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+.mono{font-family:'Space Mono',monospace}
+input,textarea,select{font-family:inherit;background:rgba(255,255,255,.04);border:1px solid var(--border);color:#E2E8F0;border-radius:8px;padding:10px 14px;font-size:14px;width:100%;outline:0;transition:border .2s}
+input:focus,textarea:focus,select:focus{border-color:rgba(139,92,246,.5)}
+select option{background:#1E293B}button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:3px}
+.bp{background:linear-gradient(135deg,#8B5CF6,#6D28D9);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;transition:transform .15s}.bp:hover{transform:translateY(-1px)}
+.bpb{background:linear-gradient(135deg,#3B82F6,#2563EB);color:#fff;border:none;padding:10px 24px;border-radius:8px;font-size:14px;font-weight:600;transition:transform .15s}.bpb:hover{transform:translateY(-1px)}
+.bs{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:8px 16px;border-radius:8px;font-size:13px;font-weight:500;transition:all .2s}.bs:hover{border-color:rgba(139,92,246,.3)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.fade{animation:fi .4s ease}@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.mbg{position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(3px)}
+.modal{background:#0F172A;border:1px solid var(--border);border-radius:14px;padding:28px;max-width:560px;width:92%;max-height:85vh;overflow-y:auto}
+.ptrack{height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden}
+.pbar{height:100%;border-radius:3px;transition:width .8s ease}
+.disc{color:#475569;font-size:10px;line-height:1.6;padding:10px;background:rgba(255,255,255,.015);border:1px solid rgba(255,255,255,.03);border-radius:6px;margin-top:14px}
+.sidebar{width:230px;border-right:1px solid var(--border);display:flex;flex-direction:column;padding:14px 10px;flex-shrink:0;background:rgba(0,0,0,.2)}
+.sbi{display:flex;align-items:center;gap:9px;padding:9px 13px;border-radius:7px;transition:all .15s;color:var(--muted);font-size:13px;font-weight:500;border:none;background:none;width:100%;text-align:left}
+.sbi:hover{background:rgba(139,92,246,.06);color:#A78BFA}.sbi.on{background:rgba(139,92,246,.1);color:#A78BFA}
+.mnav{display:none;position:fixed;bottom:0;left:0;right:0;background:#070B15;border-top:1px solid var(--border);z-index:50;padding:4px 0}
+.mb{flex:1;display:flex;flex-direction:column;align-items:center;gap:1px;padding:5px 0;border:none;background:none;color:var(--muted);font-size:9px;font-weight:500}.mb.on{color:#A78BFA}
+.tab{display:inline-flex;padding:7px 16px;border-radius:6px;font-size:13px;font-weight:500;border:none;cursor:pointer;transition:all .15s}
+.tab-off{background:transparent;color:#64748B}.tab-off:hover{color:#94A3B8}
+.tab-on{background:rgba(139,92,246,.1);color:#A78BFA}
+.crow{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.crow:hover{background:rgba(139,92,246,.03)}
+@media(max-width:768px){.sidebar{display:none}.mnav{display:flex}.mc{padding-bottom:66px!important}.modal{width:96%;padding:20px}}
+@media(min-width:769px){.mnav{display:none!important}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useCallback}=React;
+const SUPABASE_URL="https://uuktxbqjemizafizxhzz.supabase.co";
+const SUPABASE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV1a3R4YnFqZW1pemFmaXp4aHp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2OTAyMzYsImV4cCI6MjA5MDI2NjIzNn0.3aNOEbNNCWpJgWMmQHPkOG4KeSdkndVsHy9tch5p78Q";
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const DISC="Strumento informativo — non costituisce consulenza legale. La responsabilità dei contenuti e della firma è del Titolare. Fonti: Reg. (UE) 2024/1689, L. 132/2025.";
+const CATS={vietato:{l:"Vietato",c:"#DC2626",ic:"⛔",bg:"rgba(220,38,38,.08)"},alto:{l:"Alto Rischio",c:"#EF4444",ic:"🔴",bg:"rgba(239,68,68,.06)"},trasparenza:{l:"Trasparenza",c:"#F59E0B",ic:"🟡",bg:"rgba(245,158,11,.06)"},gpai:{l:"IA Generativa",c:"#3B82F6",ic:"🔵",bg:"rgba(59,130,246,.06)"},minimo:{l:"Minimo",c:"#10B981",ic:"🟢",bg:"rgba(16,185,129,.06)"}};
+const STMAP={bozza:{l:"Bozza",c:"#64748B",bg:"rgba(100,116,139,.1)"},in_corso:{l:"In corso",c:"#F59E0B",bg:"rgba(245,158,11,.1)"},completato:{l:"Completato",c:"#10B981",bg:"rgba(16,185,129,.1)"},scaduto:{l:"Scaduto",c:"#EF4444",bg:"rgba(239,68,68,.1)"}};
+const VENDORS={chatgpt:{name:"ChatGPT",provider:"OpenAI",cat:"gpai",risks:["Art. 50 — contenuti identificabili se pubblicati","Art. 4 — formazione obbligatoria","Dati possono essere usati per addestramento (verificare opt-out)"]},gemini:{name:"Gemini",provider:"Google",cat:"gpai",risks:["Art. 50 — stessi obblighi trasparenza","Integrato in Workspace — verificare attivazione"]},copilot:{name:"Copilot",provider:"Microsoft",cat:"gpai",risks:["Art. 50 — contenuti identificabili","Integrato in M365 — potrebbe essere attivo a insaputa dei dipendenti"]},claude:{name:"Claude",provider:"Anthropic",cat:"gpai",risks:["Art. 50 — contenuti identificabili","Dati NON usati per addestramento (piano Team/Enterprise)"]},midjourney:{name:"Midjourney",provider:"Midjourney Inc.",cat:"gpai",risks:["Art. 50(2) — immagini devono essere marcate AI-generated","Immagini pubbliche nel piano base"]}};
+const RDOCS=[{type:"policy",title:"Policy Interna IA",icon:"📋",ref:"AI Act + L.132/2025"},{type:"info_dip",title:"Informativa dipendenti",icon:"👥",ref:"Art. 11 L.132/2025"},{type:"info_cli",title:"Informativa clienti",icon:"🤝",ref:"Art. 50 AI Act"},{type:"registro",title:"Registro IA formale",icon:"🗂️",ref:"Best practice"}];
+const MODS=[{id:"m1",title:"Cos'è l'AI Act",dur:.5},{id:"m2",title:"Uso responsabile IA Generativa",dur:.5},{id:"m3",title:"Le 8 pratiche vietate",dur:.5},{id:"m4",title:"Obblighi L.132/2025",dur:.5}];
+
+const log=async(cid,pid,uid,type,desc)=>{try{await sb.from("compliance_logs").insert({company_id:cid,partner_id:pid,action_by:uid,action_type:type,description:desc})}catch(e){}};
+
+/* ═══════ AUTH ═══════ */
+function Auth({onAuth}){
+const[mode,setMode]=useState("login");const[email,setEmail]=useState("");const[pass,setPass]=useState("");const[studio,setStudio]=useState("");const[contact,setContact]=useState("");const[err,setErr]=useState("");const[ld,setLd]=useState(false);
+const go=async(e)=>{e.preventDefault();setErr("");setLd(true);try{
+if(mode==="login"){const{data,error}=await sb.auth.signInWithPassword({email,password:pass});if(error)throw error;const{data:p}=await sb.from("partners").select("id").eq("user_id",data.user.id).single();if(!p){setErr("Account non registrato come Partner. Usa /app.html per il Pro.");setLd(false);return}onAuth(data.user)}
+else{const{data,error}=await sb.auth.signUp({email,password:pass,options:{data:{company_name:studio}}});if(error)throw error;if(data.user){await sb.from("profiles").upsert({id:data.user.id,role:"partner",display_name:studio,email});const{data:pt}=await sb.from("partners").insert({user_id:data.user.id,studio_name:studio,contact_name:contact,contact_email:email,client_slots:10}).select().single();if(pt)await sb.from("partner_settings").insert({partner_id:pt.id});onAuth(data.user)}}
+}catch(e){setErr(e.message)}setLd(false)};
+return(<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}><div style={{maxWidth:400,width:"100%"}}>
+<div style={{display:"flex",alignItems:"center",gap:8,marginBottom:32,justifyContent:"center"}}><div style={{width:34,height:34,borderRadius:8,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:14,fontFamily:"Space Mono"}}>AI</div><span style={{color:"#fff",fontWeight:600,fontSize:19}}>AIComply<span style={{color:"#A78BFA"}}>.it</span> <span style={{color:"#7C3AED",fontSize:13}}>Enterprise</span></span></div>
+<div className="card" style={{padding:28}}><h2 style={{color:"#fff",fontSize:20,fontWeight:700,marginBottom:4}}>{mode==="login"?"Accedi":"Registra il tuo Studio"}</h2>
+<p style={{color:"#64748B",fontSize:13,marginBottom:20}}>{mode==="login"?"Gestisci i tuoi clienti PMI":"Dashboard multi-cliente per il tuo studio"}</p>
+<form onSubmit={go} style={{display:"flex",flexDirection:"column",gap:12}}>
+{mode==="register"&&<><input placeholder="Nome Studio *" value={studio} onChange={e=>setStudio(e.target.value)} required/><input placeholder="Referente" value={contact} onChange={e=>setContact(e.target.value)}/></>}
+<input type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} required/>
+<input type="password" placeholder="Password (min 6)" value={pass} onChange={e=>setPass(e.target.value)} required minLength={6}/>
+{err&&<p style={{color:"#EF4444",fontSize:12}}>{err}</p>}
+<button className="bp" type="submit" disabled={ld} style={{width:"100%"}}>{ld?"...":(mode==="login"?"Accedi":"Registra")}</button></form>
+<p style={{color:"#475569",fontSize:12,marginTop:14,textAlign:"center"}}>{mode==="login"?<>Nuovo? <button onClick={()=>{setMode("register");setErr("")}} style={{background:"none",border:"none",color:"#A78BFA",cursor:"pointer",fontSize:12}}>Registrati</button></>:<>Hai un account? <button onClick={()=>{setMode("login");setErr("")}} style={{background:"none",border:"none",color:"#A78BFA",cursor:"pointer",fontSize:12}}>Accedi</button></>}</p>
+</div><p style={{color:"#334155",fontSize:10,textAlign:"center",marginTop:16}}>Dopo il pagamento su Stripe, registrati qui per accedere alla dashboard.</p>
+</div></div>)}
+
+/* ═══════ MAIN APP ═══════ */
+function App(){
+const[user,setUser]=useState(null);const[loading,setLoading]=useState(true);
+const[page,setPage]=useState("dash");const[partner,setPartner]=useState(null);const[settings,setSettings]=useState(null);
+const[clients,setClients]=useState([]);const[alerts,setAlerts]=useState([]);
+const[selClient,setSelClient]=useState(null); // selected client for workspace
+const[clientTab,setClientTab]=useState("reg"); // sub-tab inside client workspace
+const[cSys,setCSys]=useState([]);const[cTr,setCTr]=useState([]);const[cDocs,setCDocs]=useState([]);
+
+const[subActive,setSubActive]=useState(false);
+const[subChecked,setSubChecked]=useState(false);
+const[checking,setChecking]=useState(false);
+
+const checkSub=async(email)=>{
+  try{const{data}=await sb.from("subscriptions").select("status,plan").eq("customer_email",email.toLowerCase()).in("status",["active","canceling"]).limit(1);
+  return data&&data.length>0&&data.some(s=>s.plan==="enterprise"||s.plan==="pro")}catch(e){return false}
+};
+
+const loadData=useCallback(async(uid)=>{
+  const{data:p}=await sb.from("partners").select("*").eq("user_id",uid).single();setPartner(p);
+  if(p){
+    const[{data:cl},{data:ps},{data:al}]=await Promise.all([
+      sb.from("companies").select("*").eq("partner_id",p.id).order("name"),
+      sb.from("partner_settings").select("*").eq("partner_id",p.id).single(),
+      sb.from("alerts").select("*").order("published_at",{ascending:false})]);
+    setClients(cl||[]);setSettings(ps);setAlerts(al||[]);}
+},[]);
+
+const loadClient=async(c)=>{
+  const[{data:s},{data:t},{data:d}]=await Promise.all([
+    sb.from("ai_systems").select("*").eq("company_id",c.id).order("created_at",{ascending:false}),
+    sb.from("training_records").select("*").eq("company_id",c.id).order("completed_at",{ascending:false}),
+    sb.from("documents").select("*").eq("company_id",c.id)]);
+  setCSys(s||[]);setCTr(t||[]);setCDocs(d||[]);setSelClient(c);setClientTab("reg");setPage("workspace");
+};
+
+const refreshClient=async()=>{if(selClient)await loadClient(selClient);if(user)await loadData(user.id)};
+const refresh=()=>user&&loadData(user.id);
+
+useEffect(()=>{
+  const timer=setTimeout(()=>setLoading(false),6000);
+  sb.auth.getSession().then(async({data:{session}})=>{
+    clearTimeout(timer);
+    if(session?.user){setUser(session.user);
+      const active=await checkSub(session.user.email);setSubActive(active);setSubChecked(true);
+      if(active)await loadData(session.user.id)}
+    setLoading(false)});
+  const{data:{subscription}}=sb.auth.onAuthStateChange(async(ev,session)=>{
+    if(session?.user){setUser(session.user);
+      const active=await checkSub(session.user.email);setSubActive(active);setSubChecked(true);
+      if(active)await loadData(session.user.id)}
+    else{setUser(null);setPartner(null);setSubActive(false);setSubChecked(false)}});
+  return()=>{clearTimeout(timer);subscription.unsubscribe()}},[loadData]);
+
+const recheck=async()=>{setChecking(true);await new Promise(r=>setTimeout(r,2000));const active=await checkSub(user.email);setSubActive(active);if(active)await loadData(user.id);setChecking(false)};
+const logout=async()=>{await sb.auth.signOut();setUser(null);setPartner(null);setSubActive(false);setSubChecked(false)};
+
+if(loading)return<div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"#060A14"}}>
+  <div style={{textAlign:"center"}}><div style={{width:40,height:40,border:"3px solid rgba(139,92,246,.2)",borderTopColor:"#8B5CF6",borderRadius:"50%",animation:"spin .8s linear infinite",margin:"0 auto 16px"}}/><span style={{color:"#475569",fontSize:14}}>Caricamento...</span><style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style></div></div>;
+
+if(!user)return<Auth onAuth={async u=>{setUser(u);const active=await checkSub(u.email);setSubActive(active);setSubChecked(true);if(active)await loadData(u.id)}}/>;
+
+/* PAYWALL Enterprise */
+if(subChecked&&!subActive)return(
+  <div style={{minHeight:"100vh",display:"flex",alignItems:"center",justifyContent:"center",background:"linear-gradient(170deg,#060A14,#0E1225)",padding:20}}>
+    <div style={{maxWidth:400,width:"100%",textAlign:"center"}}>
+      <div style={{width:56,height:56,borderRadius:14,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:22,fontFamily:"Space Mono",margin:"0 auto 20px"}}>AI</div>
+      <h2 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:8}}>Abbonamento Enterprise non attivo</h2>
+      <p style={{color:"#64748B",fontSize:14,marginBottom:6}}>Accesso riservato ai Partner AIComply Enterprise.</p>
+      {user.email&&<p style={{color:"#475569",fontSize:12,marginBottom:24}}>Account: {user.email}</p>}
+      <button className="bp" onClick={()=>window.open("https://buy.stripe.com/9B68wPaPJ2WDbea0WjfYY02","_blank")} style={{width:"100%",marginBottom:12,padding:"14px 0",fontSize:16}}>Attiva Enterprise — €199/mese</button>
+      <button className="bs" onClick={recheck} disabled={checking} style={{width:"100%",padding:"12px 0"}}>{checking?"Verifico...":"Ho già pagato — Verifica"}</button>
+      <div style={{marginTop:20,display:"flex",gap:16,justifyContent:"center"}}>
+        <a href="/" style={{color:"#475569",fontSize:12,textDecoration:"none"}}>← Torna al sito</a>
+        <button onClick={logout} style={{background:"none",border:"none",color:"#475569",fontSize:12,cursor:"pointer"}}>Esci</button>
+      </div>
+    </div>
+  </div>);
+
+/* Se non è ancora partner (ha pagato ma non si è registrato come partner) */
+if(!partner)return<Auth onAuth={async u=>{setUser(u);await loadData(u.id)}}/>;
+
+/* ═══ SIDEBAR ═══ */
+const PAGES=[{id:"dash",icon:"📊",label:"Overview"},{id:"clients",icon:"🏢",label:"Clienti"},{id:"activity",icon:"📋",label:"Attività"},{id:"brand",icon:"🎨",label:"White-Label"},{id:"alerts",icon:"🔔",label:"Alert"}];
+const sidebarPage=page==="workspace"?"clients":page;
+
+const SB=()=>(<div className="sidebar">
+  <div style={{display:"flex",alignItems:"center",gap:8,padding:"4px 8px",marginBottom:16}}>
+    <div style={{width:26,height:26,borderRadius:6,background:"linear-gradient(135deg,#8B5CF6,#6D28D9)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700,color:"#fff",fontSize:10,fontFamily:"Space Mono"}}>AI</div>
+    <span style={{color:"#fff",fontWeight:600,fontSize:14}}>AIComply <span style={{color:"#A78BFA",fontSize:11}}>Enterprise</span></span>
+  </div>
+  <div style={{padding:"6px 13px",marginBottom:14,background:"rgba(139,92,246,.05)",borderRadius:7,border:"1px solid rgba(139,92,246,.1)"}}>
+    <div style={{color:"#A78BFA",fontSize:12,fontWeight:600}}>{partner.studio_name}</div>
+    <div style={{color:"#475569",fontSize:11}}>Slot: {partner.clients_used}/{partner.client_slots}</div>
+  </div>
+  {selClient&&page==="workspace"&&<div style={{padding:"8px 13px",marginBottom:10,background:"rgba(59,130,246,.06)",borderRadius:7,border:"1px solid rgba(59,130,246,.12)"}}>
+    <div style={{color:"#93C5FD",fontSize:11}}>Cliente attivo:</div>
+    <div style={{color:"#fff",fontSize:13,fontWeight:600}}>{selClient.name}</div>
+    <button onClick={()=>{setSelClient(null);setPage("clients")}} style={{background:"none",border:"none",color:"#60A5FA",fontSize:11,cursor:"pointer",padding:0,marginTop:4}}>← Torna alla lista</button>
+  </div>}
+  <div style={{flex:1,display:"flex",flexDirection:"column",gap:2}}>
+    {PAGES.map(p=><button key={p.id} className={"sbi"+(sidebarPage===p.id?" on":"")} onClick={()=>{setPage(p.id);if(p.id!=="clients")setSelClient(null)}}><span style={{fontSize:14}}>{p.icon}</span>{p.label}</button>)}
+  </div>
+  <button className="sbi" onClick={logout} style={{borderTop:"1px solid var(--border)",paddingTop:10,marginTop:8}}><span style={{fontSize:12}}>🚪</span>Esci</button>
+</div>);
+
+const MN=()=>(<div className="mnav">{PAGES.map(p=><button key={p.id} className={"mb"+(sidebarPage===p.id?" on":"")} onClick={()=>{setPage(p.id);if(p.id!=="clients")setSelClient(null)}}><span style={{fontSize:16}}>{p.icon}</span>{p.label}</button>)}</div>);
+
+/* ═══ OVERVIEW ═══ */
+const Overview=()=>{
+  const avg=clients.length?Math.round(clients.reduce((a,c)=>a+(c.compliance_score||0),0)/clients.length):0;
+  const lc=avg>=70?"#10B981":avg>=40?"#F59E0B":"#EF4444";
+  const counts={bozza:0,in_corso:0,completato:0,scaduto:0};clients.forEach(c=>counts[c.compliance_status||"bozza"]++);
+  return(<div className="fade">
+    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Overview Studio</h1>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:10,marginBottom:16}}>
+      {[{n:clients.length,l:"Clienti",c:"#fff"},{n:avg+"%",l:"Score medio",c:lc},{n:partner.client_slots-partner.clients_used,l:"Slot liberi",c:"#A78BFA"},{n:counts.completato,l:"Completati",c:"#10B981"}].map((s,i)=>
+        <div key={i} className="card" style={{textAlign:"center",padding:14}}><div className="mono" style={{color:s.c,fontSize:24,fontWeight:700}}>{s.n}</div><div style={{color:"#64748B",fontSize:11}}>{s.l}</div></div>)}
+    </div>
+    <div className="card" style={{marginBottom:16}}>
+      <div style={{display:"flex",gap:14,flexWrap:"wrap",marginBottom:10}}>
+        {Object.entries(counts).map(([k,v])=>{const s=STMAP[k];return<div key={k} style={{display:"flex",alignItems:"center",gap:5}}><div style={{width:8,height:8,borderRadius:"50%",background:s.c}}/><span style={{color:s.c,fontSize:13,fontWeight:500}}>{v}</span><span style={{color:"#475569",fontSize:12}}>{s.l}</span></div>})}
+      </div>
+      {clients.length>0&&<div className="ptrack"><div style={{display:"flex",height:"100%"}}>
+        {counts.completato>0&&<div style={{width:(counts.completato/clients.length*100)+"%",background:"#10B981",borderRadius:"3px 0 0 3px"}}/>}
+        {counts.in_corso>0&&<div style={{width:(counts.in_corso/clients.length*100)+"%",background:"#F59E0B"}}/>}
+        {counts.bozza>0&&<div style={{width:(counts.bozza/clients.length*100)+"%",background:"#475569"}}/>}
+        {counts.scaduto>0&&<div style={{width:(counts.scaduto/clients.length*100)+"%",background:"#EF4444",borderRadius:"0 3px 3px 0"}}/>}
+      </div></div>}
+    </div>
+    {[...clients].sort((a,b)=>(a.compliance_score||0)-(b.compliance_score||0)).slice(0,5).map(c=>{const st=STMAP[c.compliance_status||"bozza"];return(
+      <div key={c.id} className="crow" onClick={()=>loadClient(c)} style={{borderRadius:8,marginBottom:4,border:"1px solid var(--border)"}}>
+        <div><span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{c.name}</span><span className="badge" style={{background:st.bg,color:st.c,marginLeft:8}}>{st.l}</span></div>
+        <span className="mono" style={{color:(c.compliance_score||0)>=70?"#10B981":(c.compliance_score||0)>=40?"#F59E0B":"#EF4444",fontSize:15,fontWeight:700}}>{c.compliance_score||0}%</span>
+      </div>)})}
+    <div className="disc">{DISC}</div>
+  </div>);
+};
+
+/* ═══ CLIENTS LIST ═══ */
+const Clients=()=>{
+  const[showAdd,setShowAdd]=useState(false);const[f,setF]=useState({name:"",sector:"altro",employees:"1",contact_email:""});
+  const canAdd=partner.clients_used<partner.client_slots;
+  const add=async()=>{if(!f.name||!canAdd)return;
+    const{data:co}=await sb.from("companies").insert({user_id:user.id,partner_id:partner.id,name:f.name,sector:f.sector,employees:f.employees,contact_email:f.contact_email,compliance_status:"bozza"}).select().single();
+    if(co){await sb.from("partners").update({clients_used:partner.clients_used+1}).eq("id",partner.id);
+    await sb.from("documents").insert(RDOCS.map(d=>({company_id:co.id,doc_type:d.type,doc_title:d.title,status:"missing"})));
+    await log(co.id,partner.id,user.id,"client_added","Aggiunto: "+f.name)}
+    setShowAdd(false);setF({name:"",sector:"altro",employees:"1",contact_email:""});refresh()};
+  const remove=async(c)=>{if(!confirm("Rimuovere "+c.name+"?"))return;await sb.from("companies").delete().eq("id",c.id);await sb.from("partners").update({clients_used:Math.max(0,partner.clients_used-1)}).eq("id",partner.id);await log(null,partner.id,user.id,"client_removed","Rimosso: "+c.name);refresh()};
+
+  return(<div className="fade">
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
+      <div><h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>Clienti PMI</h1><p style={{color:"#64748B",fontSize:13}}>{partner.clients_used}/{partner.client_slots} slot</p></div>
+      <button className="bp" onClick={()=>setShowAdd(true)} disabled={!canAdd} style={{opacity:canAdd?1:.5}}>{canAdd?"+ Aggiungi":"Slot esauriti"}</button>
+    </div>
+    {clients.length===0?<div className="card" style={{textAlign:"center",padding:40}}><p style={{color:"#64748B"}}>Nessun cliente. Clicca + Aggiungi.</p></div>:
+    clients.map(c=>{const st=STMAP[c.compliance_status||"bozza"];return(
+      <div key={c.id} className="card" style={{marginBottom:8,padding:0,overflow:"hidden"}}>
+        <div className="crow" onClick={()=>loadClient(c)} style={{borderBottom:"none"}}>
+          <div style={{flex:1}}><span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{c.name}</span>
+            <span className="badge" style={{background:st.bg,color:st.c,marginLeft:8}}>{st.l}</span>
+            <div style={{color:"#475569",fontSize:12,marginTop:2}}>{c.sector} · {c.employees} dip.</div></div>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span className="mono" style={{color:(c.compliance_score||0)>=70?"#10B981":(c.compliance_score||0)>=40?"#F59E0B":"#EF4444",fontSize:16,fontWeight:700}}>{c.compliance_score||0}%</span>
+            <button onClick={e=>{e.stopPropagation();remove(c)}} style={{background:"none",border:"none",color:"#EF4444",fontSize:12,cursor:"pointer"}}>🗑️</button>
+          </div>
+        </div>
+      </div>)})}
+    {showAdd&&<div className="mbg" onClick={()=>setShowAdd(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
+      <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:16}}>Aggiungi Cliente PMI</h3>
+      <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <input placeholder="Ragione sociale *" value={f.name} onChange={e=>setF({...f,name:e.target.value})}/>
+        <select value={f.sector} onChange={e=>setF({...f,sector:e.target.value})}><option value="altro">Settore</option><option value="sv">Servizi</option><option value="cm">Commercio</option><option value="rs">Ristorazione</option><option value="mn">Manifattura</option><option value="sn">Sanità</option><option value="ed">Edilizia</option><option value="tc">Tech</option><option value="fn">Finanza</option><option value="is">Istruzione</option><option value="pro">Studio prof.</option></select>
+        <select value={f.employees} onChange={e=>setF({...f,employees:e.target.value})}><option value="1">1</option><option value="9">2-9</option><option value="49">10-49</option><option value="249">50-249</option></select>
+        <input type="email" placeholder="Email referente" value={f.contact_email} onChange={e=>setF({...f,contact_email:e.target.value})}/>
+        <div style={{display:"flex",gap:10}}><button className="bp" onClick={add}>Aggiungi</button><button className="bs" onClick={()=>setShowAdd(false)}>Annulla</button></div>
+      </div></div></div>}
+  </div>);
+};
+
+/* ═══ CLIENT WORKSPACE (FULL MANAGEMENT) ═══ */
+const Workspace=()=>{
+  const c=selClient;if(!c)return null;
+  const[showSysForm,setShowSysForm]=useState(false);
+  const[sysForm,setSysForm]=useState({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",vendor_key:""});
+  const[vendorInfo,setVendorInfo]=useState(null);
+  const[showTrainForm,setShowTrainForm]=useState(false);
+  const[trainForm,setTrainForm]=useState({employee_name:"",topic:MODS[0].title,duration_hours:.5,completed_at:new Date().toISOString().split("T")[0]});
+
+  const pickVendor=(k)=>{const v=VENDORS[k];if(!v)return;setSysForm(f=>({...f,name:v.name,provider:v.provider,category:v.cat,vendor_key:k}));setVendorInfo(v)};
+  const addSys=async()=>{if(!sysForm.name)return;await sb.from("ai_systems").insert({...sysForm,company_id:c.id});await log(c.id,partner.id,user.id,"system_added","Aggiunto sistema: "+sysForm.name+" per "+c.name);setShowSysForm(false);setSysForm({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",vendor_key:""});setVendorInfo(null);refreshClient()};
+  const delSys=async(id,name)=>{if(!confirm("Eliminare?"))return;await sb.from("ai_systems").delete().eq("id",id);await log(c.id,partner.id,user.id,"system_removed","Rimosso: "+name);refreshClient()};
+  const genDoc=async(type)=>{await sb.from("documents").update({status:"generated",generated_at:new Date().toISOString()}).eq("company_id",c.id).eq("doc_type",type);await log(c.id,partner.id,user.id,"doc_generated","Generato: "+type+" per "+c.name);refreshClient()};
+  const signDoc=async(type)=>{await sb.from("documents").update({status:"signed",signed_at:new Date().toISOString()}).eq("company_id",c.id).eq("doc_type",type);await log(c.id,partner.id,user.id,"doc_signed","Firmato: "+type+" per "+c.name);refreshClient()};
+  const addTrain=async()=>{if(!trainForm.employee_name)return;await sb.from("training_records").insert({...trainForm,company_id:c.id});await log(c.id,partner.id,user.id,"training_completed",trainForm.employee_name+" — "+trainForm.topic);setShowTrainForm(false);setTrainForm({employee_name:"",topic:MODS[0].title,duration_hours:.5,completed_at:new Date().toISOString().split("T")[0]});refreshClient()};
+  const updateStatus=async(s)=>{await sb.from("companies").update({compliance_status:s}).eq("id",c.id);await log(c.id,partner.id,user.id,"score_updated","Stato: "+s);refreshClient()};
+
+  const docStatus={missing:{bg:"rgba(239,68,68,.08)",c:"#FCA5A5",l:"⚠️ Mancante"},generated:{bg:"rgba(245,158,11,.08)",c:"#FCD34D",l:"📝 Da firmare"},signed:{bg:"rgba(16,185,129,.08)",c:"#6EE7B7",l:"✅ Firmato"}};
+
+  return(<div className="fade">
+    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8,flexWrap:"wrap",gap:8}}>
+      <div>
+        <button onClick={()=>{setSelClient(null);setPage("clients")}} style={{background:"none",border:"none",color:"#A78BFA",fontSize:12,cursor:"pointer",padding:0,marginBottom:4}}>← Torna ai clienti</button>
+        <h1 style={{color:"#fff",fontSize:22,fontWeight:700}}>{c.name}</h1>
+        <p style={{color:"#64748B",fontSize:13}}>{c.sector} · {c.employees} dip.</p>
+      </div>
+      <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+        {["bozza","in_corso","completato","scaduto"].map(s=>{const st=STMAP[s];return<button key={s} onClick={()=>updateStatus(s)} className="tab" style={{background:c.compliance_status===s?st.bg:"transparent",color:c.compliance_status===s?st.c:"#475569",border:"1px solid "+(c.compliance_status===s?st.c+"30":"rgba(255,255,255,.06)"),fontSize:12}}>{st.l}</button>})}
+      </div>
+    </div>
+
+    {/* Sub-tabs */}
+    <div style={{display:"flex",gap:4,marginBottom:16,flexWrap:"wrap"}}>
+      {[{id:"reg",l:"🗂️ Registro IA"},{id:"docs",l:"📄 Documenti"},{id:"train",l:"📚 Formazione"}].map(t=>
+        <button key={t.id} className={"tab "+(clientTab===t.id?"tab-on":"tab-off")} onClick={()=>setClientTab(t.id)}>{t.l}</button>)}
+    </div>
+
+    {/* ─── REGISTRO IA ─── */}
+    {clientTab==="reg"&&<div>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}><h3 style={{color:"#fff",fontSize:16,fontWeight:600}}>Sistemi IA ({cSys.length})</h3>
+        <button className="bpb" style={{fontSize:12,padding:"7px 16px"}} onClick={()=>{setShowSysForm(true);setVendorInfo(null);setSysForm({name:"",provider:"",category:"gpai",status:"attivo",obligation:"",vendor_key:""})}}>+ Aggiungi</button></div>
+      {cSys.length===0?<p style={{color:"#475569",fontSize:13}}>Nessun sistema. Aggiungi il primo.</p>:
+      cSys.map(s=>{const cat=CATS[s.category]||{l:s.category,c:"#64748B",ic:"⚪",bg:"rgba(100,116,139,.1)"};return(
+        <div key={s.id} className="card" style={{marginBottom:6,padding:14}}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+            <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}><span>{cat.ic}</span><span style={{color:"#E2E8F0",fontSize:14,fontWeight:500}}>{s.name}</span>{s.provider&&<span style={{color:"#475569",fontSize:12}}>({s.provider})</span>}<span className="badge" style={{background:cat.bg,color:cat.c}}>{cat.l}</span></div>
+            <button onClick={()=>delSys(s.id,s.name)} style={{background:"none",border:"none",color:"#EF4444",cursor:"pointer"}}>🗑️</button>
+          </div>
+          {s.obligation&&<p style={{color:"#5A6B7F",fontSize:12,marginTop:4}}>{s.obligation}</p>}
+        </div>)})}
+      {showSysForm&&<div className="mbg" onClick={()=>{setShowSysForm(false);setVendorInfo(null)}}><div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:14}}>Aggiungi sistema per {c.name}</h3>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:14}}>{Object.entries(VENDORS).map(([k,v])=><button key={k} className="bs" style={{fontSize:11,padding:"5px 10px"}} onClick={()=>pickVendor(k)}>{v.name}</button>)}</div>
+        {vendorInfo&&<div style={{background:"rgba(245,158,11,.04)",border:"1px solid rgba(245,158,11,.12)",borderRadius:8,padding:12,marginBottom:14}}>
+          <div style={{color:"#FCD34D",fontSize:12,fontWeight:600,marginBottom:4}}>⚠️ Rischi — {vendorInfo.name}</div>
+          {vendorInfo.risks.map((r,i)=><div key={i} style={{color:"#94A3B8",fontSize:12,paddingLeft:10}}>• {r}</div>)}</div>}
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          <input placeholder="Nome sistema *" value={sysForm.name} onChange={e=>setSysForm({...sysForm,name:e.target.value})}/>
+          <input placeholder="Fornitore" value={sysForm.provider} onChange={e=>setSysForm({...sysForm,provider:e.target.value})}/>
+          <select value={sysForm.category} onChange={e=>setSysForm({...sysForm,category:e.target.value})}>{Object.entries(CATS).map(([k,v])=><option key={k} value={k}>{v.ic} {v.l}</option>)}</select>
+          <textarea placeholder="Obbligo normativo" value={sysForm.obligation} onChange={e=>setSysForm({...sysForm,obligation:e.target.value})} rows={2}/>
+          <div style={{display:"flex",gap:10}}><button className="bpb" onClick={addSys}>Aggiungi</button><button className="bs" onClick={()=>{setShowSysForm(false);setVendorInfo(null)}}>Annulla</button></div>
+        </div></div></div>}
+    </div>}
+
+    {/* ─── DOCUMENTI ─── */}
+    {clientTab==="docs"&&<div>
+      <h3 style={{color:"#fff",fontSize:16,fontWeight:600,marginBottom:12}}>Documenti Audit-Ready</h3>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:10}}>
+        {RDOCS.map(rd=>{const d=cDocs.find(x=>x.doc_type===rd.type)||{status:"missing"};const st=docStatus[d.status]||docStatus.missing;return(
+          <div key={rd.type} className="card" style={{padding:16,borderColor:d.status==="signed"?"rgba(16,185,129,.15)":d.status==="generated"?"rgba(245,158,11,.15)":"rgba(239,68,68,.1)"}}>
+            <div style={{fontSize:24,marginBottom:6}}>{rd.icon}</div>
+            <h4 style={{color:"#fff",fontSize:13,fontWeight:600,marginBottom:4}}>{rd.title}</h4>
+            <span className="badge" style={{background:st.bg,color:st.c,marginBottom:10}}>{st.l}</span>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:8}}>
+              {d.status==="missing"&&<button className="bpb" style={{fontSize:11,padding:"6px 12px"}} onClick={()=>genDoc(rd.type)}>Genera</button>}
+              {d.status==="generated"&&<><button className="bs" style={{fontSize:11}} onClick={()=>genDoc(rd.type)}>Rigenera</button><button className="bpb" style={{fontSize:11,padding:"6px 12px"}} onClick={()=>signDoc(rd.type)}>✅ Firmato</button></>}
+              {d.status==="signed"&&<span style={{color:"#6EE7B7",fontSize:11}}>Firmato {d.signed_at?new Date(d.signed_at).toLocaleDateString("it-IT"):""}</span>}
+            </div>
+            <div style={{color:"#334155",fontSize:10,marginTop:6}}>{rd.ref}</div>
+          </div>)})}
+      </div>
+    </div>}
+
+    {/* ─── FORMAZIONE ─── */}
+    {clientTab==="train"&&<div>
+      <div style={{display:"flex",justifyContent:"space-between",marginBottom:12}}><h3 style={{color:"#fff",fontSize:16,fontWeight:600}}>Formazione ({cTr.length})</h3>
+        <button className="bpb" style={{fontSize:12,padding:"7px 16px"}} onClick={()=>setShowTrainForm(true)}>+ Registra</button></div>
+      {cTr.length===0?<p style={{color:"#475569",fontSize:13}}>Nessuna formazione registrata per {c.name}.</p>:
+      cTr.map(t=><div key={t.id} className="card" style={{marginBottom:6,padding:12,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:6}}>
+        <div><span style={{color:"#E2E8F0",fontSize:13,fontWeight:500}}>{t.employee_name}</span><span style={{color:"#475569",fontSize:12,marginLeft:8}}>{t.topic}</span></div>
+        <div style={{display:"flex",gap:8,alignItems:"center"}}><span className="mono" style={{color:"#475569",fontSize:11}}>{new Date(t.completed_at).toLocaleDateString("it-IT")}</span><span style={{color:"#64748B",fontSize:11}}>{t.duration_hours}h</span></div>
+      </div>)}
+      {showTrainForm&&<div className="mbg" onClick={()=>setShowTrainForm(false)}><div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3 style={{color:"#fff",fontSize:17,fontWeight:700,marginBottom:14}}>Registra formazione — {c.name}</h3>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          <input placeholder="Nome dipendente *" value={trainForm.employee_name} onChange={e=>setTrainForm({...trainForm,employee_name:e.target.value})}/>
+          <select value={trainForm.topic} onChange={e=>setTrainForm({...trainForm,topic:e.target.value})}>{MODS.map(m=><option key={m.id} value={m.title}>{m.title}</option>)}<option value="Formazione esterna">Formazione esterna</option></select>
+          <div style={{display:"flex",gap:10}}><input type="date" value={trainForm.completed_at} onChange={e=>setTrainForm({...trainForm,completed_at:e.target.value})} style={{flex:1}}/><input type="number" min=".5" step=".5" value={trainForm.duration_hours} onChange={e=>setTrainForm({...trainForm,duration_hours:parseFloat(e.target.value)||.5})} style={{flex:1}} placeholder="Ore"/></div>
+          <div style={{display:"flex",gap:10}}><button className="bpb" onClick={addTrain}>Registra</button><button className="bs" onClick={()=>setShowTrainForm(false)}>Annulla</button></div>
+        </div></div></div>}
+    </div>}
+
+    <div className="disc">{DISC}</div>
+  </div>);
+};
+
+/* ═══ ACTIVITY ═══ */
+const Activity=()=>{
+  const[logs,setLogs]=useState([]);const[fl,setFl]=useState("all");
+  useEffect(()=>{(async()=>{const{data}=await sb.from("compliance_logs").select("*").eq("partner_id",partner.id).order("created_at",{ascending:false}).limit(100);setLogs(data||[])})()},[partner.id]);
+  const filt=fl==="all"?logs:logs.filter(l=>l.company_id===fl);
+  const dlReport=(cid)=>{const cl=clients.find(c=>c.id===cid);const cl2=logs.filter(l=>l.company_id===cid);
+    const txt=`REPORT ATTIVITÀ\n${cl?.name||"Cliente"}\nStudio: ${partner.studio_name}\n${new Date().toLocaleDateString("it-IT")}\n${"=".repeat(40)}\n\n${cl2.map(l=>`[${new Date(l.created_at).toLocaleString("it-IT")}] ${l.action_type}: ${l.description}`).join("\n")}\n\n${DISC}`;
+    const b=new Blob([txt],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=`report-${cl?.name||"x"}.txt`;a.click()};
+  return(<div className="fade">
+    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Registro Attività</h1>
+    <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
+      <select value={fl} onChange={e=>setFl(e.target.value)} style={{maxWidth:250}}><option value="all">Tutti</option>{clients.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select>
+      {fl!=="all"&&<button className="bs" onClick={()=>dlReport(fl)} style={{fontSize:12}}>📥 Report</button>}
+    </div>
+    {filt.length===0?<p style={{color:"#475569",fontSize:13}}>Nessuna attività.</p>:
+    filt.map(l=>{const cl=clients.find(c=>c.id===l.company_id);return(<div key={l.id} style={{padding:"8px 0",borderBottom:"1px solid rgba(255,255,255,.03)",display:"flex",gap:10}}>
+      <span className="mono" style={{color:"#334155",fontSize:10,flexShrink:0,marginTop:2,width:70}}>{new Date(l.created_at).toLocaleDateString("it-IT")}</span>
+      <div><span style={{color:"#D1D9E6",fontSize:13}}>{l.description}</span>{cl&&<span style={{color:"#475569",fontSize:11,marginLeft:6}}>— {cl.name}</span>}<div style={{color:"#3D4B5E",fontSize:11}}>{l.action_type}</div></div>
+    </div>)})}
+    <div className="disc">{DISC}</div>
+  </div>);
+};
+
+/* ═══ WHITE-LABEL ═══ */
+const Brand=()=>{
+  const[f,setF]=useState({logo_url:settings?.logo_url||"",brand_color:settings?.brand_color||"#8B5CF6",welcome_message:settings?.welcome_message||"",footer_text:settings?.footer_text||""});
+  const[ok,setOk]=useState(false);
+  const save=async()=>{await sb.from("partner_settings").update(f).eq("partner_id",partner.id);await log(null,partner.id,user.id,"settings_updated","White-label aggiornato");setOk(true);setTimeout(()=>setOk(false),2000);refresh()};
+  return(<div className="fade">
+    <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:6}}>White-Label</h1>
+    <p style={{color:"#64748B",fontSize:13,marginBottom:20}}>Personalizza i documenti dei tuoi clienti con il logo del tuo studio.</p>
+    <div className="card" style={{maxWidth:480}}>
+      <div style={{display:"flex",flexDirection:"column",gap:14}}>
+        <div><label style={{color:"#64748B",fontSize:12,display:"block",marginBottom:4}}>URL Logo</label><input placeholder="https://..." value={f.logo_url} onChange={e=>setF({...f,logo_url:e.target.value})}/></div>
+        <div><label style={{color:"#64748B",fontSize:12,display:"block",marginBottom:4}}>Colore primario</label>
+          <div style={{display:"flex",gap:8}}><input type="color" value={f.brand_color} onChange={e=>setF({...f,brand_color:e.target.value})} style={{width:44,height:40,padding:2}}/><input value={f.brand_color} onChange={e=>setF({...f,brand_color:e.target.value})} style={{flex:1}}/></div></div>
+        <div><label style={{color:"#64748B",fontSize:12,display:"block",marginBottom:4}}>Messaggio benvenuto</label><textarea value={f.welcome_message} onChange={e=>setF({...f,welcome_message:e.target.value})} rows={2}/></div>
+        <div><label style={{color:"#64748B",fontSize:12,display:"block",marginBottom:4}}>Footer documenti</label><input value={f.footer_text} onChange={e=>setF({...f,footer_text:e.target.value})} placeholder="Studio Nome — P.IVA"/></div>
+        <button className="bp" onClick={save}>{ok?"✅ Salvato":"Salva"}</button>
+      </div>
+    </div>
+    <div className="card" style={{marginTop:14,maxWidth:480}}>
+      <div style={{color:"#94A3B8",fontSize:12,fontWeight:600,marginBottom:8}}>Anteprima</div>
+      <div style={{background:"#fff",borderRadius:8,padding:16,color:"#111"}}>
+        {f.logo_url?<img src={f.logo_url} style={{maxHeight:40,marginBottom:8}} onError={e=>{e.target.style.display="none"}}/>:
+        <div style={{background:f.brand_color,color:"#fff",padding:"6px 14px",borderRadius:6,display:"inline-block",fontSize:13,fontWeight:700,marginBottom:8}}>{partner.studio_name}</div>}
+        <div style={{fontSize:10,color:"#666",borderTop:"2px solid "+f.brand_color,paddingTop:6}}>Documento generato da {partner.studio_name} tramite AIComply.it{f.footer_text?" — "+f.footer_text:""}</div>
+      </div>
+    </div>
+    <div className="disc">{DISC}</div>
+  </div>);
+};
+
+/* ═══ ALERTS ═══ */
+const Alerts=()=>(<div className="fade">
+  <h1 style={{color:"#fff",fontSize:22,fontWeight:700,marginBottom:16}}>Alert Normativi</h1>
+  {alerts.map(a=><div key={a.id} className="card" style={{marginBottom:10,padding:16}}>
+    <div style={{display:"flex",justifyContent:"space-between",gap:8,flexWrap:"wrap"}}><h3 style={{color:"#fff",fontSize:15,fontWeight:600}}>{a.title}</h3>
+      <span className="badge" style={{background:a.severity==="critical"?"rgba(239,68,68,.1)":"rgba(59,130,246,.08)",color:a.severity==="critical"?"#FCA5A5":"#93C5FD"}}>{a.severity}</span></div>
+    <p style={{color:"#94A3B8",fontSize:13,marginTop:6}}>{a.content}</p>
+    {a.impact&&<p style={{color:"#F59E0B",fontSize:12,background:"rgba(245,158,11,.04)",padding:"6px 10px",borderRadius:6,marginTop:6}}>💡 {a.impact}</p>}
+    <span className="mono" style={{color:"#334155",fontSize:10,display:"block",marginTop:6}}>{new Date(a.published_at).toLocaleDateString("it-IT")} · {a.source}</span>
+  </div>)}
+  <div className="disc">{DISC}</div>
+</div>);
+
+/* ═══ RENDER ═══ */
+return(<div style={{display:"flex",height:"100vh"}}><SB/>
+  <div className="mc" style={{flex:1,overflow:"auto",padding:"20px 24px"}}>
+    {page==="dash"&&<Overview/>}
+    {page==="clients"&&!selClient&&<Clients/>}
+    {page==="workspace"&&selClient&&<Workspace/>}
+    {page==="activity"&&<Activity/>}
+    {page==="brand"&&<Brand/>}
+    {page==="alerts"&&<Alerts/>}
+  </div><MN/></div>);
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
