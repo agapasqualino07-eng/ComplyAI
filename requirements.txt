@@ -1,2 +1,0 @@
-# AIComply Python Backend v2.1
-# Solo libreria standard Python - zero dipendenze esterne
