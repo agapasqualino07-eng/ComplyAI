@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 8%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 262 83% 96%;
+    --accent-foreground: 262 83% 30%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 262 83% 58%;
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 6%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 6%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262 83% 65%;
+    --primary-foreground: 240 6% 10%;
+    --secondary: 240 4% 14%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 14%;
+    --muted-foreground: 240 5% 64%;
+    --accent: 240 4% 14%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 18%;
+    --input: 240 4% 18%;
+    --ring: 262 83% 65%;
+  }
+
+  * {
+    @apply border-border;
+  }
+  html, body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+@layer components {
+  .container-narrow { @apply mx-auto w-full max-w-5xl px-4 sm:px-6; }
+  .container-wide { @apply mx-auto w-full max-w-7xl px-4 sm:px-6; }
+  .grid-bg {
+    background-image:
+      radial-gradient(circle at 1px 1px, hsl(var(--border)) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+  .gradient-text {
+    @apply bg-gradient-to-r from-violet-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent;
+  }
+  .card-soft {
+    @apply rounded-xl border bg-card shadow-sm transition-all hover:shadow-md;
+  }
+}
+
+/* Prose for rendered policy pages */
+.policy-prose h1 { @apply text-3xl font-bold mt-6 mb-4; }
+.policy-prose h2 { @apply text-2xl font-semibold mt-6 mb-3; }
+.policy-prose h3 { @apply text-xl font-semibold mt-5 mb-2; }
+.policy-prose p { @apply my-3 leading-7; }
+.policy-prose ul { @apply my-3 pl-6 list-disc space-y-1; }
+.policy-prose ol { @apply my-3 pl-6 list-decimal space-y-1; }
+.policy-prose a { @apply text-primary underline; }
+.policy-prose table { @apply w-full border-collapse my-4; }
+.policy-prose th, .policy-prose td { @apply border px-3 py-2 text-left; }
