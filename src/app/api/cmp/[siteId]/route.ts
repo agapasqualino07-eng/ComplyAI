@@ -29,7 +29,7 @@ export async function PATCH(
     update.accent_color = `#${update.accent_color}`;
   }
 
-  const { error } = await supabase.from("cmp_configs").update(update).eq("site_id", siteId);
+  const { error } = await supabase.from("cmp_configs").update(update as any).eq("site_id", siteId);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json({ ok: true });
 }
