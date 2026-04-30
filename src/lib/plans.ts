@@ -56,6 +56,7 @@ export const PLANS: Record<PlanId, Plan> = {
       "Privacy + Cookie Policy + Termini",
       "CMP banner senza watermark",
       "Registro consensi illimitato",
+      "Modulo AI Act: 1 sistema AI nel registro",
       "Aggiornamenti normativi automatici",
       "Supporto email",
     ],
@@ -83,6 +84,7 @@ export const PLANS: Record<PlanId, Plan> = {
       "CMP banner personalizzabile",
       "Registro consensi + export CSV/PDF",
       "Registro trattamenti GDPR",
+      "AI Act: registro + classificatore + AI Use Policy + AI Disclosure",
       "Cookie scanner automatico",
       "Supporto prioritario",
       "2 utenti team",
@@ -107,6 +109,7 @@ export const PLANS: Record<PlanId, Plan> = {
     features: [
       "Siti illimitati su 1 azienda",
       "Tutto del piano Pro",
+      "AI Act: sistemi AI illimitati + checklist obblighi",
       "White-label parziale (rimuovi marchio)",
       "Audit log avanzato",
       "DPA fornitori",
@@ -134,6 +137,7 @@ export const PLANS: Record<PlanId, Plan> = {
     features: [
       "Aziende illimitate (multi-tenant)",
       "Tutto del piano Business",
+      "AI Act enterprise: FRIA + Annex IV documentation",
       "Accesso API completo",
       "Account manager dedicato",
       "SLA garantito 99.9%",

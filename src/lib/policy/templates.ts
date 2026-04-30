@@ -1,4 +1,5 @@
 import type { PolicyAnswers, DocumentType } from "./types";
+import { renderAIUsePolicy, renderAIDisclosureNotice, type AIPolicyAnswers } from "./ai-templates";
 
 function escape(s: string) {
   return s
@@ -218,6 +219,10 @@ export function renderDocument(type: DocumentType, answers: PolicyAnswers): stri
       return renderTermsOfService(answers);
     case "eula":
       return renderTermsOfService(answers);
+    case "ai_use_policy":
+      return renderAIUsePolicy(answers as AIPolicyAnswers);
+    case "ai_disclosure":
+      return renderAIDisclosureNotice(answers as AIPolicyAnswers);
   }
 }
 
@@ -226,4 +231,6 @@ export const DOCUMENT_TITLES: Record<DocumentType, string> = {
   cookie: "Cookie Policy",
   terms: "Termini e Condizioni",
   eula: "EULA",
+  ai_use_policy: "AI Use Policy (interna)",
+  ai_disclosure: "AI Disclosure Notice (pubblica)",
 };

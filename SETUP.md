@@ -58,6 +58,7 @@ STRIPE_PRICE_ENTERPRISE_YEARLY
 
 1. Apri **Supabase Dashboard → SQL Editor**.
 2. Copia il contenuto di `supabase/migrations/0001_init.sql` (in questo repo) ed esegui.
+3. Esegui poi `supabase/migrations/0002_ai_act.sql` per il modulo AI Act (registro sistemi AI + nuovi tipi documento).
 3. Vai in **Authentication → URL Configuration** e imposta:
    - **Site URL**: `https://aicomplyonline.it`
    - **Redirect URLs**: aggiungi `https://aicomplyonline.it/auth/callback`

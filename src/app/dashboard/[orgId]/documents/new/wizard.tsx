@@ -15,6 +15,8 @@ const TYPE_LABEL: Record<DocumentType, string> = {
   cookie: "Cookie Policy",
   terms: "Termini e Condizioni",
   eula: "EULA",
+  ai_use_policy: "AI Use Policy (interna)",
+  ai_disclosure: "AI Disclosure Notice (pubblica)",
 };
 
 interface Site {
@@ -54,7 +56,8 @@ export function DocumentWizard({ orgId, defaultType, defaultSiteId, sites, organ
     otherProcessors: "",
   });
 
-  const totalSteps = type === "terms" || type === "eula" ? 2 : 4;
+  const isAI = type === "ai_use_policy" || type === "ai_disclosure";
+  const totalSteps = type === "terms" || type === "eula" || isAI ? 2 : 4;
 
   function update<K extends keyof typeof answers>(k: K, v: (typeof answers)[K]) {
     setAnswers((a) => ({ ...a, [k]: v }));

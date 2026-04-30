@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, FileText, Globe, ScrollText, ShieldCheck, ClipboardList } from "lucide-react";
+import { ArrowRight, FileText, Globe, ScrollText, ShieldCheck, ClipboardList, Bot } from "lucide-react";
 import { requireActiveOrg } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,13 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
     { count: docsCount },
     { count: prCount },
     { count: consentsCount },
+    { count: aiCount },
   ] = await Promise.all([
     supabase.from("sites").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
     supabase.from("documents").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
     supabase.from("processing_records").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
     supabase.from("consent_logs").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
+    supabase.from("ai_systems").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
   ]);
 
   const setupSteps = [
@@ -26,6 +28,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
     { done: (docsCount ?? 0) > 0, label: "Genera Privacy & Cookie Policy", href: `/dashboard/${orgId}/documents` },
     { done: (sitesCount ?? 0) > 0 && (docsCount ?? 0) > 0, label: "Configura il banner cookie", href: `/dashboard/${orgId}/cmp` },
     { done: (prCount ?? 0) > 0, label: "Compila il registro trattamenti", href: `/dashboard/${orgId}/processing` },
+    { done: (aiCount ?? 0) > 0, label: "Mappa i sistemi AI (AI Act)", href: `/dashboard/${orgId}/ai` },
   ];
   const doneSteps = setupSteps.filter((s) => s.done).length;
   const progress = Math.round((doneSteps / setupSteps.length) * 100);
@@ -34,7 +37,7 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
     { label: "Siti gestiti", value: sitesCount ?? 0, icon: Globe },
     { label: "Documenti generati", value: docsCount ?? 0, icon: FileText },
     { label: "Consensi tracciati", value: consentsCount ?? 0, icon: ScrollText },
-    { label: "Trattamenti registrati", value: prCount ?? 0, icon: ClipboardList },
+    { label: "Sistemi AI mappati", value: aiCount ?? 0, icon: Bot },
   ];
 
   return (
@@ -146,6 +149,18 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
               </div>
               <Link href={`/dashboard/${orgId}/processing`}>
                 <Button size="sm" variant="outline" className="w-full">Apri</Button>
+              </Link>
+            </CardContent>
+          </Card>
+          <Card className="hover:shadow-md transition-shadow">
+            <CardContent className="pt-6 space-y-3">
+              <Bot className="h-6 w-6 text-fuchsia-600" />
+              <div>
+                <h3 className="font-semibold">Classifica sistema AI</h3>
+                <p className="text-sm text-muted-foreground">Wizard rischio AI Act.</p>
+              </div>
+              <Link href={`/dashboard/${orgId}/ai/new`}>
+                <Button size="sm" variant="outline" className="w-full">Inizia</Button>
               </Link>
             </CardContent>
           </Card>

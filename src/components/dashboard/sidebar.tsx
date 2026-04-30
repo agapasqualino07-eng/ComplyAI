@@ -14,6 +14,7 @@ import {
   CreditCard,
   ShieldCheck,
   CircleHelp,
+  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OrgSwitcher } from "./org-switcher";
@@ -25,6 +26,7 @@ const nav = (orgId: string) => [
   { label: "Cookie & CMP", href: `/dashboard/${orgId}/cmp`, icon: Cookie },
   { label: "Registro consensi", href: `/dashboard/${orgId}/consents`, icon: ScrollText },
   { label: "Registro trattamenti", href: `/dashboard/${orgId}/processing`, icon: ClipboardList },
+  { label: "AI Act", href: `/dashboard/${orgId}/ai`, icon: Bot },
 ];
 
 const settingsNav = (orgId: string) => [

@@ -7,7 +7,7 @@ import { slugify } from "@/lib/utils";
 const schema = z.object({
   organization_id: z.string().uuid(),
   site_id: z.string().uuid().optional().nullable(),
-  type: z.enum(["privacy", "cookie", "terms", "eula"]),
+  type: z.enum(["privacy", "cookie", "terms", "eula", "ai_use_policy", "ai_disclosure"]),
   language: z.string().default("it"),
   publish: z.boolean().default(false),
   answers: z.object({

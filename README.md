@@ -1,6 +1,6 @@
 # ComplyAI
 
-> Compliance GDPR automatica: banner cookie, Privacy/Cookie/Terms generator, registro consensi, registro trattamenti — tutto in un SaaS.
+> Compliance GDPR + AI Act automatica: banner cookie, generatori documenti, registri GDPR, registro sistemi AI con classificatore di rischio AI Act — tutto in un SaaS.
 
 **Sito**: https://aicomplyonline.it
 
@@ -18,6 +18,7 @@
 - 🍪 Banner cookie configurabile (CMP) + registro consensi automatico
 - 📄 Generatori Privacy Policy, Cookie Policy, Termini e Condizioni (italiano)
 - 📋 Registro trattamenti GDPR (art. 30)
+- 🤖 **AI Act**: registro sistemi AI + classificatore rischio guidato (vietato/alto/limitato/minimo/GPAI) + AI Use Policy interna + AI Disclosure Notice pubblica
 - 🌐 Multi-tenant: gestisci più aziende e siti da un singolo account
 - 💳 Abbonamenti Stripe con trial 14 giorni e portale self-service
 

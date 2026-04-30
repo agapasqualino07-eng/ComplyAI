@@ -105,7 +105,7 @@ export interface Database {
           id: string;
           organization_id: string;
           site_id: string | null;
-          type: "privacy" | "cookie" | "terms" | "eula";
+          type: "privacy" | "cookie" | "terms" | "eula" | "ai_use_policy" | "ai_disclosure";
           title: string;
           slug: string;
           language: string;
@@ -118,7 +118,7 @@ export interface Database {
         };
         Insert: Partial<Database["public"]["Tables"]["documents"]["Row"]> & {
           organization_id: string;
-          type: "privacy" | "cookie" | "terms" | "eula";
+          type: "privacy" | "cookie" | "terms" | "eula" | "ai_use_policy" | "ai_disclosure";
           title: string;
           slug: string;
           language: string;
@@ -191,6 +191,35 @@ export interface Database {
           legal_basis: string;
         };
         Update: Partial<Database["public"]["Tables"]["processing_records"]["Row"]>;
+      };
+      ai_systems: {
+        Row: {
+          id: string;
+          organization_id: string;
+          name: string;
+          vendor: string | null;
+          vendor_url: string | null;
+          description: string | null;
+          purpose: string | null;
+          org_role: "provider" | "deployer" | "distributor" | "importer";
+          risk_class: "prohibited" | "high" | "limited" | "minimal" | "gpai" | null;
+          status: "in_use" | "in_evaluation" | "decommissioned";
+          is_gpai: boolean;
+          uses_personal_data: boolean;
+          affects_individuals: boolean;
+          domains: string[];
+          questionnaire: Json;
+          human_oversight: string | null;
+          data_sources: string | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["ai_systems"]["Row"]> & {
+          organization_id: string;
+          name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["ai_systems"]["Row"]>;
       };
       audit_logs: {
         Row: {

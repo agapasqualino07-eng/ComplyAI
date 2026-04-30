@@ -11,6 +11,7 @@ import {
   Lock,
   CheckCircle2,
   ArrowRight,
+  Bot,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,11 @@ const features = [
     desc: "Adempi all'art. 30 GDPR con un editor guidato. Esporta in PDF/CSV per il Garante.",
   },
   {
+    icon: Bot,
+    title: "AI Act (UE 2024/1689)",
+    desc: "Registro sistemi AI, classificazione rischio guidata, AI Use Policy interna e disclosure pubblica per chatbot.",
+  },
+  {
     icon: ShieldCheck,
     title: "Aggiornamenti normativi",
     desc: "Quando cambia la normativa o le linee guida del Garante, aggiorniamo i tuoi documenti.",
@@ -59,15 +65,15 @@ export default function HomePage() {
           <div className="max-w-3xl mx-auto text-center space-y-6 animate-fade-in">
             <Badge variant="secondary" className="bg-white border">
               <Sparkles className="h-3 w-3 mr-1.5 text-violet-600" />
-              Nuovo: aggiornamento automatico delle policy
+              Novità: modulo AI Act incluso in tutti i piani
             </Badge>
             <h1 className="text-4xl sm:text-6xl font-display font-bold tracking-tight">
-              <span className="gradient-text">Compliance GDPR</span> automatica<br />
-              per il tuo sito.
+              <span className="gradient-text">GDPR + AI Act</span> automatici<br />
+              per la tua azienda.
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Banner cookie, Privacy Policy, registro consensi e registro trattamenti.
-              Tutto pronto in 5 minuti, sempre aggiornato. <strong className="text-foreground">Senza un avvocato.</strong>
+              Banner cookie, Privacy Policy, registri consensi e trattamenti, classificazione rischio AI Act
+              e policy aziendali sull'IA. Tutto pronto in 5 minuti, sempre aggiornato. <strong className="text-foreground">Senza un avvocato.</strong>
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Link href="/signup">

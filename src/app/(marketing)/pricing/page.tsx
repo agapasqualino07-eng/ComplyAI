@@ -25,7 +25,7 @@ export default async function PricingPage({
           <span className="gradient-text">Un piano</span> per ogni esigenza.
         </h1>
         <p className="text-muted-foreground">
-          Inizia gratis, paghi solo se decidi di restare. Nessun vincolo, nessuna sorpresa.
+          GDPR + AI Act inclusi in ogni piano. Inizia gratis, paghi solo se decidi di restare. Nessun vincolo.
         </p>
         <div className="inline-flex rounded-lg border p-0.5 bg-card text-sm mt-4">
           <Link

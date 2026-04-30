@@ -1,4 +1,4 @@
-export type DocumentType = "privacy" | "cookie" | "terms" | "eula";
+export type DocumentType = "privacy" | "cookie" | "terms" | "eula" | "ai_use_policy" | "ai_disclosure";
 
 export interface PolicyAnswers {
   controllerName: string;

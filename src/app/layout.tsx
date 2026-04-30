@@ -9,19 +9,30 @@ const display = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-displa
 export const metadata: Metadata = {
   metadataBase: new URL("https://aicomplyonline.it"),
   title: {
-    default: "ComplyAI — Compliance GDPR automatica per il tuo sito",
+    default: "ComplyAI — Compliance GDPR e AI Act per la tua azienda",
     template: "%s | ComplyAI",
   },
   description:
-    "Banner cookie, Privacy Policy, Cookie Policy, registro consensi e registro trattamenti GDPR. Tutto pronto in 5 minuti, sempre aggiornato.",
-  keywords: ["GDPR", "Privacy Policy", "Cookie Policy", "Cookie banner", "Consent Management", "compliance Italia"],
+    "Piattaforma all-in-one per GDPR e AI Act: banner cookie, Privacy Policy, registro consensi, registro trattamenti, classificatore rischio AI e AI Use Policy. Pronto in 5 minuti.",
+  keywords: [
+    "GDPR",
+    "AI Act",
+    "Regolamento UE 2024/1689",
+    "Privacy Policy",
+    "Cookie Policy",
+    "Cookie banner",
+    "Consent Management",
+    "compliance Italia",
+    "AI Use Policy",
+    "classificatore rischio AI",
+  ],
   openGraph: {
     type: "website",
     locale: "it_IT",
     url: "https://aicomplyonline.it",
     siteName: "ComplyAI",
-    title: "ComplyAI — Compliance GDPR automatica",
-    description: "La piattaforma all-in-one per essere a norma GDPR in 5 minuti.",
+    title: "ComplyAI — GDPR + AI Act automatici",
+    description: "La piattaforma all-in-one per essere a norma GDPR e AI Act in 5 minuti.",
   },
   robots: { index: true, follow: true },
 };

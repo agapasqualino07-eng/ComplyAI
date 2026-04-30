@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FileText, Cookie, ScrollText, Plus } from "lucide-react";
+import { FileText, Cookie, ScrollText, Plus, Bot, Megaphone } from "lucide-react";
 import { requireActiveOrg } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +11,8 @@ const TYPE_META: Record<string, { label: string; icon: any; color: string }> = {
   cookie: { label: "Cookie Policy", icon: Cookie, color: "text-amber-600" },
   terms: { label: "Termini e Condizioni", icon: ScrollText, color: "text-blue-600" },
   eula: { label: "EULA", icon: ScrollText, color: "text-blue-600" },
+  ai_use_policy: { label: "AI Use Policy", icon: Bot, color: "text-fuchsia-600" },
+  ai_disclosure: { label: "AI Disclosure Notice", icon: Megaphone, color: "text-fuchsia-600" },
 };
 
 export default async function DocumentsPage({ params }: { params: Promise<{ orgId: string }> }) {
@@ -32,11 +34,13 @@ export default async function DocumentsPage({ params }: { params: Promise<{ orgI
         </div>
       </div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {[
           { type: "privacy", label: "Privacy Policy", desc: "Informativa GDPR" },
           { type: "cookie", label: "Cookie Policy", desc: "Per banner cookie" },
           { type: "terms", label: "Termini e Condizioni", desc: "T&C del sito" },
+          { type: "ai_use_policy", label: "AI Use Policy", desc: "Policy IA interna (AI Act)" },
+          { type: "ai_disclosure", label: "AI Disclosure", desc: "Trasparenza IA pubblica" },
           { type: "eula", label: "EULA", desc: "Software/SaaS" },
         ].map((t) => {
           const meta = TYPE_META[t.type];
