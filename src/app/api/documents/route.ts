@@ -6,26 +6,35 @@ import { slugify } from "@/lib/utils";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
-  site_id: z.string().uuid().optional().nullable(),
-  type: z.enum(["privacy", "cookie", "terms", "eula", "ai_use_policy", "ai_disclosure"]),
+  type: z.enum(["ai_use_policy", "ai_employee_notice", "ai_disclosure", "ai_registry_export"]),
   language: z.string().default("it"),
   publish: z.boolean().default(false),
-  answers: z.object({
-    controllerName: z.string().min(2),
-    vatNumber: z.string().optional(),
-    address: z.string().optional(),
-    websiteUrl: z.string().min(3),
-    contactEmail: z.string().email(),
-    dpoEmail: z.string().email().optional().or(z.literal("")),
-    purposes: z.array(z.string()).default([]),
-    usesCloudflare: z.boolean().optional(),
-    usesGoogleAnalytics: z.boolean().optional(),
-    usesMetaPixel: z.boolean().optional(),
-    usesStripe: z.boolean().optional(),
-    usesMailchimp: z.boolean().optional(),
-    usesHotjar: z.boolean().optional(),
-    otherProcessors: z.string().optional(),
-  }),
+  answers: z
+    .object({
+      controllerName: z.string().min(2),
+      vatNumber: z.string().optional(),
+      address: z.string().optional(),
+      websiteUrl: z.string().optional(),
+      contactEmail: z.string().email(),
+      dpoEmail: z.string().email().optional().or(z.literal("")),
+      sector: z.string().optional(),
+      approvedTools: z.string().optional(),
+      prohibitedUseCases: z.string().optional(),
+      hasHumanReviewProcess: z.boolean().optional(),
+      trainingProvided: z.boolean().optional(),
+      appliesToProfessions: z.boolean().optional(),
+      aiSystemsList: z
+        .array(
+          z.object({
+            name: z.string(),
+            vendor: z.string().nullable().optional(),
+            purpose: z.string().nullable().optional(),
+            category: z.string().nullable().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .passthrough(),
 });
 
 export async function POST(req: Request) {
@@ -39,40 +48,35 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Dati non validi", details: parsed.error.flatten() }, { status: 400 });
   }
 
-  const { organization_id, site_id, type, language, publish, answers } = parsed.data;
+  const { organization_id, type, language, publish, answers } = parsed.data;
   const html = renderDocument(type, answers as any);
   const title = `${DOCUMENT_TITLES[type]} — ${answers.controllerName}`;
-  const slug = `${slugify(answers.controllerName)}-${type}`;
+  const baseSlug = `${slugify(answers.controllerName)}-${type}`;
+  const finalSlug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
 
-  // Upsert: se esiste già un doc dello stesso tipo per questo sito, ne creiamo una nuova versione
+  // Versioning: se esiste già un doc dello stesso tipo per l'org, incrementa la versione
   const { data: existing } = await supabase
     .from("documents")
     .select("id, version")
     .eq("organization_id", organization_id)
     .eq("type", type)
-    .eq("site_id", site_id || null)
     .order("version", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  const insert = {
-    organization_id,
-    site_id: site_id || null,
-    type,
-    title,
-    slug: existing ? existing.id : slug,
-    language,
-    version: existing ? existing.version + 1 : 1,
-    questionnaire: answers as any,
-    rendered_html: html,
-    published_at: publish ? new Date().toISOString() : null,
-  };
-
-  // To make slug unique we just append id-fragment as fallback
-  const finalSlug = `${slug}-${Math.random().toString(36).slice(2, 7)}`;
   const { data, error } = await supabase
     .from("documents")
-    .insert({ ...insert, slug: finalSlug })
+    .insert({
+      organization_id,
+      type,
+      title,
+      slug: finalSlug,
+      language,
+      version: existing ? existing.version + 1 : 1,
+      questionnaire: answers as any,
+      rendered_html: html,
+      published_at: publish ? new Date().toISOString() : null,
+    } as any)
     .select("id")
     .single();
 

@@ -6,7 +6,7 @@ import { getStripePriceId, type PlanId, type Cadence } from "@/lib/plans";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
-  plan: z.enum(["solo", "pro", "business", "enterprise"]),
+  plan: z.enum(["pro", "enterprise"]),
   cadence: z.enum(["monthly", "yearly"]),
 });
 

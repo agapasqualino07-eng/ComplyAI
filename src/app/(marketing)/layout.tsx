@@ -11,9 +11,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 grid place-items-center text-white">
               <ShieldCheck className="h-4 w-4" />
             </div>
-            ComplyAI
+            AIComply
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
+            <Link href="/quiz" className="text-muted-foreground hover:text-foreground">Quiz gratuito</Link>
             <Link href="/#features" className="text-muted-foreground hover:text-foreground">Funzionalità</Link>
             <Link href="/pricing" className="text-muted-foreground hover:text-foreground">Prezzi</Link>
             <Link href="/#faq" className="text-muted-foreground hover:text-foreground">FAQ</Link>
@@ -23,8 +24,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <Link href="/login" className="hidden sm:inline-block text-sm font-medium hover:text-primary">
               Accedi
             </Link>
-            <Link href="/signup">
-              <Button variant="gradient" size="sm">Prova gratis</Button>
+            <Link href="/quiz">
+              <Button variant="gradient" size="sm">Quiz gratuito</Button>
             </Link>
           </div>
         </div>
@@ -39,10 +40,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 grid place-items-center text-white">
                 <ShieldCheck className="h-4 w-4" />
               </div>
-              ComplyAI
+              AIComply
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm">
-              La piattaforma all-in-one per la compliance GDPR. Banner cookie, Privacy Policy, registri consensi e trattamenti — tutto pronto in 5 minuti.
+              La piattaforma italiana per la compliance AI Act + Legge 132/2025. Registro IA, documenti audit-ready, formazione e alert normativi.
             </p>
             <div className="flex items-center gap-3 mt-4 text-muted-foreground">
               <a href="https://twitter.com" aria-label="Twitter" className="hover:text-foreground"><Twitter className="h-4 w-4" /></a>
@@ -52,9 +53,10 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
           <div>
             <p className="text-sm font-semibold mb-3">Prodotto</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/quiz" className="hover:text-foreground">Quiz gratuito</Link></li>
               <li><Link href="/#features" className="hover:text-foreground">Funzionalità</Link></li>
               <li><Link href="/pricing" className="hover:text-foreground">Prezzi</Link></li>
-              <li><Link href="/signup" className="hover:text-foreground">Inizia gratis</Link></li>
+              <li><Link href="/signup" className="hover:text-foreground">Registrati</Link></li>
             </ul>
           </div>
           <div>
@@ -69,7 +71,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         </div>
         <div className="border-t">
           <div className="container-wide py-4 text-xs text-muted-foreground flex flex-wrap items-center justify-between gap-2">
-            <span>© {new Date().getFullYear()} ComplyAI · aicomplyonline.it</span>
+            <span>© {new Date().getFullYear()} AIComply · aicomplyonline.it</span>
             <span>Made with ❤️ in Italia · Soluzione GDPR-ready</span>
           </div>
         </div>

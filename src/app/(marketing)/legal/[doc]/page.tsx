@@ -2,10 +2,10 @@ import { notFound } from "next/navigation";
 
 const DOCS: Record<string, { title: string; content: string }> = {
   privacy: {
-    title: "Privacy Policy di ComplyAI",
+    title: "Privacy Policy di AIComply",
     content: `
 <h2>1. Titolare del trattamento</h2>
-<p>Il titolare del trattamento dei dati raccolti tramite questo sito è ComplyAI, contattabile all'indirizzo <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a>.</p>
+<p>Il titolare del trattamento dei dati raccolti tramite questo sito è AIComply, contattabile all'indirizzo <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a>.</p>
 <h2>2. Dati raccolti</h2>
 <p>Raccogliamo: email, nome, dati aziendali, log di utilizzo del servizio, dati di pagamento (gestiti da Stripe).</p>
 <h2>3. Finalità</h2>
@@ -17,7 +17,7 @@ const DOCS: Record<string, { title: string; content: string }> = {
 `,
   },
   cookie: {
-    title: "Cookie Policy di ComplyAI",
+    title: "Cookie Policy di AIComply",
     content: `
 <h2>Cookie utilizzati</h2>
 <p>Il sito aicomplyonline.it utilizza esclusivamente cookie tecnici e di sessione necessari al funzionamento del servizio. Non sono presenti cookie di profilazione o marketing.</p>
@@ -26,14 +26,14 @@ const DOCS: Record<string, { title: string; content: string }> = {
 `,
   },
   terms: {
-    title: "Termini di servizio di ComplyAI",
+    title: "Termini di servizio di AIComply",
     content: `
 <h2>1. Servizio</h2>
-<p>ComplyAI fornisce strumenti software per supportare le aziende nella compliance privacy. I documenti generati hanno carattere standard e potrebbero richiedere personalizzazioni in casi specifici.</p>
+<p>AIComply fornisce strumenti software per supportare le aziende nella compliance privacy. I documenti generati hanno carattere standard e potrebbero richiedere personalizzazioni in casi specifici.</p>
 <h2>2. Abbonamenti</h2>
 <p>Gli abbonamenti sono mensili o annuali. Il rinnovo è automatico. Puoi annullare in qualsiasi momento dal tuo account o dal portale di Stripe.</p>
 <h2>3. Limitazione di responsabilità</h2>
-<p>ComplyAI non si assume responsabilità per l'uso improprio dei documenti generati o per il mancato adeguamento normativo del cliente.</p>
+<p>AIComply non si assume responsabilità per l'uso improprio dei documenti generati o per il mancato adeguamento normativo del cliente.</p>
 <h2>4. Foro competente</h2>
 <p>Per qualsiasi controversia è competente il Foro del consumatore.</p>
 `,

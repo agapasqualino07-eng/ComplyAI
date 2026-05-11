@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { ArrowRight, FileText, Globe, ScrollText, ShieldCheck, ClipboardList, Bot } from "lucide-react";
+import {
+  ArrowRight,
+  Bot,
+  FileText,
+  GraduationCap,
+  Bell,
+  ShieldCheck,
+  AlertTriangle,
+  Sparkles,
+} from "lucide-react";
 import { requireActiveOrg } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,42 +19,85 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
   const { org, supabase } = await requireActiveOrg(orgId);
 
   const [
-    { count: sitesCount },
-    { count: docsCount },
-    { count: prCount },
-    { count: consentsCount },
     { count: aiCount },
+    { count: prohibitedCount },
+    { count: highRiskCount },
+    { count: docsCount },
+    { count: signedDocsCount },
+    { count: trainingCount },
+    { count: alertsCount },
   ] = await Promise.all([
-    supabase.from("sites").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
-    supabase.from("documents").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
-    supabase.from("processing_records").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
-    supabase.from("consent_logs").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
     supabase.from("ai_systems").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
+    supabase.from("ai_systems").select("id", { count: "exact", head: true }).eq("organization_id", orgId).eq("category", "vietato"),
+    supabase.from("ai_systems").select("id", { count: "exact", head: true }).eq("organization_id", orgId).eq("category", "alto"),
+    supabase.from("documents").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
+    supabase.from("documents").select("id", { count: "exact", head: true }).eq("organization_id", orgId).not("published_at", "is", null),
+    supabase.from("training_records").select("id", { count: "exact", head: true }).eq("organization_id", orgId),
+    supabase.from("alerts").select("id", { count: "exact", head: true }),
   ]);
 
+  // Score calculation (semplificato lato client per ora; il DB ha la function recompute_compliance_score)
+  const base = 30;
+  const bonusSystems = Math.min((aiCount ?? 0) * 4, 20);
+  const penaltyHigh = Math.min((highRiskCount ?? 0) * 12, 36);
+  const penaltyProhibited = (prohibitedCount ?? 0) * 25;
+  const bonusTraining = Math.min((trainingCount ?? 0) * 5, 20);
+  const bonusDocs = (docsCount ?? 0) > 0 ? Math.round(((signedDocsCount ?? 0) / (docsCount ?? 1)) * 30) : 0;
+  const score = Math.max(0, Math.min(100, base + bonusSystems + bonusTraining + bonusDocs - penaltyHigh - penaltyProhibited));
+
   const setupSteps = [
-    { done: (sitesCount ?? 0) > 0, label: "Aggiungi il primo sito", href: `/dashboard/${orgId}/sites` },
-    { done: (docsCount ?? 0) > 0, label: "Genera Privacy & Cookie Policy", href: `/dashboard/${orgId}/documents` },
-    { done: (sitesCount ?? 0) > 0 && (docsCount ?? 0) > 0, label: "Configura il banner cookie", href: `/dashboard/${orgId}/cmp` },
-    { done: (prCount ?? 0) > 0, label: "Compila il registro trattamenti", href: `/dashboard/${orgId}/processing` },
-    { done: (aiCount ?? 0) > 0, label: "Mappa i sistemi AI (AI Act)", href: `/dashboard/${orgId}/ai` },
+    { done: (aiCount ?? 0) > 0, label: "Mappa i sistemi AI usati in azienda", href: `/dashboard/${orgId}/ai/new` },
+    { done: (signedDocsCount ?? 0) > 0, label: "Genera e firma l'Informativa Art. 11 ai dipendenti", href: `/dashboard/${orgId}/documents/new?type=ai_employee_notice` },
+    { done: (docsCount ?? 0) >= 2, label: "Genera la Policy interna sull'uso dell'IA", href: `/dashboard/${orgId}/documents/new?type=ai_use_policy` },
+    { done: (trainingCount ?? 0) > 0, label: "Registra almeno una formazione AI literacy", href: `/dashboard/${orgId}/training` },
   ];
   const doneSteps = setupSteps.filter((s) => s.done).length;
   const progress = Math.round((doneSteps / setupSteps.length) * 100);
-
-  const stats = [
-    { label: "Siti gestiti", value: sitesCount ?? 0, icon: Globe },
-    { label: "Documenti generati", value: docsCount ?? 0, icon: FileText },
-    { label: "Consensi tracciati", value: consentsCount ?? 0, icon: ScrollText },
-    { label: "Sistemi AI mappati", value: aiCount ?? 0, icon: Bot },
-  ];
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
       <div>
         <p className="text-sm text-muted-foreground">Benvenuto</p>
         <h1 className="text-2xl sm:text-3xl font-display font-bold">{org.name}</h1>
+        <p className="text-muted-foreground mt-1">Stato di compliance AI Act + L. 132/2025</p>
       </div>
+
+      {/* Compliance score */}
+      <Card className="overflow-hidden">
+        <div className="bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-700 text-white p-6 grid sm:grid-cols-2 gap-4 items-center">
+          <div>
+            <p className="text-sm opacity-80 uppercase tracking-wide">Score di compliance</p>
+            <p className="text-6xl font-display font-bold mt-1">{score}<span className="text-2xl opacity-70">/100</span></p>
+            <p className="text-sm opacity-90 mt-2">
+              {score >= 70 ? "Buon livello — mantieni gli aggiornamenti" : score >= 40 ? "Attenzione: completa i passi mancanti" : "Critico: agisci subito sui passi qui sotto"}
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 text-sm">
+            <Stat label="Sistemi AI" value={aiCount ?? 0} />
+            <Stat label="Documenti firmati" value={`${signedDocsCount ?? 0} / ${docsCount ?? 0}`} />
+            <Stat label="Formazioni" value={trainingCount ?? 0} />
+            <Stat label="Alert attivi" value={alertsCount ?? 0} />
+          </div>
+        </div>
+      </Card>
+
+      {/* Critical: prohibited */}
+      {(prohibitedCount ?? 0) > 0 && (
+        <div className="rounded-lg bg-red-50 border border-red-200 p-4 flex items-start gap-3">
+          <AlertTriangle className="h-5 w-5 text-red-600 shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-red-900">
+              {prohibitedCount} {prohibitedCount === 1 ? "sistema rientra" : "sistemi rientrano"} tra le pratiche vietate (Art. 5 AI Act)
+            </p>
+            <p className="text-sm text-red-800 mt-0.5">
+              Sanzione fino a 35M€ o 7% del fatturato. Dismetti o riprogetta subito.
+            </p>
+            <Link href={`/dashboard/${orgId}/ai`} className="inline-block mt-2 text-sm font-medium text-red-700 underline">
+              Vai al registro IA →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Setup checklist */}
       {progress < 100 && (
@@ -54,9 +106,9 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
             <div className="flex items-center justify-between gap-4">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <ShieldCheck className="h-5 w-5 text-primary" /> Setup compliance
+                  <ShieldCheck className="h-5 w-5 text-primary" /> Setup compliance AI Act
                 </CardTitle>
-                <CardDescription>Completa la configurazione iniziale per essere a norma.</CardDescription>
+                <CardDescription>Completa i passi essenziali per essere a norma.</CardDescription>
               </div>
               <Badge variant="secondary">{progress}% completato</Badge>
             </div>
@@ -97,75 +149,35 @@ export default async function OverviewPage({ params }: { params: Promise<{ orgId
         </Card>
       )}
 
-      {/* Stats */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map(({ label, value, icon: Icon }) => (
-          <Card key={label}>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <Icon className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <p className="text-3xl font-display font-bold mt-2">{value}</p>
-              <p className="text-sm text-muted-foreground mt-1">{label}</p>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
       {/* Quick actions */}
       <div>
         <h2 className="text-lg font-semibold mb-3">Azioni rapide</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6 space-y-3">
-              <FileText className="h-6 w-6 text-primary" />
-              <div>
-                <h3 className="font-semibold">Genera Privacy Policy</h3>
-                <p className="text-sm text-muted-foreground">Questionario guidato in 5 minuti.</p>
-              </div>
-              <Link href={`/dashboard/${orgId}/documents/new?type=privacy`}>
-                <Button size="sm" variant="outline" className="w-full">Inizia</Button>
-              </Link>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6 space-y-3">
-              <Globe className="h-6 w-6 text-primary" />
-              <div>
-                <h3 className="font-semibold">Aggiungi sito</h3>
-                <p className="text-sm text-muted-foreground">Collega un nuovo dominio.</p>
-              </div>
-              <Link href={`/dashboard/${orgId}/sites/new`}>
-                <Button size="sm" variant="outline" className="w-full">Aggiungi</Button>
-              </Link>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6 space-y-3">
-              <ClipboardList className="h-6 w-6 text-primary" />
-              <div>
-                <h3 className="font-semibold">Registro trattamenti</h3>
-                <p className="text-sm text-muted-foreground">Adempi all'art. 30 GDPR.</p>
-              </div>
-              <Link href={`/dashboard/${orgId}/processing`}>
-                <Button size="sm" variant="outline" className="w-full">Apri</Button>
-              </Link>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-md transition-shadow">
-            <CardContent className="pt-6 space-y-3">
-              <Bot className="h-6 w-6 text-fuchsia-600" />
-              <div>
-                <h3 className="font-semibold">Classifica sistema AI</h3>
-                <p className="text-sm text-muted-foreground">Wizard rischio AI Act.</p>
-              </div>
-              <Link href={`/dashboard/${orgId}/ai/new`}>
-                <Button size="sm" variant="outline" className="w-full">Inizia</Button>
-              </Link>
-            </CardContent>
-          </Card>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <QuickAction icon={Bot} title="Aggiungi sistema AI" desc="Classificatore rischio guidato." href={`/dashboard/${orgId}/ai/new`} />
+          <QuickAction icon={FileText} title="Informativa Art. 11" desc="Per i dipendenti, L. 132/2025." href={`/dashboard/${orgId}/documents/new?type=ai_employee_notice`} />
+          <QuickAction icon={GraduationCap} title="Registra formazione" desc="AI literacy Art. 4." href={`/dashboard/${orgId}/training`} />
+          <QuickAction icon={Bell} title="Alert normativi" desc="Scadenze e novità AI Act." href={`/dashboard/${orgId}/alerts`} />
         </div>
       </div>
     </div>
+  );
+}
+
+function Stat({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="bg-white/10 rounded-lg p-3 backdrop-blur">
+      <p className="text-2xl font-display font-bold">{value}</p>
+      <p className="text-xs opacity-80">{label}</p>
+    </div>
+  );
+}
+
+function QuickAction({ icon: Icon, title, desc, href }: { icon: any; title: string; desc: string; href: string }) {
+  return (
+    <Link href={href} className="group rounded-xl border bg-card p-5 hover:border-primary/40 hover:shadow-sm transition-all">
+      <Icon className="h-6 w-6 text-primary" />
+      <h3 className="font-semibold mt-3 group-hover:text-primary transition-colors">{title}</h3>
+      <p className="text-sm text-muted-foreground mt-0.5">{desc}</p>
+    </Link>
   );
 }

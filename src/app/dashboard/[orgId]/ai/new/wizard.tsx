@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { classify, RISK_LABELS, type ClassifierAnswers } from "@/lib/aiact/classifier";
+import { VENDOR_LIST } from "@/lib/aiact/vendors";
 
 interface Props {
   orgId: string;
@@ -110,6 +111,27 @@ export function AIWizard({ orgId }: Props) {
         {step === 0 && (
           <div className="space-y-4">
             <h3 className="font-semibold">1. Identifica il sistema</h3>
+            <div className="space-y-2">
+              <Label>Scelta rapida da catalogo (opzionale)</Label>
+              <div className="flex flex-wrap gap-2">
+                {VENDOR_LIST.slice(0, 6).map((v) => (
+                  <button
+                    type="button"
+                    key={v.key}
+                    onClick={() => {
+                      setName(v.name);
+                      setVendor(v.provider);
+                      setVendorUrl(v.vendorUrl);
+                      setPurpose(v.defaultPurpose);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full border bg-card px-3 py-1 text-xs hover:border-primary/40 transition-colors"
+                  >
+                    <span>{v.icon}</span>
+                    {v.name}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="name">Nome del sistema *</Label>
               <Input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Es. ChatGPT Enterprise, GitHub Copilot, chatbot interno…" required />

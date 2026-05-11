@@ -12,7 +12,7 @@ export default function LoginPage({
     <div className="w-full max-w-md space-y-8">
       <div className="space-y-2">
         <h1 className="text-3xl font-display font-bold">Bentornato</h1>
-        <p className="text-muted-foreground">Accedi al tuo account ComplyAI per gestire la compliance dei tuoi siti.</p>
+        <p className="text-muted-foreground">Accedi al tuo account AIComply per gestire la compliance AI Act della tua azienda.</p>
       </div>
 
       <LoginForm searchParamsPromise={searchParams} />

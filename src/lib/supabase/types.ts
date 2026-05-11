@@ -1,9 +1,8 @@
-// Tipi minimi del DB - generabili in seguito con `supabase gen types`.
-// Qui definiamo manualmente i tipi necessari per type-safety nelle query.
+// Tipi DB lato client. Per type-safety completa: `supabase gen types`.
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-export type PlanId = "free" | "solo" | "pro" | "business" | "enterprise";
+export type PlanId = "free" | "pro" | "enterprise";
 export type SubscriptionStatus =
   | "trialing"
   | "active"
@@ -13,6 +12,14 @@ export type SubscriptionStatus =
   | "incomplete_expired"
   | "unpaid"
   | "paused";
+
+export type DocumentType =
+  | "ai_use_policy"
+  | "ai_employee_notice"
+  | "ai_disclosure"
+  | "ai_registry_export";
+
+export type ComplianceStatus = "bozza" | "in_corso" | "completato" | "scaduto";
 
 export interface Database {
   public: {
@@ -41,6 +48,12 @@ export interface Database {
           postal_code: string | null;
           email: string | null;
           owner_id: string;
+          sector: string | null;
+          employees: string | null;
+          compliance_score: number;
+          compliance_status: ComplianceStatus;
+          questionnaire_data: Json | null;
+          partner_id: string | null;
           created_at: string;
         };
         Insert: Partial<Database["public"]["Tables"]["organizations"]["Row"]> & { name: string; owner_id: string };
@@ -60,6 +73,29 @@ export interface Database {
           role: "owner" | "admin" | "editor" | "viewer";
         };
         Update: Partial<Database["public"]["Tables"]["org_members"]["Row"]>;
+      };
+      partners: {
+        Row: {
+          id: string;
+          user_id: string;
+          studio_name: string;
+          contact_name: string | null;
+          contact_email: string | null;
+          vat_number: string | null;
+          client_slots: number;
+          clients_used: number;
+          logo_url: string | null;
+          brand_color: string | null;
+          footer_text: string | null;
+          welcome_message: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["partners"]["Row"]> & {
+          user_id: string;
+          studio_name: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["partners"]["Row"]>;
       };
       subscriptions: {
         Row: {
@@ -84,114 +120,6 @@ export interface Database {
         };
         Update: Partial<Database["public"]["Tables"]["subscriptions"]["Row"]>;
       };
-      sites: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          domain: string;
-          public_id: string;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["sites"]["Row"]> & {
-          organization_id: string;
-          name: string;
-          domain: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["sites"]["Row"]>;
-      };
-      documents: {
-        Row: {
-          id: string;
-          organization_id: string;
-          site_id: string | null;
-          type: "privacy" | "cookie" | "terms" | "eula" | "ai_use_policy" | "ai_disclosure";
-          title: string;
-          slug: string;
-          language: string;
-          version: number;
-          questionnaire: Json;
-          rendered_html: string;
-          published_at: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["documents"]["Row"]> & {
-          organization_id: string;
-          type: "privacy" | "cookie" | "terms" | "eula" | "ai_use_policy" | "ai_disclosure";
-          title: string;
-          slug: string;
-          language: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["documents"]["Row"]>;
-      };
-      cmp_configs: {
-        Row: {
-          id: string;
-          organization_id: string;
-          site_id: string;
-          theme: "light" | "dark" | "auto";
-          accent_color: string;
-          position: "bottom" | "top" | "center";
-          layout: "bar" | "box";
-          consent_mode: "opt_in" | "opt_out" | "info";
-          categories: Json;
-          texts: Json;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["cmp_configs"]["Row"]> & {
-          organization_id: string;
-          site_id: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["cmp_configs"]["Row"]>;
-      };
-      consent_logs: {
-        Row: {
-          id: string;
-          site_id: string;
-          organization_id: string;
-          subject_id: string;
-          consent_string: string;
-          categories: Json;
-          user_agent: string | null;
-          ip_hash: string | null;
-          page_url: string | null;
-          created_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["consent_logs"]["Row"]> & {
-          site_id: string;
-          organization_id: string;
-          subject_id: string;
-          consent_string: string;
-          categories: Json;
-        };
-        Update: Partial<Database["public"]["Tables"]["consent_logs"]["Row"]>;
-      };
-      processing_records: {
-        Row: {
-          id: string;
-          organization_id: string;
-          name: string;
-          purpose: string;
-          legal_basis: string;
-          data_categories: string[];
-          data_subjects: string[];
-          retention: string | null;
-          recipients: string | null;
-          transfers_outside_eu: boolean;
-          security_measures: string | null;
-          dpo_notes: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: Partial<Database["public"]["Tables"]["processing_records"]["Row"]> & {
-          organization_id: string;
-          name: string;
-          purpose: string;
-          legal_basis: string;
-        };
-        Update: Partial<Database["public"]["Tables"]["processing_records"]["Row"]>;
-      };
       ai_systems: {
         Row: {
           id: string;
@@ -199,10 +127,13 @@ export interface Database {
           name: string;
           vendor: string | null;
           vendor_url: string | null;
+          vendor_key: string | null;
           description: string | null;
           purpose: string | null;
           org_role: "provider" | "deployer" | "distributor" | "importer";
           risk_class: "prohibited" | "high" | "limited" | "minimal" | "gpai" | null;
+          category: string | null;
+          obligation: string | null;
           status: "in_use" | "in_evaluation" | "decommissioned";
           is_gpai: boolean;
           uses_personal_data: boolean;
@@ -220,6 +151,84 @@ export interface Database {
           name: string;
         };
         Update: Partial<Database["public"]["Tables"]["ai_systems"]["Row"]>;
+      };
+      documents: {
+        Row: {
+          id: string;
+          organization_id: string;
+          site_id: string | null;
+          type: DocumentType;
+          title: string;
+          slug: string;
+          language: string;
+          version: number;
+          questionnaire: Json;
+          rendered_html: string;
+          published_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["documents"]["Row"]> & {
+          organization_id: string;
+          type: DocumentType;
+          title: string;
+          slug: string;
+          language: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["documents"]["Row"]>;
+      };
+      training_records: {
+        Row: {
+          id: string;
+          organization_id: string;
+          employee_name: string;
+          employee_email: string | null;
+          topic: string;
+          module_id: string | null;
+          duration_hours: number;
+          completed_at: string;
+          notes: string | null;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["training_records"]["Row"]> & {
+          organization_id: string;
+          employee_name: string;
+          topic: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["training_records"]["Row"]>;
+      };
+      alerts: {
+        Row: {
+          id: string;
+          title: string;
+          content: string;
+          severity: "info" | "warning" | "critical";
+          impact: string | null;
+          source: string | null;
+          published_at: string;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["alerts"]["Row"]> & {
+          title: string;
+          content: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["alerts"]["Row"]>;
+      };
+      quiz_completions: {
+        Row: {
+          id: string;
+          sector: string | null;
+          employees: string | null;
+          score: number | null;
+          systems_count: number | null;
+          risk_summary: Json;
+          answers: Json;
+          email: string | null;
+          clicked_pro: boolean;
+          created_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["quiz_completions"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["quiz_completions"]["Row"]>;
       };
       audit_logs: {
         Row: {

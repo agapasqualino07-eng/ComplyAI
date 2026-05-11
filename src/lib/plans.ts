@@ -1,4 +1,4 @@
-export type PlanId = "free" | "solo" | "pro" | "business" | "enterprise";
+export type PlanId = "free" | "pro" | "enterprise";
 export type Cadence = "monthly" | "yearly";
 
 export interface Plan {
@@ -11,154 +11,94 @@ export interface Plan {
   highlight?: boolean;
   limits: {
     organizations: number;
-    sites: number;
+    aiSystems: number;
     documents: number;
-    consentLogsPerMonth: number;
-    customBranding: boolean;
-    apiAccess: boolean;
-    auditLog: boolean;
     teamMembers: number;
+    auditTrail: boolean;
+    whiteLabel: boolean;
+    apiAccess: boolean;
   };
 }
 
 export const PLANS: Record<PlanId, Plan> = {
   free: {
     id: "free",
-    name: "Trial",
-    tagline: "Prova ComplyAI per 14 giorni",
+    name: "Free",
+    tagline: "Quiz di compliance gratuito",
     monthly: 0,
     yearly: 0,
     features: [
-      "1 sito con banner watermark",
-      "Privacy & Cookie Policy con marchio ComplyAI",
-      "Registro consensi (ultimi 7 giorni)",
-      "Supporto email base",
+      "Quiz 17 domande di compliance AI Act",
+      "Report con score, sistemi rilevati, obblighi",
+      "Calendario scadenze 2025-2027",
+      "Newsletter aggiornamenti normativi",
     ],
     limits: {
-      organizations: 1,
-      sites: 1,
-      documents: 2,
-      consentLogsPerMonth: 1000,
-      customBranding: false,
+      organizations: 0,
+      aiSystems: 0,
+      documents: 0,
+      teamMembers: 0,
+      auditTrail: false,
+      whiteLabel: false,
       apiAccess: false,
-      auditLog: false,
-      teamMembers: 1,
-    },
-  },
-  solo: {
-    id: "solo",
-    name: "Solo",
-    tagline: "Per freelance e piccoli professionisti",
-    monthly: 14,
-    yearly: 119,
-    features: [
-      "1 sito web",
-      "Privacy + Cookie Policy + Termini",
-      "CMP banner senza watermark",
-      "Registro consensi illimitato",
-      "Modulo AI Act: 1 sistema AI nel registro",
-      "Aggiornamenti normativi automatici",
-      "Supporto email",
-    ],
-    limits: {
-      organizations: 1,
-      sites: 1,
-      documents: 10,
-      consentLogsPerMonth: 50000,
-      customBranding: false,
-      apiAccess: false,
-      auditLog: false,
-      teamMembers: 1,
     },
   },
   pro: {
     id: "pro",
     name: "Pro",
-    tagline: "Per PMI e professionisti strutturati",
+    tagline: "Per la tua PMI",
     monthly: 29,
-    yearly: 249,
+    yearly: 290,
     highlight: true,
     features: [
-      "Fino a 5 siti web",
-      "Tutti i generatori (Privacy, Cookie, Termini, EULA)",
-      "CMP banner personalizzabile",
-      "Registro consensi + export CSV/PDF",
-      "Registro trattamenti GDPR",
-      "AI Act: registro + classificatore + AI Use Policy + AI Disclosure",
-      "Cookie scanner automatico",
-      "Supporto prioritario",
-      "2 utenti team",
+      "1 azienda",
+      "Registro sistemi IA illimitato + classificatore rischio",
+      "Vendor Intelligence (ChatGPT, Copilot, Gemini, Claude, Midjourney…)",
+      "4 documenti audit-ready (Policy interna, Informativa Art.11, Disclosure Art.50, Registro formale)",
+      "Modulo formazione AI literacy con tracking",
+      "Alert normativi AI Act + L.132/2025",
+      "Aggiornamenti automatici delle scadenze",
+      "Supporto email prioritario",
     ],
     limits: {
       organizations: 1,
-      sites: 5,
-      documents: 50,
-      consentLogsPerMonth: 250000,
-      customBranding: false,
-      apiAccess: false,
-      auditLog: true,
-      teamMembers: 2,
-    },
-  },
-  business: {
-    id: "business",
-    name: "Business",
-    tagline: "Per e-commerce e SaaS in crescita",
-    monthly: 59,
-    yearly: 499,
-    features: [
-      "Siti illimitati su 1 azienda",
-      "Tutto del piano Pro",
-      "AI Act: sistemi AI illimitati + checklist obblighi",
-      "White-label parziale (rimuovi marchio)",
-      "Audit log avanzato",
-      "DPA fornitori",
-      "Webhooks consensi",
-      "Supporto telefonico",
-      "5 utenti team",
-    ],
-    limits: {
-      organizations: 1,
-      sites: 9999,
+      aiSystems: 9999,
       documents: 9999,
-      consentLogsPerMonth: 2000000,
-      customBranding: true,
+      teamMembers: 3,
+      auditTrail: false,
+      whiteLabel: false,
       apiAccess: false,
-      auditLog: true,
-      teamMembers: 5,
     },
   },
   enterprise: {
     id: "enterprise",
-    name: "Enterprise / Agency",
-    tagline: "Per agenzie e commercialisti che gestiscono più clienti",
-    monthly: 99,
-    yearly: 899,
+    name: "Enterprise",
+    tagline: "Per studi commercialisti, legali e consulenziali",
+    monthly: 199,
+    yearly: 1990,
     features: [
-      "Aziende illimitate (multi-tenant)",
-      "Tutto del piano Business",
-      "AI Act enterprise: FRIA + Annex IV documentation",
-      "Accesso API completo",
+      "Tutto del piano Pro",
+      "Multi-azienda: gestisci fino a 10 clienti (slot aggiuntivi acquistabili)",
+      "Workspace dedicato per ciascun cliente",
+      "Audit trail completo delle azioni",
+      "White-label: logo, colori, footer personalizzati",
+      "Report attività per cliente",
       "Account manager dedicato",
-      "SLA garantito 99.9%",
-      "Onboarding personalizzato",
-      "Utenti illimitati",
-      "Fatturazione consolidata",
+      "Onboarding e formazione del tuo team",
     ],
     limits: {
-      organizations: 9999,
-      sites: 9999,
-      documents: 9999,
-      consentLogsPerMonth: 99999999,
-      customBranding: true,
-      apiAccess: true,
-      auditLog: true,
-      teamMembers: 9999,
+      organizations: 10,
+      aiSystems: 99999,
+      documents: 99999,
+      teamMembers: 10,
+      auditTrail: true,
+      whiteLabel: true,
+      apiAccess: false,
     },
   },
 };
 
-export const PLAN_ORDER: PlanId[] = ["free", "solo", "pro", "business", "enterprise"];
+export const PLAN_ORDER: PlanId[] = ["free", "pro", "enterprise"];
 
 export function getStripePriceId(plan: PlanId, cadence: Cadence): string | null {
   if (plan === "free") return null;

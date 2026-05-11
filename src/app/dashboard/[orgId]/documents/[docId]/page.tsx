@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink, Pencil } from "lucide-react";
+import { ArrowLeft, Download, Pencil } from "lucide-react";
 import { requireActiveOrg } from "@/lib/auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,36 +26,32 @@ export default async function DocumentDetailPage({
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center gap-2">
-        <Link href={`/dashboard/${orgId}/documents`}>
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4" /> Documenti
-          </Button>
-        </Link>
-      </div>
+      <Link href={`/dashboard/${orgId}/documents`}>
+        <Button variant="ghost" size="sm">
+          <ArrowLeft className="h-4 w-4" /> Documenti
+        </Button>
+      </Link>
 
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
-            {doc.published_at ? <Badge variant="success">Pubblicato</Badge> : <Badge variant="secondary">Bozza</Badge>}
+            {doc.published_at ? <Badge variant="success">Firmato</Badge> : <Badge variant="secondary">Bozza</Badge>}
             <span className="text-sm text-muted-foreground">v{doc.version} · {doc.language.toUpperCase()}</span>
           </div>
           <h1 className="mt-1 text-2xl font-display font-bold">{doc.title}</h1>
         </div>
         <div className="flex items-center gap-2">
           <PublishToggle docId={doc.id} initial={!!doc.published_at} />
-          <Link href={`/dashboard/${orgId}/documents/new?type=${doc.type}${doc.site_id ? `&siteId=${doc.site_id}` : ""}`}>
+          <Link href={`/dashboard/${orgId}/documents/new?type=${doc.type}`}>
             <Button variant="outline">
               <Pencil className="h-4 w-4" /> Nuova versione
             </Button>
           </Link>
-          {doc.published_at && (
-            <Link href={`/p/${doc.slug}`} target="_blank">
-              <Button variant="gradient">
-                <ExternalLink className="h-4 w-4" /> Visualizza
-              </Button>
-            </Link>
-          )}
+          <a href={`/api/documents/${doc.id}/export?format=html`} target="_blank" rel="noopener">
+            <Button variant="gradient">
+              <Download className="h-4 w-4" /> Scarica
+            </Button>
+          </a>
         </div>
       </div>
 

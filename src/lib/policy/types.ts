@@ -1,38 +1,53 @@
-export type DocumentType = "privacy" | "cookie" | "terms" | "eula" | "ai_use_policy" | "ai_disclosure";
+export type DocumentType =
+  | "ai_use_policy"
+  | "ai_employee_notice"
+  | "ai_disclosure"
+  | "ai_registry_export";
 
 export interface PolicyAnswers {
   controllerName: string;
   vatNumber?: string;
   address?: string;
-  websiteUrl: string;
+  websiteUrl?: string;
   contactEmail: string;
   dpoEmail?: string;
-  purposes: string[];
 
-  usesCloudflare?: boolean;
-  usesGoogleAnalytics?: boolean;
-  usesMetaPixel?: boolean;
-  usesStripe?: boolean;
-  usesMailchimp?: boolean;
-  usesHotjar?: boolean;
-  otherProcessors?: string;
+  // Specifici AI Act
+  sector?: string;
+  approvedTools?: string;
+  prohibitedUseCases?: string;
+  hasHumanReviewProcess?: boolean;
+  trainingProvided?: boolean;
+  appliesToProfessions?: boolean;
+
+  // Sistemi AI rilevanti
+  aiSystemsList?: Array<{
+    name: string;
+    vendor?: string | null;
+    purpose?: string | null;
+    category?: string | null;
+  }>;
 }
 
-export const PURPOSES = [
-  { id: "contact_form", label: "Form di contatto" },
-  { id: "newsletter", label: "Newsletter / email marketing" },
-  { id: "analytics", label: "Analisi statistica del sito" },
-  { id: "profiling", label: "Profilazione marketing" },
-  { id: "ecommerce", label: "Vendita online (e-commerce)" },
-  { id: "support", label: "Assistenza clienti" },
-  { id: "legal_obligations", label: "Adempimenti fiscali / contabili" },
-] as const;
-
-export const PROCESSORS = [
-  { key: "usesCloudflare", label: "Cloudflare (CDN/sicurezza)" },
-  { key: "usesGoogleAnalytics", label: "Google Analytics" },
-  { key: "usesMetaPixel", label: "Meta Pixel (Facebook/Instagram)" },
-  { key: "usesStripe", label: "Stripe (pagamenti)" },
-  { key: "usesMailchimp", label: "Mailchimp (newsletter)" },
-  { key: "usesHotjar", label: "Hotjar (heatmap)" },
-] as const;
+export const DOC_LABELS: Record<DocumentType, { title: string; subtitle: string; audience: string }> = {
+  ai_use_policy: {
+    title: "Policy Interna sull'uso dell'IA",
+    subtitle: "Regole interne per dipendenti e collaboratori",
+    audience: "Documento interno aziendale",
+  },
+  ai_employee_notice: {
+    title: "Informativa AI ai dipendenti",
+    subtitle: "Art. 11 Legge 132/2025",
+    audience: "Consegna scritta ai lavoratori",
+  },
+  ai_disclosure: {
+    title: "Informativa Trasparenza AI ai clienti",
+    subtitle: "Art. 50 AI Act",
+    audience: "Pubblica, da pubblicare sul sito",
+  },
+  ai_registry_export: {
+    title: "Registro formale Sistemi AI",
+    subtitle: "Export audit-ready del registro IA",
+    audience: "Documentazione interna / audit",
+  },
+};

@@ -4,16 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
-  name: z.string().min(2),
-  purpose: z.string().min(5),
-  legal_basis: z.string().min(2),
-  data_categories: z.array(z.string()).default([]),
-  data_subjects: z.array(z.string()).default([]),
-  retention: z.string().optional().nullable(),
-  recipients: z.string().optional().nullable(),
-  transfers_outside_eu: z.boolean().default(false),
-  security_measures: z.string().optional().nullable(),
-  dpo_notes: z.string().optional().nullable(),
+  employee_name: z.string().min(2),
+  employee_email: z.string().email().nullable().optional(),
+  topic: z.string().min(2),
+  module_id: z.string().nullable().optional(),
+  duration_hours: z.number().min(0).max(40),
+  completed_at: z.string(),
+  notes: z.string().nullable().optional(),
 });
 
 export async function POST(req: Request) {
@@ -25,11 +22,7 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Dati non validi" }, { status: 400 });
 
-  const { error, data } = await supabase
-    .from("processing_records")
-    .insert(parsed.data as any)
-    .select("id")
-    .single();
+  const { error } = await supabase.from("training_records").insert(parsed.data as any);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ id: data.id });
+  return NextResponse.json({ ok: true });
 }

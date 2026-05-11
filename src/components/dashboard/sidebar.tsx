@@ -4,29 +4,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Globe,
+  Bot,
   FileText,
-  Cookie,
-  ScrollText,
-  ClipboardList,
+  GraduationCap,
+  Bell,
   Users,
   Settings,
   CreditCard,
   ShieldCheck,
   CircleHelp,
-  Bot,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { OrgSwitcher } from "./org-switcher";
 
 const nav = (orgId: string) => [
   { label: "Panoramica", href: `/dashboard/${orgId}`, icon: LayoutDashboard },
-  { label: "Siti", href: `/dashboard/${orgId}/sites`, icon: Globe },
+  { label: "Registro IA", href: `/dashboard/${orgId}/ai`, icon: Bot },
   { label: "Documenti", href: `/dashboard/${orgId}/documents`, icon: FileText },
-  { label: "Cookie & CMP", href: `/dashboard/${orgId}/cmp`, icon: Cookie },
-  { label: "Registro consensi", href: `/dashboard/${orgId}/consents`, icon: ScrollText },
-  { label: "Registro trattamenti", href: `/dashboard/${orgId}/processing`, icon: ClipboardList },
-  { label: "AI Act", href: `/dashboard/${orgId}/ai`, icon: Bot },
+  { label: "Formazione", href: `/dashboard/${orgId}/training`, icon: GraduationCap },
+  { label: "Alert normativi", href: `/dashboard/${orgId}/alerts`, icon: Bell },
 ];
 
 const settingsNav = (orgId: string) => [
@@ -54,7 +50,7 @@ export function Sidebar({ orgId, orgs, subscription }: Props) {
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 grid place-items-center text-white">
             <ShieldCheck className="h-4 w-4" />
           </div>
-          ComplyAI
+          AIComply
         </Link>
       </div>
 
@@ -64,7 +60,7 @@ export function Sidebar({ orgId, orgs, subscription }: Props) {
 
       <nav className="flex-1 px-3 pb-3 space-y-6 overflow-y-auto mt-4">
         <div className="space-y-0.5">
-          <p className="px-2 mb-1 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Workspace</p>
+          <p className="px-2 mb-1 text-[11px] uppercase tracking-wider font-semibold text-muted-foreground">Compliance AI</p>
           {items.map((item) => {
             const Icon = item.icon;
             const active = pathname === item.href || pathname?.startsWith(item.href + "/");

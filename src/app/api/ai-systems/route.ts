@@ -29,9 +29,23 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Dati non validi", details: parsed.error.flatten() }, { status: 400 });
 
+  // Mappa risk_class → category (italiano)
+  const categoryMap: Record<string, string> = {
+    prohibited: "vietato",
+    high: "alto",
+    limited: "trasparenza",
+    gpai: "gpai",
+    minimal: "minimo",
+  };
+
+  const payload = {
+    ...parsed.data,
+    category: parsed.data.risk_class ? categoryMap[parsed.data.risk_class] : null,
+  };
+
   const { error, data } = await supabase
     .from("ai_systems")
-    .insert(parsed.data as any)
+    .insert(payload as any)
     .select("id")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
