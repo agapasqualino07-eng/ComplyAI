@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 
 const schema = z.object({
   name: z.string().min(2).max(120),
@@ -24,8 +24,12 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Dati non validi", details: parsed.error.flatten() }, { status: 400 });
   }
 
+  // L'utente è già validato sopra via getUser(); usiamo l'admin client per
+  // l'insert iniziale (l'owner non è ancora membro dell'org, quindi la sua
+  // sessione non soddisfa le policy che richiedono is_org_member).
   const data = parsed.data;
-  const { data: org, error } = await supabase
+  const admin = createAdminClient();
+  const { data: org, error } = await admin
     .from("organizations")
     .insert({
       name: data.name,
