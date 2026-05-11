@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { enforceLimit } from "@/lib/limits";
+import { recomputeScore } from "@/lib/compliance";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
@@ -29,6 +31,9 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: "Dati non validi", details: parsed.error.flatten() }, { status: 400 });
 
+  const check = await enforceLimit(parsed.data.organization_id, "aiSystems");
+  if (!check.allowed) return NextResponse.json({ error: check.reason }, { status: 402 });
+
   // Mappa risk_class → category (italiano)
   const categoryMap: Record<string, string> = {
     prohibited: "vietato",
@@ -49,5 +54,7 @@ export async function POST(req: Request) {
     .select("id")
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await recomputeScore(parsed.data.organization_id);
   return NextResponse.json({ id: data.id });
 }

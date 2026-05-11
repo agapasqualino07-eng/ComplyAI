@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { recomputeScore } from "@/lib/compliance";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
@@ -24,5 +25,7 @@ export async function POST(req: Request) {
 
   const { error } = await supabase.from("training_records").insert(parsed.data as any);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  await recomputeScore(parsed.data.organization_id);
   return NextResponse.json({ ok: true });
 }

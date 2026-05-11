@@ -81,5 +81,9 @@
 .policy-prose ul { @apply my-3 pl-6 list-disc space-y-1; }
 .policy-prose ol { @apply my-3 pl-6 list-decimal space-y-1; }
 .policy-prose a { @apply text-primary underline; }
-.policy-prose table { @apply w-full border-collapse my-4; }
-.policy-prose th, .policy-prose td { @apply border px-3 py-2 text-left; }
+.policy-prose table { @apply w-full border-collapse my-4 text-sm; }
+.policy-prose th, .policy-prose td { @apply border px-3 py-2 text-left align-top; }
+.policy-prose th { @apply bg-muted/50 font-semibold; }
+.policy-prose code { @apply rounded bg-muted px-1.5 py-0.5 text-sm font-mono; }
+.policy-prose em { @apply text-muted-foreground; }
+.policy-prose strong { @apply font-semibold text-foreground; }

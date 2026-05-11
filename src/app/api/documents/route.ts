@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { renderDocument, DOCUMENT_TITLES } from "@/lib/policy/templates";
 import { slugify } from "@/lib/utils";
+import { enforceLimit } from "@/lib/limits";
+import { recomputeScore } from "@/lib/compliance";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
@@ -49,10 +52,15 @@ export async function POST(req: Request) {
   }
 
   const { organization_id, type, language, publish, answers } = parsed.data;
+
+  const check = await enforceLimit(organization_id, "documents");
+  if (!check.allowed) return NextResponse.json({ error: check.reason }, { status: 402 });
+
   const html = renderDocument(type, answers as any);
   const title = `${DOCUMENT_TITLES[type]} — ${answers.controllerName}`;
   const baseSlug = `${slugify(answers.controllerName)}-${type}`;
-  const finalSlug = `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`;
+  // UUID per evitare collisioni sul slug (vincolo unique su slug+language)
+  const finalSlug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
 
   // Versioning: se esiste già un doc dello stesso tipo per l'org, incrementa la versione
   const { data: existing } = await supabase
@@ -82,5 +90,6 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  await recomputeScore(organization_id);
   return NextResponse.json({ document_id: data.id });
 }

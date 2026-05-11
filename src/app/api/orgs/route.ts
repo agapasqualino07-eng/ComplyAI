@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
+import { enforceOrgCreation } from "@/lib/limits";
 
 const schema = z.object({
   name: z.string().min(2).max(120),
@@ -22,6 +23,11 @@ export async function POST(req: Request) {
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: "Dati non validi", details: parsed.error.flatten() }, { status: 400 });
+  }
+
+  const orgCheck = await enforceOrgCreation(user.id);
+  if (!orgCheck.allowed) {
+    return NextResponse.json({ error: orgCheck.reason }, { status: 402 });
   }
 
   // L'utente è già validato sopra via getUser(); usiamo l'admin client per

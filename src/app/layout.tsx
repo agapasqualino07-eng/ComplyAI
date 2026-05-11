@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "sonner";
+import { CookieBanner } from "@/components/cookie-banner";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -34,7 +35,13 @@ export const metadata: Metadata = {
     title: "AIComply — Compliance AI Act + Legge 132/2025",
     description: "La piattaforma italiana per essere a norma AI Act in meno di un'ora.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "AIComply — Compliance AI Act + Legge 132/2025",
+    description: "La piattaforma italiana per essere a norma AI Act in meno di un'ora.",
+  },
   robots: { index: true, follow: true },
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -42,6 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it" className={`${inter.variable} ${display.variable}`} suppressHydrationWarning>
       <body className="min-h-screen bg-background font-sans antialiased">
         {children}
+        <CookieBanner />
         <Toaster richColors closeButton position="top-right" />
       </body>
     </html>
