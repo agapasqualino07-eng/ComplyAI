@@ -1,7 +1,7 @@
-# Data Protection Impact Assessment (DPIA) — AIComply
+# Data Protection Impact Assessment (DPIA) — AIComplyOnline
 
 > Documento ai sensi dell'art. 35 GDPR.
-> **Non obbligatoria** per AIComply (il trattamento non rientra fra quelli ad alto rischio sistematico), ma redatta volontariamente per dimostrare accountability e per uso commerciale (sales material verso clienti Enterprise).
+> **Non obbligatoria** per AIComplyOnline (il trattamento non rientra fra quelli ad alto rischio sistematico), ma redatta volontariamente per dimostrare accountability e per uso commerciale (sales material verso clienti Enterprise).
 >
 > Versione: 1.0 — Aggiornato: 2026-05-11.
 > **Da revisionare con un legale prima della pubblicazione esterna.**
@@ -11,7 +11,7 @@
 ## 1. Descrizione sistematica del trattamento
 
 ### 1.1 Natura del trattamento
-AIComply è una piattaforma SaaS che assiste le aziende italiane nell'adeguamento al Reg. UE 2024/1689 (AI Act) e alla L. 132/2025. Il trattamento riguarda:
+AIComplyOnline è una piattaforma SaaS che assiste le aziende italiane nell'adeguamento al Reg. UE 2024/1689 (AI Act) e alla L. 132/2025. Il trattamento riguarda:
 - Dati di account dei nostri utenti (B2B)
 - Contenuti caricati dai nostri clienti su loro responsabilità (dati di terzi)
 
@@ -94,7 +94,7 @@ Vedi `legal/registro-trattamenti.md`.
 | Aspetto | Valutazione |
 |---|---|
 | Origine | Cliente che usa documenti senza adeguamento al proprio caso |
-| Severità | Reputazionale (AIComply venduta come compliance) |
+| Severità | Reputazionale (AIComplyOnline venduta come compliance) |
 | Probabilità | Media |
 | **Misure di mitigazione** | Disclaimer nei documenti generati ("modello standard, da personalizzare"), nei Terms ("non costituisce consulenza legale") |
 | Rischio residuo | Medio-basso |
@@ -129,7 +129,7 @@ Vedi `legal/registro-trattamenti.md`.
 
 ## 6. Conclusioni
 
-Il trattamento svolto da AIComply è **proporzionato** alle finalità, **lecito** in tutte le sue componenti, **adeguatamente protetto** dalle misure tecniche e organizzative descritte. Il rischio residuo per gli interessati è valutato come **basso** e non richiede consultazione preventiva del Garante.
+Il trattamento svolto da AIComplyOnline è **proporzionato** alle finalità, **lecito** in tutte le sue componenti, **adeguatamente protetto** dalle misure tecniche e organizzative descritte. Il rischio residuo per gli interessati è valutato come **basso** e non richiede consultazione preventiva del Garante.
 
 La DPIA viene revisionata:
 - Almeno annualmente

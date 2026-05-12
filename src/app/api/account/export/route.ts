@@ -44,7 +44,7 @@ export async function GET() {
   const payload = {
     exported_at: new Date().toISOString(),
     notice:
-      "Esportazione GDPR art. 20 (portabilità). Contiene tutti i dati personali identificati come tuoi all'interno di AIComply.",
+      "Esportazione GDPR art. 20 (portabilità). Contiene tutti i dati personali identificati come tuoi all'interno di AIComplyOnline.",
     user: {
       id: user.id,
       email: user.email,

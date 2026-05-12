@@ -7,7 +7,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <div className="flex flex-col justify-between p-8 lg:p-12 bg-gradient-to-br from-violet-600 via-indigo-600 to-blue-700 text-white relative overflow-hidden">
         <div className="absolute inset-0 grid-bg opacity-10 pointer-events-none" />
         <Link href="/" className="relative z-10 inline-flex items-center gap-2 font-display text-xl font-bold">
-          <ShieldCheck className="h-6 w-6" /> AIComply
+          <ShieldCheck className="h-6 w-6" /> AIComplyOnline
         </Link>
         <div className="relative z-10 max-w-md space-y-4">
           <p className="text-sm font-medium opacity-80">Compliance AI Act senza sforzo</p>
@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
             Registro IA, documenti audit-ready, formazione AI literacy e alert normativi — tutto in un'unica dashboard.
           </p>
         </div>
-        <p className="relative z-10 text-xs opacity-70">© {new Date().getFullYear()} AIComply · aicomplyonline.it</p>
+        <p className="relative z-10 text-xs opacity-70">© {new Date().getFullYear()} AIComplyOnline · aicomplyonline.it</p>
       </div>
       <div className="flex items-center justify-center p-6 sm:p-12">{children}</div>
     </div>

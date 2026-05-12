@@ -10,7 +10,7 @@ export default async function NewOrgPage() {
       <div className="w-full max-w-2xl space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-3xl font-display font-bold">Aggiungi una nuova azienda</h1>
-          <p className="text-muted-foreground">Gestisci più aziende con un singolo account AIComply.</p>
+          <p className="text-muted-foreground">Gestisci più aziende con un singolo account AIComplyOnline.</p>
         </div>
         <OnboardingForm />
       </div>

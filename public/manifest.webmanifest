@@ -1,6 +1,6 @@
 {
-  "name": "AIComply",
-  "short_name": "AIComply",
+  "name": "AIComplyOnline",
+  "short_name": "AIComplyOnline",
   "description": "Compliance AI Act + Legge 132/2025 per le PMI italiane",
   "start_url": "/",
   "display": "standalone",

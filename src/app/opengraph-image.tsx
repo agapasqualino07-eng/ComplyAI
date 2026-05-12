@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
-export const alt = "AIComply — Compliance AI Act in meno di un'ora";
+export const alt = "AIComplyOnline — Compliance AI Act in meno di un'ora";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -40,7 +40,7 @@ export default async function OG() {
             A
           </div>
           <div style={{ fontSize: 36, fontWeight: 700, letterSpacing: -1 }}>
-            AIComply
+            AIComplyOnline
           </div>
         </div>
 

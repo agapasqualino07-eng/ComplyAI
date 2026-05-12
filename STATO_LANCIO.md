@@ -1,4 +1,4 @@
-# Stato di lancio — AIComply
+# Stato di lancio — AIComplyOnline
 
 > **Cosa è fatto, cosa manca, come continuare.**
 > Aggiornato: 2026-05-11. Branch: `claude/build-saas-platform-a8Bi7`.

@@ -1,6 +1,6 @@
-# AIComply — Guida deploy
+# AIComplyOnline — Guida deploy
 
-Questo documento spiega come mettere online AIComply (compliance AI Act + L. 132/2025) su `aicomplyonline.it`.
+Questo documento spiega come mettere online AIComplyOnline (compliance AI Act + L. 132/2025) su `aicomplyonline.it`.
 
 ## 1. Variabili d'ambiente (Vercel)
 
@@ -10,7 +10,7 @@ Vai su **Vercel → Project → Settings → Environment Variables** e imposta:
 | Nome | Valore |
 |---|---|
 | `NEXT_PUBLIC_APP_URL` | `https://aicomplyonline.it` |
-| `NEXT_PUBLIC_APP_NAME` | `AIComply` |
+| `NEXT_PUBLIC_APP_NAME` | `AIComplyOnline` |
 
 ### Supabase
 | Nome | Dove prenderlo |

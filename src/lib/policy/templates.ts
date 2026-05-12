@@ -111,7 +111,7 @@ ${a.appliesToProfessions
 <p>La presente policy verrà rivista al variare del quadro normativo (in particolare in vista delle scadenze AI Act del 2/8/2026 e 2/8/2027) e con l'adozione di nuovi strumenti.</p>
 
 <hr/>
-<p style="font-size:12px;opacity:.7">Documento generato con AIComply (aicomplyonline.it). Non costituisce consulenza legale.</p>
+<p style="font-size:12px;opacity:.7">Documento generato con AIComplyOnline (aicomplyonline.it). Non costituisce consulenza legale.</p>
   `.trim();
 }
 
@@ -179,7 +179,7 @@ ${aiSystemsTable(a)}
 <p style="font-size:13px">Data ___________________ Firma _________________________________</p>
 
 <hr/>
-<p style="font-size:12px;opacity:.7">Documento generato con AIComply (aicomplyonline.it). Non costituisce consulenza legale.</p>
+<p style="font-size:12px;opacity:.7">Documento generato con AIComplyOnline (aicomplyonline.it). Non costituisce consulenza legale.</p>
   `.trim();
 }
 
@@ -229,7 +229,7 @@ ${a.appliesToProfessions
 <p>Per qualsiasi richiesta sull'uso dell'IA, scrivi a <a href="mailto:${escape(a.contactEmail)}">${escape(a.contactEmail)}</a>.</p>
 
 <hr/>
-<p style="font-size:12px;opacity:.7">Documento generato con AIComply (aicomplyonline.it). Non costituisce consulenza legale.</p>
+<p style="font-size:12px;opacity:.7">Documento generato con AIComplyOnline (aicomplyonline.it). Non costituisce consulenza legale.</p>
   `.trim();
 }
 
@@ -268,7 +268,7 @@ ${items.length > 0 ? rows : "<p><em>Nessun sistema AI registrato. Aggiungi i sis
 <p>Il registro è curato dalla funzione responsabile della compliance AI Act di ${escape(a.controllerName)}, contattabile all'indirizzo <a href="mailto:${escape(a.contactEmail)}">${escape(a.contactEmail)}</a>.</p>
 
 <hr/>
-<p style="font-size:12px;opacity:.7">Documento generato con AIComply (aicomplyonline.it). Non costituisce consulenza legale.</p>
+<p style="font-size:12px;opacity:.7">Documento generato con AIComplyOnline (aicomplyonline.it). Non costituisce consulenza legale.</p>
   `.trim();
 }
 

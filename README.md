@@ -1,4 +1,4 @@
-# AIComply
+# AIComplyOnline
 
 > La piattaforma italiana per la compliance **AI Act** (Reg. UE 2024/1689) + **Legge 132/2025**. Per PMI e studi commercialisti/legali.
 
@@ -62,4 +62,4 @@ Tutto il lavoro avviene su `claude/build-saas-platform-a8Bi7`.
 
 ## Licenza
 
-Proprietario, AIComply.
+Proprietario, AIComplyOnline.

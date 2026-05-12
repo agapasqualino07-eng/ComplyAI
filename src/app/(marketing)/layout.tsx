@@ -11,7 +11,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 grid place-items-center text-white">
               <ShieldCheck className="h-4 w-4" />
             </div>
-            AIComply
+            AIComplyOnline
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm">
             <Link href="/quiz" className="text-muted-foreground hover:text-foreground">Quiz gratuito</Link>
@@ -40,7 +40,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 grid place-items-center text-white">
                 <ShieldCheck className="h-4 w-4" />
               </div>
-              AIComply
+              AIComplyOnline
             </Link>
             <p className="text-sm text-muted-foreground max-w-sm">
               La piattaforma italiana per la compliance AI Act + Legge 132/2025. Registro IA, documenti audit-ready, formazione e alert normativi.
@@ -74,7 +74,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
         </div>
         <div className="border-t">
           <div className="container-wide py-4 text-xs text-muted-foreground flex flex-wrap items-center justify-between gap-2">
-            <span>© {new Date().getFullYear()} AIComply · aicomplyonline.it</span>
+            <span>© {new Date().getFullYear()} AIComplyOnline · aicomplyonline.it</span>
             <span>Made with ❤️ in Italia · Soluzione GDPR-ready</span>
           </div>
         </div>

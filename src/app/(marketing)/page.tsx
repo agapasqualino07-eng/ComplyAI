@@ -85,10 +85,10 @@ export default function HomePage() {
             </Badge>
             <h1 className="text-4xl sm:text-6xl font-display font-bold tracking-tight">
               La tua azienda è a norma con<br />
-              <span className="gradient-text">AI Act</span> e <span className="gradient-text">Legge 132/2025</span>?
+              <span className="gradient-text">l'AI Act</span>?
             </h1>
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto">
-              Scoprilo in 3 minuti col nostro quiz gratuito. Poi gestisci tutto da una piattaforma: registro IA, documenti audit-ready, formazione dei dipendenti e alert normativi.
+              Hai un'azienda o uno studio e vuoi capire se sei a norma? Scoprilo in 3 minuti col nostro quiz gratuito. A norma in meno di un'ora e poi gestisci tutto da una piattaforma: registro IA, documenti audit-ready, formazione dei dipendenti e alert normativi.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
               <Link href="/quiz">
@@ -135,10 +135,10 @@ export default function HomePage() {
           <div className="max-w-2xl mx-auto text-center space-y-3 mb-14">
             <Badge variant="secondary">Tutto in una piattaforma</Badge>
             <h2 className="text-3xl sm:text-4xl font-display font-bold">
-              Compliance AI senza un avvocato.
+              Compliance AI, tutto in un unico posto.
             </h2>
             <p className="text-muted-foreground">
-              AIComply è la piattaforma italiana che ti aiuta a essere a norma con l'AI Act e la Legge 132/2025, passo per passo.
+              AIComplyOnline è la piattaforma italiana che aiuta aziende, studi e consulenti a essere a norma con l'AI Act e la Legge 132/2025, passo per passo.
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -308,7 +308,7 @@ export default function HomePage() {
                 a: "Sì. L'AI Act si applica anche a chi usa AI di terzi (sei un Deployer). Devi: 1) tenere un registro dei sistemi AI usati, 2) garantire AI literacy ai dipendenti (Art. 4), 3) dare un'informativa scritta sui sistemi AI che incidono sul lavoro (Art. 11 L.132/2025).",
               },
               {
-                q: "AIComply sostituisce un avvocato?",
+                q: "AIComplyOnline sostituisce un avvocato?",
                 a: "No. Forniamo strumenti e documenti standard adatti alla maggior parte delle PMI. Per situazioni complesse (sanità, settore bancario, sistemi alto rischio) consigliamo comunque la consulenza di un legale specializzato.",
               },
               {
@@ -324,7 +324,7 @@ export default function HomePage() {
                 a: "Ricevi un report con score, sistemi rilevati, obblighi che ti riguardano. I dati restano salvati localmente nel tuo browser. Se ti iscrivi al Pro, importiamo automaticamente il tuo report nella dashboard.",
               },
               {
-                q: "Sono un commercialista, posso usare AIComply per i miei clienti?",
+                q: "Sono un commercialista, posso usare AIComplyOnline per i miei clienti?",
                 a: "Sì, è esattamente quello che fa il piano Enterprise (199€/mese). Gestisci fino a 10 clienti con workspace dedicati, audit trail e white-label.",
               },
             ].map((f, i) => (

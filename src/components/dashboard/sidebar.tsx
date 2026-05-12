@@ -50,7 +50,7 @@ export function Sidebar({ orgId, orgs, subscription }: Props) {
           <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-600 to-indigo-600 grid place-items-center text-white">
             <ShieldCheck className="h-4 w-4" />
           </div>
-          AIComply
+          AIComplyOnline
         </Link>
       </div>
 

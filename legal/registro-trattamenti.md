@@ -1,4 +1,4 @@
-# Registro delle attività di trattamento — AIComply
+# Registro delle attività di trattamento — AIComplyOnline
 
 > Documento interno ai sensi dell'art. 30 GDPR (Reg. UE 2016/679).
 > Da conservare e aggiornare. **NON pubblicare**.
@@ -11,7 +11,7 @@
 
 | Campo | Valore |
 |---|---|
-| Ragione sociale | AIComply S.r.l.s. |
+| Ragione sociale | AIComplyOnline S.r.l.s. |
 | Sede legale | Via Vitaliano Brancati 10, 95030 Mascalucia (CT), Italia |
 | P.IVA | IT123456789 *(da aggiornare con valore reale)* |
 | Email | privacy@aicomplyonline.it |
@@ -25,7 +25,7 @@
 
 | Campo | Valore |
 |---|---|
-| Finalità | Erogazione del servizio AIComply, autenticazione, supporto |
+| Finalità | Erogazione del servizio AIComplyOnline, autenticazione, supporto |
 | Base giuridica | Esecuzione del contratto (art. 6.1.b GDPR) |
 | Categorie di interessati | Utenti registrati (titolari/dipendenti delle aziende clienti) |
 | Categorie di dati | Email, nome e cognome, password (hashed bcrypt), preferenze account |
@@ -49,18 +49,18 @@
 | Destinatari | Stripe Payments Europe Ltd, commercialista, Agenzia Entrate (SDI) |
 | Trasferimenti extra-UE | Stripe: CCT + EU-US DPF |
 | Conservazione | 10 anni (obbligo civilistico/fiscale art. 2220 c.c.) |
-| Misure di sicurezza | Stripe PCI-DSS Level 1, nessun dato carta in DB AIComply, webhook con firma HMAC |
+| Misure di sicurezza | Stripe PCI-DSS Level 1, nessun dato carta in DB AIComplyOnline, webhook con firma HMAC |
 
 ## Trattamento 3 — Contenuti AI Act caricati dai clienti
 
 | Campo | Valore |
 |---|---|
 | Finalità | Erogazione delle funzionalità di compliance (registro AI, documenti, formazione) |
-| Base giuridica | AIComply agisce come **responsabile del trattamento** (art. 28). Vedi DPA. |
-| Categorie di interessati | Dipendenti, collaboratori, fornitori dei clienti AIComply |
+| Base giuridica | AIComplyOnline agisce come **responsabile del trattamento** (art. 28). Vedi DPA. |
+| Categorie di interessati | Dipendenti, collaboratori, fornitori dei clienti AIComplyOnline |
 | Categorie di dati | Anagrafica formazione, descrizione sistemi AI in uso, ruoli aziendali |
 | Categorie particolari | Possibili (dipende dai sistemi AI che il cliente registra) — il cliente è responsabile della liceità del trattamento |
-| Origine | Cliente AIComply (titolare) |
+| Origine | Cliente AIComplyOnline (titolare) |
 | Destinatari | Supabase (database) |
 | Trasferimenti extra-UE | Supabase EU (Francoforte) |
 | Conservazione | Durata del contratto del cliente + 30 giorni post-cessazione (per export). Su richiesta del cliente: cancellazione immediata. |

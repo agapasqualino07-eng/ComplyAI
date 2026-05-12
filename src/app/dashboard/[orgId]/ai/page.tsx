@@ -132,7 +132,7 @@ export default async function AIRegistryPage({
       <div className="rounded-lg border bg-violet-50/40 p-4 flex items-start gap-3 text-sm">
         <ShieldCheck className="h-4 w-4 text-violet-600 shrink-0 mt-0.5" />
         <p className="text-muted-foreground">
-          <strong className="text-foreground">Nota legale:</strong> il classificatore di AIComply fornisce un orientamento basato sulle risposte fornite. La valutazione finale, in particolare per sistemi ad alto rischio, richiede una revisione legale specialistica.
+          <strong className="text-foreground">Nota legale:</strong> il classificatore di AIComplyOnline fornisce un orientamento basato sulle risposte fornite. La valutazione finale, in particolare per sistemi ad alto rischio, richiede una revisione legale specialistica.
         </p>
       </div>
     </div>

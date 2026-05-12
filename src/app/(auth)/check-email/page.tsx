@@ -12,7 +12,7 @@ export default function CheckEmailPage() {
       <div className="space-y-2">
         <h1 className="text-3xl font-display font-bold">Controlla la tua email</h1>
         <p className="text-muted-foreground">
-          Ti abbiamo inviato un link per confermare l'indirizzo. Fai clic sul link per attivare il tuo account AIComply e iniziare la prova gratuita.
+          Ti abbiamo inviato un link per confermare l'indirizzo. Fai clic sul link per attivare il tuo account AIComplyOnline e iniziare la prova gratuita.
         </p>
       </div>
       <p className="text-sm">

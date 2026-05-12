@@ -22,7 +22,7 @@ export default function SignupPage() {
       <p className="text-xs text-muted-foreground text-center leading-relaxed">
         Registrandoti accetti i{" "}
         <Link href="/legal/terms" className="underline">Termini di servizio</Link> e l'
-        <Link href="/legal/privacy" className="underline">Informativa privacy</Link> di AIComply.
+        <Link href="/legal/privacy" className="underline">Informativa privacy</Link> di AIComplyOnline.
       </p>
     </div>
   );

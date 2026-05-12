@@ -15,7 +15,7 @@ export default async function AccountPage() {
       <div className="container-narrow py-10 space-y-6">
         <div>
           <h1 className="text-2xl font-display font-bold">Il mio profilo</h1>
-          <p className="text-muted-foreground">Gestisci il tuo account AIComply.</p>
+          <p className="text-muted-foreground">Gestisci il tuo account AIComplyOnline.</p>
         </div>
 
         <Card>

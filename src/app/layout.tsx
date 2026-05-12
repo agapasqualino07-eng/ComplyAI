@@ -10,8 +10,8 @@ const display = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-displa
 export const metadata: Metadata = {
   metadataBase: new URL("https://aicomplyonline.it"),
   title: {
-    default: "AIComply — Compliance AI Act + Legge 132/2025 per le PMI italiane",
-    template: "%s | AIComply",
+    default: "AIComplyOnline — Compliance AI Act + Legge 132/2025 per le PMI italiane",
+    template: "%s | AIComplyOnline",
   },
   description:
     "Piattaforma italiana per la conformità all'AI Act (Reg. UE 2024/1689) e alla Legge 132/2025. Quiz gratuito, registro IA, documenti audit-ready, formazione AI literacy.",
@@ -31,13 +31,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "it_IT",
     url: "https://aicomplyonline.it",
-    siteName: "AIComply",
-    title: "AIComply — Compliance AI Act + Legge 132/2025",
+    siteName: "AIComplyOnline",
+    title: "AIComplyOnline — Compliance AI Act + Legge 132/2025",
     description: "La piattaforma italiana per essere a norma AI Act in meno di un'ora.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "AIComply — Compliance AI Act + Legge 132/2025",
+    title: "AIComplyOnline — Compliance AI Act + Legge 132/2025",
     description: "La piattaforma italiana per essere a norma AI Act in meno di un'ora.",
   },
   robots: { index: true, follow: true },

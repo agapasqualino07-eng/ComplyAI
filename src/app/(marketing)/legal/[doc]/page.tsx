@@ -4,12 +4,12 @@ const LAST_UPDATED = "2026-05-11";
 
 const DOCS: Record<string, { title: string; content: string }> = {
   privacy: {
-    title: "Privacy Policy di AIComply",
+    title: "Privacy Policy di AIComplyOnline",
     content: `
 <p><em>Versione del ${LAST_UPDATED}. Il presente documento è redatto ai sensi degli artt. 13 e 14 del Regolamento (UE) 2016/679 (GDPR) e del D.lgs. 196/2003.</em></p>
 
 <h2>1. Titolare del trattamento</h2>
-<p>Titolare del trattamento è <strong>AIComply S.r.l.s.</strong> (di seguito "AIComply" o "noi"), con sede legale in Via Vitaliano Brancati 10, 95030 Mascalucia (CT), Italia.<br/>
+<p>Titolare del trattamento è <strong>AIComplyOnline S.r.l.s.</strong> (di seguito "AIComplyOnline" o "noi"), con sede legale in Via Vitaliano Brancati 10, 95030 Mascalucia (CT), Italia.<br/>
 Contatti: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a>.</p>
 <p>Non abbiamo nominato un Responsabile della Protezione dei Dati (DPO), non essendo obbligati ai sensi dell'art. 37 GDPR. Le richieste relative al trattamento dei dati personali possono essere indirizzate al Titolare ai contatti sopra riportati.</p>
 
@@ -72,25 +72,25 @@ Contatti: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</
 `,
   },
   cookie: {
-    title: "Cookie Policy di AIComply",
+    title: "Cookie Policy di AIComplyOnline",
     content: `
 <p><em>Versione del ${LAST_UPDATED}. Documento redatto ai sensi del Provvedimento del Garante Privacy del 10 giugno 2021.</em></p>
 
 <h2>Cos'è un cookie</h2>
-<p>I cookie sono piccoli file di testo memorizzati dal tuo browser. Possono essere "tecnici" (necessari al funzionamento del sito) o "di profilazione" (per tracciare l'utente). AIComply utilizza esclusivamente cookie tecnici.</p>
+<p>I cookie sono piccoli file di testo memorizzati dal tuo browser. Possono essere "tecnici" (necessari al funzionamento del sito) o "di profilazione" (per tracciare l'utente). AIComplyOnline utilizza esclusivamente cookie tecnici.</p>
 
 <h2>Cookie utilizzati su aicomplyonline.it</h2>
 <table>
   <thead><tr><th>Nome</th><th>Fornitore</th><th>Finalità</th><th>Durata</th><th>Tipologia</th></tr></thead>
   <tbody>
     <tr><td><code>sb-*-auth-token</code></td><td>Supabase (1st party)</td><td>Autenticazione utente</td><td>1 anno</td><td>Tecnico necessario</td></tr>
-    <tr><td><code>aicomply-cookie-consent</code></td><td>AIComply (1st party)</td><td>Memorizza la scelta sui cookie</td><td>1 anno</td><td>Tecnico necessario</td></tr>
+    <tr><td><code>aicomply-cookie-consent</code></td><td>AIComplyOnline (1st party)</td><td>Memorizza la scelta sui cookie</td><td>1 anno</td><td>Tecnico necessario</td></tr>
     <tr><td><code>__stripe_mid</code>, <code>__stripe_sid</code></td><td>Stripe</td><td>Prevenzione frodi sui pagamenti</td><td>1 anno / 30 min</td><td>Tecnico necessario</td></tr>
   </tbody>
 </table>
 
 <h2>Cookie di profilazione o di terze parti</h2>
-<p>AIComply <strong>NON utilizza</strong> cookie di profilazione, di marketing o di tracciamento di terze parti (es. Google Analytics, Facebook Pixel). Non è pertanto richiesto consenso ex art. 7 GDPR.</p>
+<p>AIComplyOnline <strong>NON utilizza</strong> cookie di profilazione, di marketing o di tracciamento di terze parti (es. Google Analytics, Facebook Pixel). Non è pertanto richiesto consenso ex art. 7 GDPR.</p>
 
 <h2>Come gestire i cookie</h2>
 <p>Puoi disabilitare i cookie tecnici dal tuo browser, ma il sito potrebbe non funzionare correttamente (autenticazione e pagamenti). Guide per i principali browser:</p>
@@ -103,15 +103,15 @@ Contatti: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</
 `,
   },
   terms: {
-    title: "Termini e condizioni di AIComply",
+    title: "Termini e condizioni di AIComplyOnline",
     content: `
 <p><em>Versione del ${LAST_UPDATED}.</em></p>
 
 <h2>1. Oggetto</h2>
-<p>I presenti Termini disciplinano l'utilizzo del servizio software-as-a-service "AIComply" (di seguito "Servizio"), erogato da <strong>AIComply S.r.l.s.</strong>, sede in Via Vitaliano Brancati 10, 95030 Mascalucia (CT), Italia, P.IVA IT123456789 (di seguito "Fornitore").</p>
+<p>I presenti Termini disciplinano l'utilizzo del servizio software-as-a-service "AIComplyOnline" (di seguito "Servizio"), erogato da <strong>AIComplyOnline S.r.l.s.</strong>, sede in Via Vitaliano Brancati 10, 95030 Mascalucia (CT), Italia, P.IVA IT123456789 (di seguito "Fornitore").</p>
 
 <h2>2. Descrizione del Servizio</h2>
-<p>AIComply è una piattaforma che supporta le aziende nell'adeguamento al Regolamento (UE) 2024/1689 ("AI Act") e alla Legge 23 settembre 2025 n. 132. Il Servizio include: questionario di valutazione, registro dei sistemi AI, generazione di documenti standard, tracking della formazione AI literacy, feed normativo.</p>
+<p>AIComplyOnline è una piattaforma che supporta le aziende nell'adeguamento al Regolamento (UE) 2024/1689 ("AI Act") e alla Legge 23 settembre 2025 n. 132. Il Servizio include: questionario di valutazione, registro dei sistemi AI, generazione di documenti standard, tracking della formazione AI literacy, feed normativo.</p>
 <p><strong>Limite di non consulenza</strong>: il Servizio NON costituisce consulenza legale o tecnica. I documenti generati sono modelli standard che possono richiedere personalizzazioni a cura di un consulente.</p>
 
 <h2>3. Conclusione del contratto e prova gratuita</h2>
@@ -130,7 +130,7 @@ Contatti: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</
 <p>L'utente si impegna a: (i) fornire dati veritieri; (ii) custodire le credenziali; (iii) non utilizzare il Servizio per scopi illeciti o per caricare contenuti di cui non detenga i diritti; (iv) non tentare di accedere a dati di altri utenti o di compromettere la sicurezza del Servizio.</p>
 
 <h2>8. Proprietà intellettuale</h2>
-<p>Il software, il marchio "AIComply", il design e i modelli di documento sono di proprietà esclusiva del Fornitore. All'utente è concessa una licenza non esclusiva, non trasferibile e revocabile per l'uso del Servizio nei limiti dei presenti Termini. I dati e i documenti caricati dall'utente restano di sua proprietà; il Fornitore opera in qualità di responsabile del trattamento ai sensi dell'art. 28 GDPR (vedi <a href="/legal/dpa">DPA</a>).</p>
+<p>Il software, il marchio "AIComplyOnline", il design e i modelli di documento sono di proprietà esclusiva del Fornitore. All'utente è concessa una licenza non esclusiva, non trasferibile e revocabile per l'uso del Servizio nei limiti dei presenti Termini. I dati e i documenti caricati dall'utente restano di sua proprietà; il Fornitore opera in qualità di responsabile del trattamento ai sensi dell'art. 28 GDPR (vedi <a href="/legal/dpa">DPA</a>).</p>
 
 <h2>9. Livelli di servizio (SLA)</h2>
 <p>Per i piani a pagamento, il Fornitore garantisce un uptime mensile del <strong>99,5%</strong>. In caso di mancato rispetto, è previsto un credito proporzionale sul canone del mese successivo, su richiesta dell'utente entro 30 giorni.</p>
@@ -150,12 +150,12 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
 `,
   },
   dpa: {
-    title: "Data Processing Agreement (DPA) — AIComply",
+    title: "Data Processing Agreement (DPA) — AIComplyOnline",
     content: `
 <p><em>Versione del ${LAST_UPDATED}. Documento integrativo ai Termini di Servizio, ai sensi dell'art. 28 GDPR.</em></p>
 
 <h2>1. Premesse</h2>
-<p>Il presente Data Processing Agreement ("DPA") disciplina il trattamento dei dati personali che <strong>AIComply S.r.l.s.</strong> (di seguito "Responsabile") effettua per conto del Cliente (di seguito "Titolare") nell'erogazione del Servizio AIComply.</p>
+<p>Il presente Data Processing Agreement ("DPA") disciplina il trattamento dei dati personali che <strong>AIComplyOnline S.r.l.s.</strong> (di seguito "Responsabile") effettua per conto del Cliente (di seguito "Titolare") nell'erogazione del Servizio AIComplyOnline.</p>
 
 <h2>2. Oggetto, natura e finalità del trattamento</h2>
 <ul>
@@ -204,7 +204,7 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
     content: `
 <p><em>Versione del ${LAST_UPDATED}. Documento integrativo del <a href="/legal/dpa">DPA</a>.</em></p>
 
-<p>AIComply utilizza i seguenti fornitori in qualità di <strong>sub-responsabili del trattamento</strong> (sub-processor) ex art. 28.2 GDPR. Tutti i fornitori sono stati selezionati per offrire garanzie sufficienti in termini di protezione dei dati ed hanno sottoscritto idonei Data Processing Agreement.</p>
+<p>AIComplyOnline utilizza i seguenti fornitori in qualità di <strong>sub-responsabili del trattamento</strong> (sub-processor) ex art. 28.2 GDPR. Tutti i fornitori sono stati selezionati per offrire garanzie sufficienti in termini di protezione dei dati ed hanno sottoscritto idonei Data Processing Agreement.</p>
 
 <h2>Sub-processor attualmente attivi</h2>
 
@@ -246,7 +246,7 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
 </ul>
 
 <h2>Modifiche all'elenco</h2>
-<p>AIComply si impegna a comunicare via email a tutti i clienti business eventuali aggiunte o sostituzioni di sub-processor con preavviso di <strong>30 giorni</strong>. Il cliente può opporsi alla modifica per motivate ragioni; in mancanza di accordo, è prevista la possibilità di recesso senza oneri.</p>
+<p>AIComplyOnline si impegna a comunicare via email a tutti i clienti business eventuali aggiunte o sostituzioni di sub-processor con preavviso di <strong>30 giorni</strong>. Il cliente può opporsi alla modifica per motivate ragioni; in mancanza di accordo, è prevista la possibilità di recesso senza oneri.</p>
 
 <h2>Richieste e contatti</h2>
 <p>Per copia firmata di un singolo DPA o richieste su una specifica sub-fornitura, scrivere a <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a>.</p>
@@ -257,7 +257,7 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
     content: `
 <p><em>Versione del ${LAST_UPDATED}.</em></p>
 
-<p>AIComply tratta dati di compliance regolamentare per aziende italiane. La sicurezza e l'integrità di questi dati sono al centro della nostra architettura. Questa pagina descrive in trasparenza le misure tecniche e organizzative che adottiamo.</p>
+<p>AIComplyOnline tratta dati di compliance regolamentare per aziende italiane. La sicurezza e l'integrità di questi dati sono al centro della nostra architettura. Questa pagina descrive in trasparenza le misure tecniche e organizzative che adottiamo.</p>
 
 <h2>1. Crittografia</h2>
 <ul>

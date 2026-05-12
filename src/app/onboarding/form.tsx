@@ -32,7 +32,7 @@ export function OnboardingForm() {
       return;
     }
     const { organization_id } = await res.json();
-    toast.success("Azienda creata. Benvenuto in AIComply.");
+    toast.success("Azienda creata. Benvenuto in AIComplyOnline.");
     router.push(`/dashboard/${organization_id}`);
     router.refresh();
   }

@@ -11,7 +11,7 @@
 
 **Data Breach (violazione di dati personali)**: violazione di sicurezza che comporta accidentalmente o in modo illecito la **distruzione, perdita, modifica, divulgazione non autorizzata o accesso** a dati personali trasmessi, conservati o trattati.
 
-Esempi nel contesto AIComply:
+Esempi nel contesto AIComplyOnline:
 - Accesso non autorizzato al database Supabase
 - Compromissione di credenziali admin
 - Esposizione accidentale di dati via bug (es. user A vede dati di user B)
@@ -170,12 +170,12 @@ DATA CHIUSURA INCIDENTE: ____________________
 ## Allegato B — Template comunicazione agli interessati
 
 ```
-Oggetto: Comunicazione importante sulla sicurezza dei tuoi dati su AIComply
+Oggetto: Comunicazione importante sulla sicurezza dei tuoi dati su AIComplyOnline
 
 Ciao [NOME],
 
 ti scriviamo per informarti tempestivamente di un incidente di sicurezza che
-potrebbe aver coinvolto i tuoi dati personali su AIComply.
+potrebbe aver coinvolto i tuoi dati personali su AIComplyOnline.
 
 COSA È SUCCESSO
 Il giorno [DATA] abbiamo rilevato [DESCRIZIONE BREVE NON TECNICA].
@@ -203,7 +203,7 @@ contattandoci a privacy@aicomplyonline.it.
 Siamo dispiaciuti per l'accaduto. La sicurezza dei tuoi dati è la nostra
 massima priorità.
 
-Il team AIComply
+Il team AIComplyOnline
 ```
 
 ---
