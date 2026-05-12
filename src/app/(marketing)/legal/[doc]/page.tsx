@@ -180,7 +180,7 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
 </ul>
 
 <h2>4. Sub-responsabili</h2>
-<p>Il Titolare autorizza in via generale il ricorso ai sub-responsabili elencati nella <a href="/legal/privacy">Privacy Policy §5</a>. Il Responsabile comunicherà via email eventuali modifiche con preavviso di 30 giorni; il Titolare può opporsi per motivate ragioni, con facoltà di recesso senza oneri qualora non si raggiunga un accordo.</p>
+<p>Il Titolare autorizza in via generale il ricorso ai sub-responsabili elencati in <a href="/legal/sub-processori">aicomplyonline.it/legal/sub-processori</a>. Il Responsabile comunicherà via email eventuali modifiche con preavviso di 30 giorni; il Titolare può opporsi per motivate ragioni, con facoltà di recesso senza oneri qualora non si raggiunga un accordo.</p>
 
 <h2>5. Trasferimenti extra-UE</h2>
 <p>Eventuali trasferimenti avvengono sulla base delle Clausole Contrattuali Tipo (CCT) approvate dalla Commissione UE o, ove applicabile, del Data Privacy Framework UE-USA.</p>
@@ -197,6 +197,139 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
 </ul>
 
 <p><strong>Sottoscrizione</strong>: la sottoscrizione del Servizio costituisce accettazione del presente DPA. Per richieste di firma di una versione bilaterale, contattare <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a>.</p>
+`,
+  },
+  "sub-processori": {
+    title: "Elenco dei sub-responsabili (sub-processor)",
+    content: `
+<p><em>Versione del ${LAST_UPDATED}. Documento integrativo del <a href="/legal/dpa">DPA</a>.</em></p>
+
+<p>AIComply utilizza i seguenti fornitori in qualità di <strong>sub-responsabili del trattamento</strong> (sub-processor) ex art. 28.2 GDPR. Tutti i fornitori sono stati selezionati per offrire garanzie sufficienti in termini di protezione dei dati ed hanno sottoscritto idonei Data Processing Agreement.</p>
+
+<h2>Sub-processor attualmente attivi</h2>
+
+<table>
+  <thead>
+    <tr><th>Fornitore</th><th>Servizio</th><th>Dati trattati</th><th>Sede / regione</th><th>DPA</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Supabase Inc.</td>
+      <td>Database PostgreSQL, autenticazione utenti, storage</td>
+      <td>Tutti i dati di account e di applicazione</td>
+      <td>UE (Francoforte, Irlanda)</td>
+      <td><a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener">DPA</a></td>
+    </tr>
+    <tr>
+      <td>Vercel Inc.</td>
+      <td>Hosting frontend e API serverless</td>
+      <td>Log applicativi, request/response metadata</td>
+      <td>UE (Edge); HQ USA</td>
+      <td><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">DPA</a></td>
+    </tr>
+    <tr>
+      <td>Stripe Payments Europe Ltd</td>
+      <td>Gestione pagamenti e fatturazione</td>
+      <td>Dati di pagamento, identificativi cliente</td>
+      <td>UE (Irlanda); processing globale</td>
+      <td><a href="https://stripe.com/legal/dpa" target="_blank" rel="noopener">DPA</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Trasferimenti extra-UE</h2>
+<p>Vercel e Stripe sono entità con casa madre negli USA. I trasferimenti dei dati personali avvengono sulla base di:</p>
+<ul>
+  <li><strong>Clausole Contrattuali Tipo (CCT)</strong> approvate dalla Decisione UE 2021/914;</li>
+  <li><strong>Certificazione EU-US Data Privacy Framework</strong> (Decisione di adeguatezza 2023/1795), ove applicabile;</li>
+  <li>Salvaguardie tecniche aggiuntive: cifratura end-to-end, regionalizzazione UE dove possibile.</li>
+</ul>
+
+<h2>Modifiche all'elenco</h2>
+<p>AIComply si impegna a comunicare via email a tutti i clienti business eventuali aggiunte o sostituzioni di sub-processor con preavviso di <strong>30 giorni</strong>. Il cliente può opporsi alla modifica per motivate ragioni; in mancanza di accordo, è prevista la possibilità di recesso senza oneri.</p>
+
+<h2>Richieste e contatti</h2>
+<p>Per copia firmata di un singolo DPA o richieste su una specifica sub-fornitura, scrivere a <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a>.</p>
+`,
+  },
+  sicurezza: {
+    title: "Trust Center — Sicurezza e protezione dei dati",
+    content: `
+<p><em>Versione del ${LAST_UPDATED}.</em></p>
+
+<p>AIComply tratta dati di compliance regolamentare per aziende italiane. La sicurezza e l'integrità di questi dati sono al centro della nostra architettura. Questa pagina descrive in trasparenza le misure tecniche e organizzative che adottiamo.</p>
+
+<h2>1. Crittografia</h2>
+<ul>
+  <li><strong>In transito</strong>: HTTPS obbligatorio (HSTS, TLS 1.2+). Connessioni HTTP automaticamente reindirizzate.</li>
+  <li><strong>A riposo</strong>: AES-256 sui database PostgreSQL gestiti da Supabase.</li>
+  <li><strong>Password</strong>: salvate con hash bcrypt (work factor adeguato), mai in chiaro.</li>
+  <li><strong>Token di sessione</strong>: JWT firmati, scadenza configurata.</li>
+</ul>
+
+<h2>2. Architettura multi-tenant sicura</h2>
+<ul>
+  <li><strong>Row Level Security (RLS)</strong> PostgreSQL su tutte le tabelle: ogni cliente vede solo i propri dati, anche in caso di bug applicativo.</li>
+  <li><strong>Isolamento per organizzazione</strong>: ogni risorsa è associata a un <code>organization_id</code> e l'accesso è filtrato a livello database.</li>
+  <li><strong>RBAC</strong> (Role-Based Access Control): ruoli owner, admin, editor, viewer con privilegi differenziati.</li>
+</ul>
+
+<h2>3. Autenticazione</h2>
+<ul>
+  <li>Password policy: minimo 8 caratteri, almeno una lettera e un numero, blacklist password comuni.</li>
+  <li>Multi-Factor Authentication (MFA) — disponibile su richiesta per piano Enterprise.</li>
+  <li>Logout su tutti i device disponibile dalla pagina profilo.</li>
+  <li>Sessioni con refresh token auto-rotanti.</li>
+</ul>
+
+<h2>4. Hardening dell'applicazione</h2>
+<ul>
+  <li><strong>Content Security Policy (CSP)</strong> stretta.</li>
+  <li><strong>X-Frame-Options</strong>: DENY (no embedding in iframe).</li>
+  <li><strong>HSTS</strong>: 2 anni, includeSubDomains, preload.</li>
+  <li><strong>Permissions-Policy</strong>: nessun accesso a camera/microfono/geolocation.</li>
+  <li><strong>Rate limiting</strong> sugli endpoint pubblici.</li>
+  <li>Protezione CSRF su API tramite SameSite cookies.</li>
+</ul>
+
+<h2>5. Audit e logging</h2>
+<ul>
+  <li>Audit log delle azioni significative (creazione/modifica documenti, sistemi AI, formazione, abbonamenti).</li>
+  <li>Log di sicurezza con retention 90 giorni e purge automatica.</li>
+  <li>Accesso ai log riservato a owner/admin tramite RLS.</li>
+</ul>
+
+<h2>6. Backup e disaster recovery</h2>
+<ul>
+  <li>Backup automatici giornalieri (Supabase managed) cifrati.</li>
+  <li>Retention: 7 giorni (Free/Pro), 30 giorni (Enterprise).</li>
+  <li>Procedura di restore documentata; test annuale.</li>
+</ul>
+
+<h2>7. Sub-processor</h2>
+<p>Elenco completo e DPA: <a href="/legal/sub-processori">aicomplyonline.it/legal/sub-processori</a>.</p>
+
+<h2>8. Gestione incidenti e responsible disclosure</h2>
+<ul>
+  <li>Procedura di Data Breach interna allineata agli artt. 33-34 GDPR (notifica al Garante entro 72h).</li>
+  <li>Programma di responsible disclosure: vulnerabilità segnalabili a <a href="mailto:security@aicomplyonline.it">security@aicomplyonline.it</a>.</li>
+  <li>Vedi anche <a href="/.well-known/security.txt"><code>/.well-known/security.txt</code></a> (RFC 9116).</li>
+</ul>
+
+<h2>9. Conformità normativa</h2>
+<ul>
+  <li><strong>GDPR</strong> (Reg. UE 2016/679) — Titolare e Responsabile a seconda del trattamento.</li>
+  <li><strong>D.lgs. 196/2003</strong> (Codice Privacy).</li>
+  <li>Provvedimento Garante 10/6/2021 (cookie).</li>
+  <li>Misure di sicurezza ex art. 32 GDPR documentate nella DPIA volontaria.</li>
+</ul>
+
+<h2>10. Trasparenza</h2>
+<p>Per ulteriori dettagli tecnici, audit di sicurezza o richieste di documenti compliance:</p>
+<ul>
+  <li>Email: <a href="mailto:security@aicomplyonline.it">security@aicomplyonline.it</a></li>
+  <li>Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a></li>
+</ul>
 `,
   },
 };

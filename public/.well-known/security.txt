@@ -1,0 +1,6 @@
+Contact: mailto:security@aicomplyonline.it
+Expires: 2027-05-11T00:00:00.000Z
+Preferred-Languages: it, en
+Canonical: https://aicomplyonline.it/.well-known/security.txt
+Policy: https://aicomplyonline.it/legal/sicurezza
+Acknowledgments: https://aicomplyonline.it/legal/sicurezza#acknowledgments

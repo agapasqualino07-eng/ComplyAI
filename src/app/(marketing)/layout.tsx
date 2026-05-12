@@ -66,6 +66,9 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <li><Link href="/legal/privacy" className="hover:text-foreground">Privacy Policy</Link></li>
               <li><Link href="/legal/cookie" className="hover:text-foreground">Cookie Policy</Link></li>
               <li><Link href="/legal/terms" className="hover:text-foreground">Termini</Link></li>
+              <li><Link href="/legal/dpa" className="hover:text-foreground">DPA</Link></li>
+              <li><Link href="/legal/sub-processori" className="hover:text-foreground">Sub-processor</Link></li>
+              <li><Link href="/legal/sicurezza" className="hover:text-foreground">Sicurezza</Link></li>
             </ul>
           </div>
         </div>

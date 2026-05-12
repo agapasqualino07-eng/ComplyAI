@@ -75,27 +75,39 @@
 
 - ✅ GitHub Actions workflow `.github/workflows/ci.yml` (lint + typecheck + build) su PR/push main.
 
+### Compliance GDPR (documenti + automazione)
+
+- ✅ **Registro trattamenti** (`legal/registro-trattamenti.md`) — art. 30 GDPR.
+- ✅ **Procedura Data Breach** (`legal/procedura-data-breach.md`) — artt. 33-34 + template notifica Garante.
+- ✅ **DPIA volontaria** (`legal/dpia.md`) — art. 35.
+- ✅ **Pagina pubblica `/legal/sub-processori`** con elenco DPA Supabase/Vercel/Stripe.
+- ✅ **Pagina pubblica `/legal/sicurezza`** (Trust Center).
+- ✅ **security.txt** RFC 9116 per responsible disclosure.
+- ✅ **Cron retention notturno** (Vercel Cron 3:00 + funzione SQL `purge_expired_data`):
+  - audit_logs: cancellati oltre 90 giorni
+  - quiz_completions: email anonimizzate oltre 24 mesi
+  - org_invitations: cancellati oltre 30 giorni dalla scadenza
+
 ---
 
 ## ⚠️ Azioni manuali OBBLIGATORIE prima del prossimo redeploy
 
 > **Queste sono le uniche cose che DEVI FARE TU**. Tutto il resto è già committato e pushato.
 
-### 1. Eseguire le 3 nuove migration su Supabase
+### 1. Eseguire le 4 migration su Supabase
 
 Apri Supabase Dashboard → SQL Editor → **incolla ed esegui in ordine**:
 
-1. `supabase/migrations/0004_grants.sql` (se non già eseguita — sblocca i permessi)
-2. `supabase/migrations/0005_indexes_and_audit.sql` (indici + `log_audit`)
-3. `supabase/migrations/0006_team_invitations.sql` (tabella inviti + RPC `accept_invitation`)
+1. `supabase/migrations/0004_grants.sql` (se non già eseguita)
+2. `supabase/migrations/0005_indexes_and_audit.sql`
+3. `supabase/migrations/0006_team_invitations.sql`
+4. `supabase/migrations/0007_retention.sql` (purge automatico GDPR)
 
-Verifica con questa query (deve restituire 3 righe):
+Verifica con:
 ```sql
-select 'org_invitations' as obj, count(*) from public.org_invitations
-union all
-select 'accept_invitation', 1 from pg_proc where proname = 'accept_invitation'
-union all
-select 'log_audit', 1 from pg_proc where proname = 'log_audit';
+select proname from pg_proc
+ where proname in ('accept_invitation','log_audit','purge_expired_data','recompute_compliance_score');
+-- Devi vedere 4 righe.
 ```
 
 ### 2. Aggiungere `ADMIN_EMAILS` su Vercel
@@ -104,26 +116,38 @@ Per accedere a `/admin/alerts`:
 
 - Vercel → Settings → Environment Variables → **Add**
 - Name: `ADMIN_EMAILS`
-- Value: `agatinopasqualinoderetto@gmail.com` (o le email separate da virgola)
-- Environments: Production, Preview, Development
+- Value: `agatinopasqualinoderetto@gmail.com`
 
-### 3. Verificare le 6 env Stripe già presenti
+### 3. Aggiungere `CRON_SECRET` su Vercel
 
-Devono esserci:
-- `STRIPE_SECRET_KEY` (sk_live_... o sk_test_...)
-- `STRIPE_WEBHOOK_SECRET` (whsec_...)
-- `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_ENTERPRISE_MONTHLY`, `STRIPE_PRICE_ENTERPRISE_YEARLY` (price_...)
+Per autenticare il cron retention notturno:
 
-### 4. Verificare il template email "Invite user" su Supabase
+- Genera un valore random (es. `openssl rand -hex 32` o un manager di password)
+- Vercel → Env Vars → Name: `CRON_SECRET` → Value: il random generato
+- Vercel applicherà automaticamente `Authorization: Bearer $CRON_SECRET` al cron
 
-Supabase Dashboard → Authentication → **Email Templates** → "Invite user":
-- Il template di default va già bene
-- Controlla che il **Redirect URL** in Authentication → URL Configuration → Site URL sia `https://aicomplyonline.it` (non localhost)
-- Sotto **Redirect URLs** aggiungi: `https://aicomplyonline.it/**` (wildcard per permettere `/invite/[token]`)
+### 4. Verificare env Stripe già presenti
 
-### 5. Redeploy su Vercel
+`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, 4×`STRIPE_PRICE_*`.
 
-Settings → Deployments → Redeploy ultima build.
+### 5. Auth URLs su Supabase
+
+Supabase Dashboard → Authentication → URL Configuration:
+- **Site URL**: `https://aicomplyonline.it`
+- **Redirect URLs**: aggiungi `https://aicomplyonline.it/**`
+
+### 6. Redeploy su Vercel
+
+Settings → Deployments → Redeploy.
+
+### 7. Personalizzare i 3 documenti privacy interni
+
+Apri e completa con i tuoi dati reali:
+- `legal/registro-trattamenti.md` — P.IVA, PEC, eventuale provider newsletter
+- `legal/procedura-data-breach.md` — contatti tech lead + avvocato di riferimento
+- `legal/dpia.md` — eventuali specifiche del tuo caso
+
+**Conservali a parte** (Google Drive / Dropbox / NAS): vanno mostrati al Garante se richiesto.
 
 ---
 

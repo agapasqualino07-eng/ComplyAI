@@ -16,6 +16,18 @@
         {"key": "Access-Control-Allow-Methods", "value": "POST, OPTIONS"},
         {"key": "Access-Control-Allow-Headers", "value": "Content-Type"}
       ]
+    },
+    {
+      "source": "/.well-known/security.txt",
+      "headers": [
+        {"key": "Content-Type", "value": "text/plain; charset=utf-8"}
+      ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/cron/retention",
+      "schedule": "0 3 * * *"
     }
   ]
 }
