@@ -89,6 +89,9 @@ Contatti: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</
   </tbody>
 </table>
 
+<h2>Analytics aggregati (Vercel Analytics)</h2>
+<p>Per misurare il traffico aggregato del sito utilizziamo <strong>Vercel Analytics</strong>, una soluzione di analytics <strong>cookieless</strong>. Vercel non utilizza cookie persistenti né traccia singoli utenti: registra solo metriche aggregate e anonime (pagine viste, dispositivi, paesi), conformi al Provvedimento del Garante del 10 giugno 2021. Maggiori informazioni: <a href="https://vercel.com/docs/analytics/privacy-policy" target="_blank" rel="noopener">vercel.com/docs/analytics/privacy-policy</a>.</p>
+
 <h2>Cookie di profilazione o di terze parti</h2>
 <p>AIComplyOnline <strong>NON utilizza</strong> cookie di profilazione, di marketing o di tracciamento di terze parti (es. Google Analytics, Facebook Pixel). Non è pertanto richiesto consenso ex art. 7 GDPR.</p>
 
@@ -222,8 +225,8 @@ Privacy: <a href="mailto:privacy@aicomplyonline.it">privacy@aicomplyonline.it</a
     </tr>
     <tr>
       <td>Vercel Inc.</td>
-      <td>Hosting frontend e API serverless</td>
-      <td>Log applicativi, request/response metadata</td>
+      <td>Hosting frontend e API serverless; Web Analytics cookieless e Speed Insights</td>
+      <td>Log applicativi, request/response metadata, metriche aggregate anonime</td>
       <td>UE (Edge); HQ USA</td>
       <td><a href="https://vercel.com/legal/dpa" target="_blank" rel="noopener">DPA</a></td>
     </tr>
