@@ -52,6 +52,7 @@ export interface Database {
           employees: string | null;
           compliance_score: number;
           compliance_status: ComplianceStatus;
+          compliance_breakdown: Json | null;
           questionnaire_data: Json | null;
           partner_id: string | null;
           created_at: string;
