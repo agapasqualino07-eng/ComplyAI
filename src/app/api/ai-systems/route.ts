@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { enforceLimit } from "@/lib/limits";
 import { recomputeScore } from "@/lib/compliance";
+import { audit } from "@/lib/audit";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
@@ -55,6 +56,16 @@ export async function POST(req: Request) {
     .single();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  await recomputeScore(parsed.data.organization_id);
+  await Promise.all([
+    recomputeScore(parsed.data.organization_id),
+    audit({
+      organizationId: parsed.data.organization_id,
+      actorId: user.id,
+      action: "ai_system.created",
+      targetType: "ai_system",
+      targetId: data.id,
+      metadata: { name: parsed.data.name, risk_class: parsed.data.risk_class ?? null },
+    }),
+  ]);
   return NextResponse.json({ id: data.id });
 }

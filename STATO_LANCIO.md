@@ -1,158 +1,268 @@
 # Stato di lancio — AIComply
 
-> Documento di sintesi su **cosa è stato fatto** in questa sessione e **cosa resta** prima del lancio pubblico.
-> Aggiornato: 2026-05-11. Branch di riferimento: `claude/build-saas-platform-a8Bi7`.
+> **Cosa è fatto, cosa manca, come continuare.**
+> Aggiornato: 2026-05-11. Branch: `claude/build-saas-platform-a8Bi7`.
 
 ---
 
-## ✅ Fatto (in questa sessione)
+## ✅ Tutto ciò che è stato fatto in queste sessioni
 
-### Fix critici di runtime
+### Sicurezza & infrastruttura
 
-- **GRANT mancanti su Supabase** → migration `0005_indexes_and_audit.sql` (+ `0004_grants.sql` già presente) concedono i permessi a `authenticated`/`anon` su tutto lo schema `public`. Risolve l'errore `permission denied for table organizations`.
-- **Creazione azienda bloccata da RLS** → `src/app/api/orgs/route.ts` ora valida l'utente con `getUser()` e fa l'insert con l'admin client (pattern già usato in altre API). Risolve `new row violates row-level security policy`.
+- ✅ Permessi Postgres (GRANT) per ruoli `authenticated`/`anon` su `public` (migration `0004_grants.sql`).
+- ✅ Header HTTP di sicurezza completi: `Content-Security-Policy`, `X-Frame-Options: DENY`, `Permissions-Policy`, `Strict-Transport-Security`, `Referrer-Policy`, `X-Content-Type-Options`.
+- ✅ Endpoint `GET /api/health` con DB ping (per uptime monitor esterni).
+- ✅ Rate limiter in-memory (`src/lib/rate-limit.ts`) applicato a `/api/quiz` (5 req/min/IP).
 
-### Sicurezza e configurazione
+### Branding & SEO
 
-- `next.config.mjs`: aggiunti header `Content-Security-Policy`, `X-Frame-Options: DENY`, `Permissions-Policy` con whitelist Stripe.
-- `src/app/api/health/route.ts`: endpoint di health-check `GET /api/health` (verifica connessione DB + ritorna SHA commit).
+- ✅ Favicon SVG + apple-touch-icon + manifest PWA.
+- ✅ Immagine OpenGraph dinamica 1200×630 (`src/app/opengraph-image.tsx`).
+- ✅ Twitter card, manifest, sitemap aggiornato.
 
-### Branding e SEO
+### Legale (conforme GDPR/AI Act)
 
-- `src/app/icon.svg` + `src/app/apple-icon.svg`: favicon e apple-touch-icon (gradient viola con check, generato inline).
-- `src/app/opengraph-image.tsx`: immagine OG dinamica 1200×630 generata con `next/og` (gradient + claim).
-- `public/manifest.webmanifest`: manifest PWA-ready.
-- `src/app/layout.tsx`: aggiunti `twitter` card, `manifest` link, integrato cookie banner.
-- `src/app/sitemap.ts`: aggiunta rotta `/legal/dpa`.
+- ✅ Privacy policy con sub-processor (Supabase/Vercel/Stripe), CCT extra-UE, retention, base giuridica, contatti.
+- ✅ Terms con SLA 99.5%, recesso 14gg consumatori, foro, IP, responsabilità.
+- ✅ Cookie policy con elenco cookie tecnici tabellato.
+- ✅ Data Processing Agreement (`/legal/dpa`) art. 28 GDPR con misure di sicurezza in allegato.
+- ✅ Cookie banner informativo (no consent gate — solo cookie tecnici).
 
-### Legale
+### GDPR per gli utenti
 
-- `src/app/(marketing)/legal/[doc]/page.tsx`: privacy policy, terms, cookie policy **riscritte** in versione conforme (sub-processor con DPA, CCT trasferimenti extra-UE, periodi di retention, diritti GDPR puntuali, fori competenti, SLA 99.5%, diritto di recesso 14gg).
-- Nuovo documento `/legal/dpa` (Data Processing Agreement art. 28 GDPR) con misure di sicurezza in allegato.
-- `src/components/cookie-banner.tsx`: banner informativo dismissibile (solo cookie tecnici → no consent gate, conforme provv. Garante 10/6/2021).
-- `src/app/globals.css`: stili `policy-prose` estesi (table, code, em, strong).
+- ✅ **Diritto all'oblio** (art. 17): `DELETE /api/account` + UI "Zona pericolo".
+- ✅ **Diritto alla portabilità** (art. 20): `GET /api/account/export` → scarica JSON con tutti i dati (profilo, org, sistemi AI, documenti, formazione, log).
+- ✅ **Logout multi-device** (art. 32 sicurezza): `POST /api/account/sessions` invalida tutti i refresh token.
 
-### GDPR — diritto all'oblio (art. 17)
+### Business logic & UX
 
-- `src/app/api/account/route.ts`: endpoint `DELETE /api/account`. Cancella org di cui l'utente è unico owner + utente da `auth.users` (cascade). Blocca se ci sono subscription attive.
-- `src/components/delete-account-button.tsx` + sezione "Zona pericolo" in `src/app/account/page.tsx`.
+- ✅ Enforcement server-side limiti piano (organizations, aiSystems, documents, teamMembers); trial = limiti Pro.
+- ✅ Score di compliance ricalcolato server-side dopo mutations (`recompute_compliance_score`).
+- ✅ Slug document collision risolto (`crypto.randomUUID` al posto di `Math.random`).
+- ✅ Password policy server-side + indicatore live nella form di signup.
+- ✅ Onboarding azienda funzionante end-to-end (admin client per bypass RLS-on-create).
+- ✅ Stripe checkout con error handling completo + validazione formati env.
 
-### Logica di business
+### Team (gestione membri)
 
-- `src/lib/limits.ts`: enforcement server-side dei limiti di piano (organizations, aiSystems, documents, teamMembers). Considera il **trial** come piano Pro.
-- API che applicano i limiti (status 402 se eccesso):
-  - `POST /api/orgs` → `enforceOrgCreation`
-  - `POST /api/ai-systems` → `enforceLimit("aiSystems")`
-  - `POST /api/documents` → `enforceLimit("documents")`
-- `src/lib/compliance.ts` + chiamata `recomputeScore()` dopo insert su `ai_systems`, `documents`, `training_records`. Lo score in DB resta allineato.
-- **Fix slug collision** in `POST /api/documents`: da `Math.random().toString(36).slice(2,7)` a `crypto.randomUUID().slice(0,8)` (40 bit di entropia → no più collisioni pratiche con unique constraint).
+- ✅ Migration `0006_team_invitations.sql` (tabella inviti + RPC `accept_invitation`).
+- ✅ Endpoint `POST/GET /api/orgs/[orgId]/invitations` per creare/listare inviti.
+- ✅ Endpoint `DELETE /api/orgs/[orgId]/invitations/[id]` per revocare.
+- ✅ Endpoint `PATCH/DELETE /api/orgs/[orgId]/members/[userId]` per cambio ruolo + rimozione.
+- ✅ Endpoint `POST /api/invitations/accept` (chiama RPC SECURITY DEFINER).
+- ✅ Pagina `/invite/[token]` per accettare invito (con login redirect e check email).
+- ✅ UI `/dashboard/[orgId]/settings/team` completa: form invito, lista membri con cambio ruolo, lista inviti pendenti con revoca.
+- ✅ Email magic-link inviata via Supabase Auth (`generateLink` per utenti esistenti, `inviteUserByEmail` per nuovi).
 
-### DB
+### Admin area (gestione alerts normativi)
 
-- `supabase/migrations/0005_indexes_and_audit.sql`:
-  - Indici composti: `documents(org, type)`, `ai_systems(org, category)`, `training_records(org, completed_at)`, `subscriptions(status)`, `alerts(severity, published_at)`.
-  - Funzione `log_audit()` SECURITY DEFINER per scrivere audit log applicativi.
+- ✅ Layout `/admin/*` con guard via `ADMIN_EMAILS` env.
+- ✅ Pagina `/admin/alerts` con CRUD: form creazione + lista con cancellazione.
+- ✅ API `POST /api/admin/alerts` + `DELETE /api/admin/alerts/[id]`.
 
-### Anti-abuse
+### Stripe webhooks (completati)
 
-- `src/lib/rate-limit.ts`: rate limiter in-memory minimale.
-- `POST /api/quiz` ora protetto a 5 req/min/IP (status 429 con `Retry-After`).
+- ✅ Handler per: `checkout.session.completed`, `customer.subscription.created/updated/deleted`, `invoice.payment_failed`, `customer.subscription.trial_will_end`, `customer.deleted`.
+- ✅ Audit log automatico su `trial_will_end` (predisposto per invio email futuro).
 
----
+### Audit trail
 
-## ⚠️ Azioni manuali richieste subito dopo il merge
+- ✅ Helper `lib/audit.ts` + funzione SQL `log_audit()` SECURITY DEFINER.
+- ✅ Audit log wired in API critiche: `ai-systems`, `documents`, `training`, webhook Stripe.
+- ✅ Indici DB (`0005_indexes_and_audit.sql`) su tutte le query frequenti.
 
-1. **Eseguire la migration 0005 su Supabase** (SQL editor o `supabase db push`).
-2. **Verificare env Vercel**:
-   - `SUPABASE_SERVICE_ROLE_KEY` ✅ (già presente)
-   - `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_ENTERPRISE_MONTHLY`, `STRIPE_PRICE_ENTERPRISE_YEARLY` (senza questi, `/api/stripe/checkout` ritorna 500).
-3. **Redeploy** del branch su Vercel.
+### CI/CD
 
----
-
-## 🔴 Blocker residui (da chiudere prima del lancio pubblico)
-
-### Funzionalità
-
-- [ ] **Export PDF dei documenti** — oggi solo HTML. Il pitch promette "audit-ready". Suggerito: `@react-pdf/renderer` o `puppeteer-core` su serverless.
-- [ ] **Invito membri team** — `src/app/dashboard/[orgId]/settings/team/page.tsx` ha lo stub "Sarà disponibile a breve". Serve endpoint invito via email + tabella `invitations`.
-- [ ] **Admin UI alerts normativi** — oggi gli alert sono solo seed nella migration. Servono: tabella di gestione (CRUD) per admin + ruolo admin via `ADMIN_EMAILS` env.
-- [ ] **White-label Enterprise** — campi DB esistono (`partners.logo_url`, `brand_color`, ...), nessuna UI per modificarli né rendering condizionato sul branding.
-
-### Tecnico
-
-- [ ] **Rimuovere `typescript.ignoreBuildErrors: true`** da `next.config.mjs`. Per farlo: `npx supabase gen types typescript --linked > src/lib/supabase/types.ts` poi `tsc --noEmit` e fixare gli errori residui (probabilmente nelle pagine che cast-ano risultati Supabase a `any`).
-- [ ] **Rimuovere `eslint.ignoreDuringBuilds: true`** dopo aver fixato i warning con `npm run lint`.
-- [ ] **Error tracking**: integrare Sentry (`@sentry/nextjs`). Aggiungere `SENTRY_DSN` su Vercel.
-- [ ] **Analytics**: scegliere fra Vercel Analytics (gratis), Plausible (€) o GA4. Aggiornare la cookie policy di conseguenza (Plausible è cookieless).
-
-### Legale (verifica con avvocato)
-
-- [ ] **Far revisionare i documenti legali da un legale italiano** prima della pubblicazione. I testi attuali sono compliant nella forma ma vanno validati per il caso specifico (sede CT, P.IVA reale, eventuali DPO, lista cookie definitiva).
-- [ ] **Pubblicare un indirizzo PEC** per le comunicazioni legali.
-
-### Stripe
-
-- [ ] **Webhook `customer.subscription.trial_will_end`** → email all'utente 3 giorni prima della fine trial.
-- [ ] **Test end-to-end checkout** in modalità Stripe live (oggi solo verificato il flusso di codice).
+- ✅ GitHub Actions workflow `.github/workflows/ci.yml` (lint + typecheck + build) su PR/push main.
 
 ---
 
-## 🟡 Importante (entro 1-2 mesi dal lancio)
+## ⚠️ Azioni manuali OBBLIGATORIE prima del prossimo redeploy
 
-- [ ] **OAuth Google/Microsoft** sul login (atteso da target B2B).
-- [ ] **Password policy lato server** (non solo `minLength=8` client). Suggerimento: usare Supabase Auth → Authentication → Policies.
-- [ ] **MFA/2FA** opzionale per Pro+.
-- [ ] **Audit logs effettivamente popolati**: la funzione SQL `log_audit()` esiste — vanno aggiunte chiamate dopo le mutations sensibili (cambio piano, eliminazione, cambio ruolo team).
-- [ ] **Rate limiter distribuito**: l'in-memory di `rate-limit.ts` non sopravvive a istanze multiple/cold start. Migrare a Upstash Redis (`@upstash/ratelimit`).
-- [ ] **Backup test recovery**: documentare la procedura di restore Supabase e fare un test reale.
-- [ ] **CSP più stretta**: la policy attuale ha `'unsafe-inline'` su style/script per pragmatismo Next.js — restringere con nonce SSR.
+> **Queste sono le uniche cose che DEVI FARE TU**. Tutto il resto è già committato e pushato.
 
----
+### 1. Eseguire le 3 nuove migration su Supabase
 
-## 🟢 Nice to have (post-lancio)
+Apri Supabase Dashboard → SQL Editor → **incolla ed esegui in ordine**:
 
-- [ ] Test E2E (Playwright) per i flussi onboarding + creazione documento + upgrade Pro.
-- [ ] CI GitHub Actions: lint + tsc + test su PR.
-- [ ] Moduli training **interattivi** (oggi solo registrazione ore manuale).
-- [ ] **Logout su tutti i device** (Supabase Auth `signOut({ scope: 'global' })`).
-- [ ] **Export dati utente** (portabilità GDPR art. 20) in JSON/CSV scaricabile da `/account`.
-- [ ] **Newsletter normativa**: integrazione con Mailchimp/Brevo per il feed alerts.
-- [ ] **API pubbliche** (chiave per integrazioni terze, già nei limits del piano).
-- [ ] **Status page** pubblica (BetterStack o Instatus, free tier).
+1. `supabase/migrations/0004_grants.sql` (se non già eseguita — sblocca i permessi)
+2. `supabase/migrations/0005_indexes_and_audit.sql` (indici + `log_audit`)
+3. `supabase/migrations/0006_team_invitations.sql` (tabella inviti + RPC `accept_invitation`)
 
----
-
-## Riepilogo per priorità
-
-| Area | Blocker | Importanti | Nice-to-have |
-|---|:---:|:---:|:---:|
-| Configurazione | 4 | 3 | 1 |
-| Funzionalità prodotto | 4 | 4 | 4 |
-| Legale | 2 | 0 | 0 |
-| Stripe | 2 | 0 | 0 |
-| Sicurezza | 0 | 4 | 0 |
-
-**Verdetto operativo**: con i fix di questa sessione + i ~10 blocker residui chiusi, il sito è in stato **launch-ready per beta privata** entro 2-3 giorni di lavoro. Per il lancio pubblico (marketing, traffico organico) bisogna chiudere anche la revisione legale dei documenti.
-
----
-
-## Come continuare
-
-```bash
-# 1. Pull delle modifiche
-git checkout claude/build-saas-platform-a8Bi7
-git pull
-
-# 2. Applicare la migration su Supabase
-# Opzione A: Dashboard → SQL Editor → incollare supabase/migrations/0005_indexes_and_audit.sql
-# Opzione B (se hai supabase CLI configurato):
-supabase db push
-
-# 3. Verificare TypeScript (al momento ignorato in build)
-npm install
-npx tsc --noEmit   # vedere quali errori vanno chiusi prima di togliere ignoreBuildErrors
-
-# 4. Test locale del cookie banner, del delete account, dei limiti piano
-npm run dev
+Verifica con questa query (deve restituire 3 righe):
+```sql
+select 'org_invitations' as obj, count(*) from public.org_invitations
+union all
+select 'accept_invitation', 1 from pg_proc where proname = 'accept_invitation'
+union all
+select 'log_audit', 1 from pg_proc where proname = 'log_audit';
 ```
+
+### 2. Aggiungere `ADMIN_EMAILS` su Vercel
+
+Per accedere a `/admin/alerts`:
+
+- Vercel → Settings → Environment Variables → **Add**
+- Name: `ADMIN_EMAILS`
+- Value: `agatinopasqualinoderetto@gmail.com` (o le email separate da virgola)
+- Environments: Production, Preview, Development
+
+### 3. Verificare le 6 env Stripe già presenti
+
+Devono esserci:
+- `STRIPE_SECRET_KEY` (sk_live_... o sk_test_...)
+- `STRIPE_WEBHOOK_SECRET` (whsec_...)
+- `STRIPE_PRICE_PRO_MONTHLY`, `STRIPE_PRICE_PRO_YEARLY`, `STRIPE_PRICE_ENTERPRISE_MONTHLY`, `STRIPE_PRICE_ENTERPRISE_YEARLY` (price_...)
+
+### 4. Verificare il template email "Invite user" su Supabase
+
+Supabase Dashboard → Authentication → **Email Templates** → "Invite user":
+- Il template di default va già bene
+- Controlla che il **Redirect URL** in Authentication → URL Configuration → Site URL sia `https://aicomplyonline.it` (non localhost)
+- Sotto **Redirect URLs** aggiungi: `https://aicomplyonline.it/**` (wildcard per permettere `/invite/[token]`)
+
+### 5. Redeploy su Vercel
+
+Settings → Deployments → Redeploy ultima build.
+
+---
+
+## 🔴 Blocker residui (cose che IO non posso fare, servono account/strumenti esterni)
+
+### Revisione legale (URGENTE prima del lancio pubblico)
+
+- [ ] **Far validare** Privacy/Terms/Cookie/DPA da un legale italiano specializzato in tech. I testi sono compliant nella forma ma vanno adattati al tuo caso reale (sede CT, dati P.IVA reali, eventuale DPO, lista cookie definitiva post-analytics).
+- [ ] **Pubblicare una PEC** ufficiale e aggiungerla ai contatti legali.
+- [ ] Verificare la presenza di una **polizza assicurativa professionale** (SLA + indennizzi promessi nei Terms).
+
+**Cosa devi fare**: prenotare consulenza con un avvocato (~€300-800 una tantum).
+
+### Export PDF dei documenti
+
+- [ ] Convertire l'export `/api/documents/[id]/export?format=html` a PDF.
+- Tecnologie possibili:
+  - **`@react-pdf/renderer`** (richiede installare pacchetto, riscrivere template come componenti React PDF)
+  - **`puppeteer-core` + `@sparticuz/chromium`** (rendering headless del HTML esistente — più semplice, ma serve verifica del bundle size su Vercel serverless)
+
+**Cosa devo fare io**: posso implementare con `@react-pdf/renderer` ma serve `npm install` + test in deploy. Dimmi se vuoi che proceda.
+
+### Error tracking (Sentry)
+
+- [ ] Aggiungere `@sentry/nextjs` per intercettare errori in produzione.
+- **Cosa devi fare tu**: creare account su https://sentry.io (gratis fino a 5k errori/mese), creare progetto "Next.js", copiare il DSN.
+- **Cosa devo fare io**: ti faccio l'integrazione una volta che hai il DSN da incollare in env `SENTRY_DSN`.
+
+### Analytics
+
+- [ ] Scegliere tool e integrarlo:
+  - **Vercel Analytics** (gratis, già nella dashboard Vercel — basta `npm i @vercel/analytics` e una riga in layout.tsx).
+  - **Plausible** (€9/mese, cookieless, EU-hosted — perfetto per il tuo posizionamento privacy).
+- **Cosa devi fare tu**: scegliere quale (consiglio Plausible per coerenza con il pitch).
+- **Cosa devo fare io**: l'integrazione (5 min con qualsiasi dei due).
+
+### OAuth Google / Microsoft
+
+- [ ] Abilitare provider su Supabase.
+- **Cosa devi fare tu**:
+  1. Supabase Dashboard → Authentication → Providers → Google → abilita
+  2. Crea OAuth client su https://console.cloud.google.com (gratis) e copia client ID + secret in Supabase
+  3. Stesso flusso per Microsoft Azure AD se vuoi anche quello
+- **Cosa devo fare io**: aggiungere i pulsanti sulla login page una volta abilitato in Supabase.
+
+### Togliere `ignoreBuildErrors` da `next.config.mjs`
+
+- [ ] Generare i tipi DB reali e fixare gli errori di tipo:
+  ```bash
+  npx supabase login
+  npx supabase link --project-ref <tuo-project-ref>
+  npx supabase gen types typescript --linked > src/lib/supabase/types.ts
+  npm run typecheck   # vedi gli errori residui
+  ```
+- **Cosa devi fare tu**: il primo `supabase login + link` (richiede il project ref dal dashboard Supabase).
+- **Cosa devo fare io**: una volta rigenerati i tipi, posso fixare gli errori `any` rimasti.
+
+### White-label Enterprise
+
+- [ ] UI per i partner Enterprise per personalizzare logo, colori, footer (campi DB esistono in `partners`).
+- **Stima**: 4-6 ore di lavoro. Importante solo se hai effettivamente vendita Enterprise in pipeline.
+
+### Test end-to-end checkout in modalità live
+
+- [ ] Quando passi a `sk_live_...`, ripeti l'intero flusso: signup → onboarding → checkout con carta vera.
+- **Cosa devi fare tu**: tu o un tester reale (servono €29).
+
+---
+
+## 🟡 Importante (post-lancio, entro 1-2 mesi)
+
+- [ ] **MFA/2FA**: Supabase Auth supporta TOTP. Da abilitare nel dashboard + aggiungere UI di setup in `/account/security`.
+- [ ] **Rate limiter distribuito** (Upstash Redis): l'attuale in-memory non sopravvive a istanze multiple. Account Upstash gratuito fino a 10k req/giorno.
+- [ ] **Backup recovery test**: documentare e testare il restore Supabase.
+- [ ] **CSP più stretta**: rimuovere `'unsafe-inline'` su script usando nonce SSR.
+- [ ] **PDF export firmati digitalmente** (P7M) per i documenti AI Act audit-ready — feature premium.
+- [ ] **i18n inglese** se vuoi target B2B internazionale.
+
+---
+
+## 🟢 Nice to have
+
+- [ ] **Test E2E** Playwright per i flussi critici (onboarding, checkout, invito team).
+- [ ] **Moduli training interattivi** in-app (oggi solo registrazione ore manuale).
+- [ ] **Newsletter normativa**: integrazione con Brevo/Mailchimp.
+- [ ] **API pubbliche** per clienti Pro+ (richiede pannello gestione chiavi).
+- [ ] **Status page** pubblica (BetterStack free tier).
+
+---
+
+## File toccati in questa sessione (riepilogo per code review)
+
+### Migration SQL
+- `supabase/migrations/0006_team_invitations.sql` (nuova)
+
+### API routes nuove
+- `src/app/api/orgs/[orgId]/invitations/route.ts`
+- `src/app/api/orgs/[orgId]/invitations/[id]/route.ts`
+- `src/app/api/orgs/[orgId]/members/[userId]/route.ts`
+- `src/app/api/invitations/accept/route.ts`
+- `src/app/api/admin/alerts/route.ts`
+- `src/app/api/admin/alerts/[id]/route.ts`
+- `src/app/api/account/sessions/route.ts`
+- `src/app/api/account/export/route.ts`
+
+### Pagine UI nuove
+- `src/app/invite/[token]/page.tsx` + `accept-button.tsx`
+- `src/app/admin/layout.tsx`
+- `src/app/admin/alerts/page.tsx` + `alert-actions.tsx`
+
+### Componenti nuovi
+- `src/components/team/invite-form.tsx`
+- `src/components/team/member-actions.tsx`
+- `src/components/account-actions.tsx`
+
+### Lib nuove
+- `src/lib/password.ts`
+- `src/lib/audit.ts`
+
+### File modificati
+- `src/app/dashboard/[orgId]/settings/team/page.tsx` (riscritta completa)
+- `src/app/account/page.tsx` (aggiunti export GDPR + logout globale)
+- `src/app/(auth)/signup/signup-form.tsx` (validazione password client)
+- `src/app/api/stripe/webhook/route.ts` (trial_will_end + customer.deleted)
+- `src/app/api/ai-systems/route.ts` (audit log)
+- `src/app/api/documents/route.ts` (audit log)
+- `src/app/api/training/route.ts` (audit log)
+
+### Workflow CI
+- `.github/workflows/ci.yml` (nuovo)
+
+---
+
+## TL;DR — Cosa devi fare TU adesso
+
+1. **Esegui le migration 0004/0005/0006** su Supabase (SQL Editor).
+2. **Aggiungi `ADMIN_EMAILS`** su Vercel.
+3. **Verifica Site URL e Redirect URLs** su Supabase Auth.
+4. **Redeploy** su Vercel.
+5. Per i blocker rimasti che richiedono servizi esterni: scegli quali attivare (Sentry, Plausible, OAuth Google) e dimmelo, te li integro.
+
+Tutto il resto è già nel codice. Buon lancio.

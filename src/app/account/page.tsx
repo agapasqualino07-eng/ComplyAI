@@ -3,6 +3,7 @@ import { requireUser } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DeleteAccountButton } from "@/components/delete-account-button";
+import { ExportDataButton, GlobalSignoutButton } from "@/components/account-actions";
 
 export const metadata = { title: "Profilo" };
 
@@ -42,7 +43,19 @@ export default async function AccountPage() {
           <form action="/auth/signout" method="post">
             <Button type="submit" variant="outline">Esci</Button>
           </form>
+          <GlobalSignoutButton />
         </div>
+
+        <Card>
+          <CardContent className="pt-6 space-y-3">
+            <h2 className="font-semibold">Diritto alla portabilità (art. 20 GDPR)</h2>
+            <p className="text-sm text-muted-foreground">
+              Scarica una copia completa dei tuoi dati personali in formato JSON: profilo, organizzazioni,
+              sistemi AI, documenti, formazione, log delle tue azioni.
+            </p>
+            <ExportDataButton />
+          </CardContent>
+        </Card>
 
         <Card className="border-destructive/40">
           <CardContent className="pt-6 space-y-3">

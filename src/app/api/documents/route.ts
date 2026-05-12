@@ -6,6 +6,7 @@ import { renderDocument, DOCUMENT_TITLES } from "@/lib/policy/templates";
 import { slugify } from "@/lib/utils";
 import { enforceLimit } from "@/lib/limits";
 import { recomputeScore } from "@/lib/compliance";
+import { audit } from "@/lib/audit";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
@@ -90,6 +91,16 @@ export async function POST(req: Request) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  await recomputeScore(organization_id);
+  await Promise.all([
+    recomputeScore(organization_id),
+    audit({
+      organizationId: organization_id,
+      actorId: user.id,
+      action: publish ? "document.published" : "document.created",
+      targetType: "document",
+      targetId: data.id,
+      metadata: { type, version: existing ? existing.version + 1 : 1 },
+    }),
+  ]);
   return NextResponse.json({ document_id: data.id });
 }

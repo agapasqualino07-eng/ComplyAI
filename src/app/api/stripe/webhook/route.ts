@@ -54,6 +54,36 @@ export async function POST(req: Request) {
           .eq("stripe_customer_id", customerId);
         break;
       }
+      case "customer.subscription.trial_will_end": {
+        // Stripe invia questo evento 3 giorni prima della fine trial.
+        // Per ora: logghiamo + scriviamo un audit log. Quando ci sarà
+        // l'invio email (Resend/Brevo), aggiungere qui la chiamata.
+        const sub = event.data.object as Stripe.Subscription;
+        const orgId = sub.metadata?.organization_id;
+        if (orgId) {
+          console.info("[stripe webhook] trial_will_end", { orgId, trialEnd: sub.trial_end });
+          try {
+            await supabase.rpc("log_audit", {
+              p_organization_id: orgId,
+              p_action: "trial.ending_soon",
+              p_target_type: "subscription",
+              p_target_id: sub.id,
+              p_metadata: { trial_end: sub.trial_end },
+            });
+          } catch {
+            // best-effort
+          }
+        }
+        break;
+      }
+      case "customer.deleted": {
+        const cust = event.data.object as Stripe.Customer;
+        await supabase
+          .from("subscriptions")
+          .update({ status: "canceled", stripe_customer_id: null })
+          .eq("stripe_customer_id", cust.id);
+        break;
+      }
     }
   } catch (err: any) {
     console.error("[stripe webhook] handler error:", err.message);

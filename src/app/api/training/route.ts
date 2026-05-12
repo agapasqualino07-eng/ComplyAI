@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { recomputeScore } from "@/lib/compliance";
+import { audit } from "@/lib/audit";
 
 const schema = z.object({
   organization_id: z.string().uuid(),
@@ -26,6 +27,19 @@ export async function POST(req: Request) {
   const { error } = await supabase.from("training_records").insert(parsed.data as any);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  await recomputeScore(parsed.data.organization_id);
+  await Promise.all([
+    recomputeScore(parsed.data.organization_id),
+    audit({
+      organizationId: parsed.data.organization_id,
+      actorId: user.id,
+      action: "training.recorded",
+      targetType: "training_record",
+      metadata: {
+        employee_name: parsed.data.employee_name,
+        topic: parsed.data.topic,
+        hours: parsed.data.duration_hours,
+      },
+    }),
+  ]);
   return NextResponse.json({ ok: true });
 }
