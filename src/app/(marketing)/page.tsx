@@ -54,9 +54,10 @@ const deadlines = [
   { date: "1 ago 2024", label: "AI Act in vigore", status: "in vigore" },
   { date: "2 feb 2025", label: "Pratiche vietate (Art. 5) + AI literacy (Art. 4)", status: "in vigore" },
   { date: "2 ago 2025", label: "Obblighi GPAI", status: "in vigore" },
-  { date: "10 ott 2025", label: "Legge italiana 132/2025: informativa dipendenti", status: "in vigore" },
-  { date: "2 ago 2026", label: "Sistemi alto rischio (Annex III) + trasparenza Art. 50", status: "in arrivo" },
-  { date: "2 nov 2026", label: "Watermarking obbligatorio contenuti AI", status: "in arrivo" },
+  { date: "10 ott 2025", label: "Legge italiana 132/2025: informativa dipendenti (Art. 11)", status: "in vigore" },
+  { date: "2 dic 2026", label: "Watermarking AI + divieto deepfake nudificazione (Omnibus 2026)", status: "in arrivo" },
+  { date: "2 dic 2027", label: "Sistemi alto rischio Annex III + trasparenza Art. 50 (rinviato da ago 2026)", status: "in arrivo" },
+  { date: "2 ago 2028", label: "Sistemi alto rischio Annex I (rinviato da ago 2027)", status: "in arrivo" },
 ];
 
 const prohibitedPractices = [
