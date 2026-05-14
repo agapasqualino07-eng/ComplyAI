@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ShieldCheck, Twitter, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SHOW_AUTH } from "@/lib/feature-flags";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,9 +22,11 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
             <Link href="mailto:supporto@aicomplyonline.it" className="text-muted-foreground hover:text-foreground">Contatti</Link>
           </nav>
           <div className="flex items-center gap-2">
-            <Link href="/login" className="hidden sm:inline-block text-sm font-medium hover:text-primary">
-              Accedi
-            </Link>
+            {SHOW_AUTH && (
+              <Link href="/login" className="hidden sm:inline-block text-sm font-medium hover:text-primary">
+                Accedi
+              </Link>
+            )}
             <Link href="/quiz">
               <Button variant="gradient" size="sm">Quiz gratuito</Button>
             </Link>
@@ -56,7 +59,7 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
               <li><Link href="/quiz" className="hover:text-foreground">Quiz gratuito</Link></li>
               <li><Link href="/#features" className="hover:text-foreground">Funzionalità</Link></li>
               <li><Link href="/pricing" className="hover:text-foreground">Prezzi</Link></li>
-              <li><Link href="/signup" className="hover:text-foreground">Registrati</Link></li>
+              {SHOW_AUTH && <li><Link href="/signup" className="hover:text-foreground">Registrati</Link></li>}
             </ul>
           </div>
           <div>

@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, AlertTriangle, Sparkles, ShieldChe
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SHOW_AUTH } from "@/lib/feature-flags";
 import { Input } from "@/components/ui/input";
 import { QUIZ, evaluate, type AnswerValue, type QuizResult } from "@/lib/aiact/quiz";
 
@@ -306,11 +307,13 @@ function Results({
           Con il piano Pro hai accesso al registro IA aggiornato, alla generazione automatica dei documenti audit-ready (informativa Art. 11, policy interna, registro formale) e al tracking della formazione.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <Link href="/signup">
-            <Button size="xl" className="bg-white text-violet-700 hover:bg-white/90">
-              Attiva il Pro 29€/mese <ArrowRight className="h-4 w-4" />
-            </Button>
-          </Link>
+          {SHOW_AUTH && (
+            <Link href="/signup">
+              <Button size="xl" className="bg-white text-violet-700 hover:bg-white/90">
+                Attiva il Pro 29€/mese <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
+          )}
           <Link href="/pricing" className="text-sm underline opacity-90 hover:opacity-100">
             Vedi tutti i piani
           </Link>

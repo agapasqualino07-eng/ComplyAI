@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SHOW_AUTH } from "@/lib/feature-flags";
 import {
   Bot,
   FileText,
@@ -252,9 +253,11 @@ export default function HomePage() {
               <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />Formazione AI literacy tracciata</li>
               <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />Alert normativi automatici</li>
             </ul>
-            <Link href="/signup" className="mt-6 inline-block">
-              <Button variant="gradient">Attiva il Pro</Button>
-            </Link>
+            {SHOW_AUTH && (
+              <Link href="/signup" className="mt-6 inline-block">
+                <Button variant="gradient">Attiva il Pro</Button>
+              </Link>
+            )}
           </div>
           <div className="rounded-2xl border-2 border-primary bg-card p-8 ring-1 ring-primary/30">
             <ShieldCheck className="h-8 w-8 text-violet-600 mb-3" />
@@ -266,9 +269,11 @@ export default function HomePage() {
               <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />Audit trail + report attività</li>
               <li className="flex gap-2"><CheckCircle2 className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />White-label + account manager</li>
             </ul>
-            <Link href="/signup?plan=enterprise" className="mt-6 inline-block">
-              <Button variant="gradient">Attiva l'Enterprise</Button>
-            </Link>
+            {SHOW_AUTH && (
+              <Link href="/signup?plan=enterprise" className="mt-6 inline-block">
+                <Button variant="gradient">Attiva l'Enterprise</Button>
+              </Link>
+            )}
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@ import { CheckCircle2, Sparkles } from "lucide-react";
 import { PLANS, PLAN_ORDER } from "@/lib/plans";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SHOW_AUTH } from "@/lib/feature-flags";
 
 export const metadata = { title: "Prezzi" };
 
@@ -80,7 +81,10 @@ export default async function PricingPage({
                   </li>
                 ))}
               </ul>
-              <Link href={isFree ? "/quiz" : "/signup"} className="mt-6">
+              <Link
+                href={isFree || !SHOW_AUTH ? "/quiz" : "/signup"}
+                className={!SHOW_AUTH && !isFree ? "mt-6 hidden" : "mt-6"}
+              >
                 <Button className="w-full" size="lg" variant={plan.highlight ? "gradient" : isFree ? "outline" : "default"}>
                   {isFree ? "Fai il quiz gratuito" : `Attiva il ${plan.name}`}
                 </Button>
