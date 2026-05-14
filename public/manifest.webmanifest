@@ -1,0 +1,17 @@
+{
+  "name": "AIComplyOnline",
+  "short_name": "AIComplyOnline",
+  "description": "Compliance AI Act + Legge 132/2025 per le PMI italiane",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7c3aed",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
